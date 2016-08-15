@@ -1,14 +1,14 @@
-vlcj-player
+subzero-player
 ===========
 
-The vlcj-player is a media player application built using vlcj with a Swing
+The subzero-player is a media player application built using vlcj with a Swing
 rich-client user interface. 
 
 The main goal of the project is to provide an extensive demo application 
 showing how to build media players with vlcj, and to include as many features
 of vlcj as possible.
 
-Generally the vlcj-player tries to match the Qt interface of VLC with as many
+Generally the subzero-player tries to match the Qt interface of VLC with as many
 of the same features implemented as possible.
 
 However, it is not possible to get a 100% like-for-like implementation since
@@ -64,4 +64,4 @@ On the other hand, just run it from an Eclipse project.
 License
 -------
 
-The vlcj-player project is provided under the GPL, version 3 or later.
+The subzero-player project is provided under the GPL, version 3 or later.
