@@ -19,17 +19,8 @@
 
 package uk.co.caprica.vlcjplayer;
 
-import static uk.co.caprica.vlcjplayer.Application.application;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
+import com.sun.jna.NativeLibrary;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.log.NativeLog;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
@@ -39,6 +30,12 @@ import uk.co.caprica.vlcjplayer.view.debug.DebugFrame;
 import uk.co.caprica.vlcjplayer.view.effects.EffectsFrame;
 import uk.co.caprica.vlcjplayer.view.main.MainFrame;
 import uk.co.caprica.vlcjplayer.view.messages.NativeLogFrame;
+
+import javax.swing.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import static uk.co.caprica.vlcjplayer.Application.application;
 
 /**
  * Application entry-point.
@@ -70,10 +67,11 @@ public class VlcjPlayer {
     private final JFrame debugFrame;
 
     private final NativeLog nativeLog;
-
+    private static final String NATIVE_LIBRARY_SEARCH_PATH = "C:\\Program Files\\VideoLAN\\VLC";
     public static void main(String[] args) throws InterruptedException {
         // This will locate LibVLC for the vast majority of cases
-        new NativeDiscovery().discover();
+      //  new NativeDiscovery().discover();
+       NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), NATIVE_LIBRARY_SEARCH_PATH);
 
         setLookAndFeel();
 
