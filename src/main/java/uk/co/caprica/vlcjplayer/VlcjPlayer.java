@@ -72,6 +72,7 @@ public class VlcjPlayer {
         // This will locate LibVLC for the vast majority of cases
       //  new NativeDiscovery().discover();
        NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), NATIVE_LIBRARY_SEARCH_PATH);
+     //   NativeLibrary.addSearchPath("libvlc", NATIVE_LIBRARY_SEARCH_PATH);
 
         setLookAndFeel();
 
