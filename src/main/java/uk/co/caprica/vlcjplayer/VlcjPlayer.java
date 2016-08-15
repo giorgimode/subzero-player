@@ -67,7 +67,7 @@ public class VlcjPlayer {
     private final JFrame debugFrame;
 
     private final NativeLog nativeLog;
-    private static final String NATIVE_LIBRARY_SEARCH_PATH = "C:\\Program Files\\VideoLAN\\VLC";
+    private static final String NATIVE_LIBRARY_SEARCH_PATH = "./lib";
     public static void main(String[] args) throws InterruptedException {
         // This will locate LibVLC for the vast majority of cases
       //  new NativeDiscovery().discover();
