@@ -20,8 +20,10 @@
 package uk.co.caprica.vlcjplayer;
 
 import com.sun.jna.NativeLibrary;
+import uk.co.caprica.vlcj.binding.internal.libvlc_marquee_position_e;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.log.NativeLog;
+import uk.co.caprica.vlcj.player.Marquee;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.streams.NativeStreams;
@@ -32,6 +34,8 @@ import uk.co.caprica.vlcjplayer.view.main.MainFrame;
 import uk.co.caprica.vlcjplayer.view.messages.NativeLogFrame;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -103,6 +107,11 @@ public class VlcjPlayer {
 
     public VlcjPlayer() {
         EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
+        Marquee marquee = Marquee.marquee()
+                .text("vlcj tutorial")
+                .position(libvlc_marquee_position_e.centre)
+                .opacity(255)
+                .enable();
 
         mainFrame = new MainFrame();
         mainFrame.addWindowListener(new WindowAdapter() {
@@ -118,6 +127,12 @@ public class VlcjPlayer {
 
             @Override
             public void windowClosed(WindowEvent e) {
+            }
+        });
+        mediaPlayerComponent.getVideoSurface().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                marquee.apply(mediaPlayerComponent.getMediaPlayer());
             }
         });
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
