@@ -21,6 +21,7 @@ package uk.co.caprica.vlcjplayer.view.main;
 
 import static uk.co.caprica.vlcjplayer.Application.application;
 import static uk.co.caprica.vlcjplayer.time.Time.formatTime;
+import static uk.co.caprica.vlcjplayer.util.CustomSliderUI.getSliderUI;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -30,6 +31,7 @@ import javax.swing.JSlider;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.SliderUI;
 
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.player.MediaPlayer;
@@ -64,6 +66,8 @@ final class PositionPane extends JPanel {
         positionSlider.setMinimum(0);
         positionSlider.setMaximum(1000);
         positionSlider.setValue(0);
+        SliderUI sliderUI = getSliderUI();
+        positionSlider.setUI(sliderUI);
 
         positionSlider.addChangeListener(new ChangeListener() {
             @Override

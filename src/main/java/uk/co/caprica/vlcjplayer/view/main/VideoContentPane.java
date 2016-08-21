@@ -19,7 +19,7 @@ final class VideoContentPane extends JPanel {
     VideoContentPane() {
         cardLayout = new CardLayout();
         setLayout(cardLayout);
-        add(new ImagePane(ImagePane.Mode.CENTER, getClass().getResource("/vlcj-logo.png"), 0.3f), NAME_DEFAULT);
+        add(new ImagePane(ImagePane.Mode.CENTER, getClass().getResource("/vlcj-logo.png"), 0.6f), NAME_DEFAULT);
         add(application().mediaPlayerComponent(), NAME_VIDEO);
     }
 

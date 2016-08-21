@@ -20,9 +20,13 @@
 package uk.co.caprica.vlcjplayer.view.main;
 
 import static uk.co.caprica.vlcjplayer.Application.application;
+import static uk.co.caprica.vlcjplayer.util.CustomSliderUI.getSliderUI;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -31,7 +35,10 @@ import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.SliderUI;
+import javax.swing.plaf.basic.BasicSliderUI;
 
+import com.sun.java.swing.plaf.windows.WindowsSliderUI;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcjplayer.event.PausedEvent;
@@ -116,6 +123,9 @@ final class ControlsPane extends BasePanel {
 
         add(muteButton, "sg 1");
         add(volumeSlider, "wmax 100");
+
+        SliderUI sliderUI = getSliderUI();
+        volumeSlider.setUI(sliderUI);
 
         volumeSlider.addChangeListener(new ChangeListener() {
             @Override
