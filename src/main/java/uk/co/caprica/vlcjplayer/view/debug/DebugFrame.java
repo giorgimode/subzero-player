@@ -135,22 +135,22 @@ public final class DebugFrame extends BaseFrame {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            addMessage(e);
+        //    addMessage(e);
         }
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            addMessage(e);
+       //     addMessage(e);
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            addMessage(e);
+      //      addMessage(e);
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            addMessage(e);
+      //      addMessage(e);
         }
 
         @Override
@@ -165,7 +165,7 @@ public final class DebugFrame extends BaseFrame {
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            addMessage(e);
+       //     addMessage(e);
         }
     }
 

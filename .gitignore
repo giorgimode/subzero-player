@@ -19,5 +19,5 @@ log/
 .idea/dynamic.xml
 .idea/uiDesigner.xml
 
-**/plugins.dat
+/lib/
 *.log

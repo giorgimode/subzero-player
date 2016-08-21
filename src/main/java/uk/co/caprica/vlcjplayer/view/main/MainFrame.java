@@ -146,7 +146,7 @@ public final class MainFrame extends BaseFrame {
     private final MouseMovementDetector mouseMovementDetector;
 
     public MainFrame() {
-        super("vlcj player");
+        super("SubZero player");
 
         this.mediaPlayerComponent = application().mediaPlayerComponent();
 
