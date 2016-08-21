@@ -1,29 +1,8 @@
-/*
- * This file is part of VLCJ.
- *
- * VLCJ is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * VLCJ is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with VLCJ.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Copyright 2015 Caprica Software Limited.
- */
-
 package uk.co.caprica.vlcjplayer;
 
 import com.sun.jna.NativeLibrary;
-import uk.co.caprica.vlcj.binding.internal.libvlc_marquee_position_e;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.log.NativeLog;
-import uk.co.caprica.vlcj.player.Marquee;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.streams.NativeStreams;
@@ -33,9 +12,9 @@ import uk.co.caprica.vlcjplayer.view.effects.EffectsFrame;
 import uk.co.caprica.vlcjplayer.view.main.MainFrame;
 import uk.co.caprica.vlcjplayer.view.messages.NativeLogFrame;
 
-import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -107,11 +86,6 @@ public class VlcjPlayer {
 
     public VlcjPlayer() {
         EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
-        Marquee marquee = Marquee.marquee()
-                .text("vlcj tutorial")
-                .position(libvlc_marquee_position_e.centre)
-                .opacity(255)
-                .enable();
 
         mainFrame = new MainFrame();
         mainFrame.addWindowListener(new WindowAdapter() {
@@ -127,12 +101,6 @@ public class VlcjPlayer {
 
             @Override
             public void windowClosed(WindowEvent e) {
-            }
-        });
-        mediaPlayerComponent.getVideoSurface().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                marquee.apply(mediaPlayerComponent.getMediaPlayer());
             }
         });
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
