@@ -15,6 +15,8 @@ import uk.co.caprica.vlcjplayer.event.ShowEffectsEvent;
 import uk.co.caprica.vlcjplayer.event.ShowMessagesEvent;
 import uk.co.caprica.vlcjplayer.event.SnapshotImageEvent;
 import uk.co.caprica.vlcjplayer.event.StoppedEvent;
+import uk.co.caprica.vlcjplayer.event.SubtitleAddedEvent;
+import uk.co.caprica.vlcjplayer.service.EnhancedTranslatorService;
 import uk.co.caprica.vlcjplayer.view.BaseFrame;
 import uk.co.caprica.vlcjplayer.view.MouseMovementDetector;
 import uk.co.caprica.vlcjplayer.view.action.StandardAction;
@@ -71,6 +73,8 @@ public final class MainFrame extends BaseFrame {
 
     private final StandardAction videoFullscreenAction;
     private final StandardAction videoAlwaysOnTopAction;
+
+    private EnhancedTranslatorService enhancedTranslatorService;
 
     private final Action subtitleAddSubtitleFileAction;
 
@@ -188,12 +192,16 @@ public final class MainFrame extends BaseFrame {
             }
         };
 
+        enhancedTranslatorService = new EnhancedTranslatorService(mediaPlayerComponent.getMediaPlayer());
+
         subtitleAddSubtitleFileAction = new StandardAction(resource("menu.subtitle.item.addSubtitleFile")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
                     File file = fileChooser.getSelectedFile();
                     mediaPlayerComponent.getMediaPlayer().setSubTitleFile(file);
+                    enhancedTranslatorService.add(file);
+                    application().post(SubtitleAddedEvent.INSTANCE);
                 }
             }
         };
