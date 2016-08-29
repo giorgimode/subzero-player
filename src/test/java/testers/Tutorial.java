@@ -3,6 +3,7 @@ package testers;
 import com.sun.jna.NativeLibrary;
 import uk.co.caprica.vlcj.binding.internal.libvlc_marquee_position_e;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.player.Marquee;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
 import javax.swing.*;
@@ -42,19 +43,27 @@ public class Tutorial {
         jpanel = new JPanel();
         jpanel.setLayout(new BorderLayout());
         jpanel.add(mediaPlayerComponent.getVideoSurface(), BorderLayout.CENTER);
+        Marquee marquee = Marquee.marquee()
+                .text("vlcj tutorial")
+                .size(40)
+                .colour(Color.WHITE)
+                .timeout(3000)
+                .position(libvlc_marquee_position_e.bottom)
+                .opacity(0.8f)
+                .enable();
 
         controlsPanel = new JPanel();
         JButton applyButton2 = new JButton("Apply");
         applyButton2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-               /* marquee()
+                marquee()
                         .text("my text")
                         //     .location(x, y)
                         .position(libvlc_marquee_position_e.centre)
                         .opacity(255)
                         .enable(true)
-                        .apply(mediaPlayerComponent.getMediaPlayer());*/
+                        .apply(mediaPlayerComponent.getMediaPlayer());
             }
         });
         controlsPanel.add(applyButton2);

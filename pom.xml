@@ -11,9 +11,9 @@
     <version>0.0.0</version>
 
     <name>subzero-player</name>
-    <!--<description>vlcj Media Player</description>-->
-    <!--<url>http://www.capricasoftware.co.uk/vlcj</url>-->
-    <!--<inceptionYear>2015</inceptionYear>-->
+    <!--<description>subzero Media Player</description>-->
+    <!--<url>gio.com/vlcj</url>-->
+    <!--<inceptionYear>2016</inceptionYear>-->
 
     <packaging>jar</packaging>
 
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <version>19.0</version>
         </dependency>
         <dependency>
             <groupId>com.miglayout</groupId>
@@ -150,6 +150,11 @@
             <groupId>uk.co.caprica</groupId>
             <artifactId>vlcj</artifactId>
             <version>3.11.0-custom</version>
+        </dependency>
+        <dependency>
+            <groupId>org.gio.submaster</groupId>
+            <artifactId>subtitle-master</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
