@@ -72,7 +72,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>uk.co.caprica.vlcjplayer.VlcjPlayer</mainClass>
+                            <mainClass>com.gio.subzero.VlcjPlayer</mainClass>
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
