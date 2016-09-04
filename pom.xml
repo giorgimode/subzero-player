@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.giorgimode.subzero</groupId>
+    <groupId>com.giorgimode</groupId>
     <artifactId>subzero</artifactId>
     <version>0.0.0</version>
 
@@ -72,7 +72,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.gio.subzero.VlcjPlayer</mainClass>
+                            <mainClass>com.giorgimode.subzero.VlcjPlayer</mainClass>
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
@@ -152,8 +152,8 @@
             <version>3.11.0-custom</version>
         </dependency>
         <dependency>
-            <groupId>org.gio.submaster</groupId>
-            <artifactId>subtitle-master</artifactId>
+            <groupId>com.giorgimode</groupId>
+            <artifactId>subtitle</artifactId>
             <version>1.0.0</version>
         </dependency>
     </dependencies>
