@@ -156,6 +156,11 @@
             <artifactId>subtitle</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.giorgimode</groupId>
+            <artifactId>dictionary</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
 
 </project>
