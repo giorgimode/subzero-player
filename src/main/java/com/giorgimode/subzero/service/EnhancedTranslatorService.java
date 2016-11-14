@@ -1,6 +1,8 @@
 package com.giorgimode.subzero.service;
 
 import com.giorgimode.dictionary.api.DictionaryService;
+import com.giorgimode.dictionary.impl.CcDictionaryService;
+import com.giorgimode.dictionary.impl.CcLanguageEnum;
 import com.giorgimode.dictionary.impl.WordnetDictionaryService;
 import com.giorgimode.subtitle.api.SubtitleService;
 import com.giorgimode.subzero.event.PausedEvent;
@@ -12,6 +14,7 @@ import uk.co.caprica.vlcj.player.MediaPlayer;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.giorgimode.subzero.Application.application;
@@ -43,8 +46,9 @@ public class EnhancedTranslatorService {
             String[] line1 = currentWords[0];
             System.out.println(Arrays.toString(line1));
             System.out.println("=======================");
-            Map<String, String> definitions = dictionaryService.retrieveDefinitions(line1);
-          //  definitions.entrySet().forEach(d -> System.out.println(d + "\n"));
+            Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(line1);
+            print(definitions);
+            //  definitions.entrySet().forEach(d -> System.out.println(d + "\n"));
         }
         long timespent = System.currentTimeMillis() - start;
         System.out.println("TIME FOR GETTING DEFINITIONS:\n" + timespent);
@@ -67,7 +71,20 @@ public class EnhancedTranslatorService {
     }
 
     private void loadDictionary(){
-        dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD);
+    //    dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD);
+        String path = "D:\\coding\\workspace\\projects\\Dictionary-parser\\src\\main\\resources\\cc\\";
+        dictionaryService = CcDictionaryService.getInMemoryInstance(CcLanguageEnum.EN_DE, path);
+}
+
+
+    private void print(Map<String, Map<String, List<String>>> definitions)   {
+        definitions.entrySet().forEach(map -> {
+            map.getValue().entrySet().forEach(list -> {
+                System.out.println(list.getKey() + ": ");
+                list.getValue().forEach(word -> System.out.println(word));
+            });
+        });
     }
+
 
 }
