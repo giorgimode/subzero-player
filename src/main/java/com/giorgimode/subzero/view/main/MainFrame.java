@@ -5,26 +5,22 @@ import com.giorgimode.subzero.customHandler.ClickListener;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.event.AfterExitFullScreenEvent;
 import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
-import com.giorgimode.subzero.event.PausedEvent;
-import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.ShowDebugEvent;
 import com.giorgimode.subzero.event.ShowEffectsEvent;
 import com.giorgimode.subzero.event.ShowMessagesEvent;
 import com.giorgimode.subzero.event.SnapshotImageEvent;
-import com.giorgimode.subzero.event.StoppedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.giorgimode.subzero.service.EnhancedTranslatorService;
+import com.giorgimode.subzero.view.BaseFrame;
+import com.giorgimode.subzero.view.MouseMovementDetector;
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.StandardAction;
+import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.giorgimode.subzero.view.snapshot.SnapshotView;
 import com.google.common.eventbus.Subscribe;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
-import com.giorgimode.subzero.view.BaseFrame;
-import com.giorgimode.subzero.view.MouseMovementDetector;
-import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -38,22 +34,20 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 
 @SuppressWarnings("serial")
@@ -67,23 +61,23 @@ public final class MainFrame extends BaseFrame {
 
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
 
-    private final Action mediaOpenAction;
-    private final Action mediaQuitAction;
+    private Action mediaOpenAction;
+    private Action mediaQuitAction;
 
-    private final StandardAction videoFullscreenAction;
-    private final StandardAction videoAlwaysOnTopAction;
+    private StandardAction videoFullscreenAction;
+    private StandardAction videoAlwaysOnTopAction;
 
     private EnhancedTranslatorService enhancedTranslatorService;
 
-    private final Action subtitleAddSubtitleFileAction;
+    private Action subtitleAddSubtitleFileAction;
 
-    private final Action toolsEffectsAction;
-    private final Action toolsMessagesAction;
-    private final Action toolsDebugAction;
+    private Action toolsEffectsAction;
+    private Action toolsMessagesAction;
+    private Action toolsDebugAction;
 
-    private final StandardAction viewStatusBarAction;
+    private StandardAction viewStatusBarAction;
 
-    private final Action helpAboutAction;
+    private Action helpAboutAction;
 
     private final JMenuBar menuBar;
 
@@ -115,17 +109,17 @@ public final class MainFrame extends BaseFrame {
 
     private final JMenu helpMenu;
 
-    private final JFileChooser fileChooser;
+    private JFileChooser fileChooser;
 
     private final PositionPane positionPane;
 
     private final ControlsPane controlsPane;
 
-    private final StatusBar statusBar;
+    private StatusBar statusBar;
 
     private final VideoContentPane videoContentPane;
 
-    private final JPanel bottomPane;
+    private JPanel bottomPane;
 
     private final MouseMovementDetector mouseMovementDetector;
 
@@ -133,36 +127,6 @@ public final class MainFrame extends BaseFrame {
         super("SubZero player");
 
         this.mediaPlayerComponent = Application.application().mediaPlayerComponent();
-
-        MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
-
-        mediaOpenAction = new StandardAction(Resource.resource("menu.media.item.openFile")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
-                    File file = fileChooser.getSelectedFile();
-                    String mrl = file.getAbsolutePath();
-                    Application.application().addRecentMedia(mrl);
-                    mediaPlayerComponent.getMediaPlayer().playMedia(mrl);
-                }
-            }
-        };
-
-        mediaQuitAction = new StandardAction(Resource.resource("menu.media.item.quit")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-                System.exit(0);
-            }
-        };
-
-        videoFullscreenAction = new StandardAction(Resource.resource("menu.video.item.fullscreen")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mediaPlayerComponent.getMediaPlayer().toggleFullScreen();
-            }
-        };
-
         mediaPlayerComponent.getVideoSurface().addMouseListener(new ClickListener() {
             public void singleClick(MouseEvent e) {
                 mediaPlayerComponent.getMediaPlayer().pause();
@@ -172,87 +136,11 @@ public final class MainFrame extends BaseFrame {
                 mediaPlayerComponent.getMediaPlayer().toggleFullScreen();
             }
         });
+        MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
 
-        videoAlwaysOnTopAction = new StandardAction(Resource.resource("menu.video.item.alwaysOnTop")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean onTop;
-                Object source = e.getSource();
-                if (source instanceof JCheckBoxMenuItem) {
-                    JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
-                    onTop = menuItem.isSelected();
-                } else {
-                    throw new IllegalStateException("Don't know about source " + source);
-                }
-                setAlwaysOnTop(onTop);
-            }
-        };
+        createStandardActions();
 
         enhancedTranslatorService = new EnhancedTranslatorService(mediaPlayerComponent.getMediaPlayer());
-
-        subtitleAddSubtitleFileAction = new StandardAction(Resource.resource("menu.subtitle.item.addSubtitleFile")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
-                    File file = fileChooser.getSelectedFile();
-                    mediaPlayerComponent.getMediaPlayer().setSubTitleFile(file);
-                    enhancedTranslatorService.add(file);
-                    Application.application().post(SubtitleAddedEvent.INSTANCE);
-                }
-            }
-        };
-
-        toolsEffectsAction = new StandardAction(Resource.resource("menu.tools.item.effects")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.application().post(ShowEffectsEvent.INSTANCE);
-            }
-        };
-
-        toolsMessagesAction = new StandardAction(Resource.resource("menu.tools.item.messages")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.application().post(ShowMessagesEvent.INSTANCE);
-            }
-        };
-
-        toolsDebugAction = new StandardAction(Resource.resource("menu.tools.item.debug")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.application().post(ShowDebugEvent.INSTANCE);
-            }
-        };
-
-        viewStatusBarAction = new StandardAction(Resource.resource("menu.view.item.statusBar")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean visible;
-                Object source = e.getSource();
-                if (source instanceof JCheckBoxMenuItem) {
-                    JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
-                    visible = menuItem.isSelected();
-                } else {
-                    throw new IllegalStateException("Don't know about source " + source);
-                }
-                statusBar.setVisible(visible);
-                bottomPane.invalidate();
-                bottomPane.revalidate();
-                bottomPane.getParent().invalidate();
-                bottomPane.getParent().revalidate();
-                MainFrame.this.invalidate();
-                MainFrame.this.revalidate();
-            }
-        };
-
-        helpAboutAction = new StandardAction(Resource.resource("menu.help.item.about")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AboutDialog dialog = new AboutDialog(MainFrame.this);
-                dialog.setLocationRelativeTo(MainFrame.this);
-
-                dialog.setVisible(true);
-            }
-        };
 
         menuBar = new JMenuBar();
 
@@ -437,6 +325,82 @@ public final class MainFrame extends BaseFrame {
         setMinimumSize(new Dimension(370, 240));
     }
 
+    private void createStandardActions() {
+        mediaOpenAction = createStandardAction("menu.media.item.openFile", (actionEvent) -> {
+            if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
+                File file = fileChooser.getSelectedFile();
+                String mrl = file.getAbsolutePath();
+                Application.application().addRecentMedia(mrl);
+                mediaPlayerComponent.getMediaPlayer().playMedia(mrl);
+            }
+        });
+
+        mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) -> {
+            dispose();
+            System.exit(0);
+        });
+
+        videoFullscreenAction = createStandardAction("menu.video.item.fullscreen",
+                (actionEvent) -> mediaPlayerComponent.getMediaPlayer().toggleFullScreen());
+
+
+        videoAlwaysOnTopAction = createStandardAction("menu.video.item.alwaysOnTop", (actionEvent) -> {
+            boolean onTop;
+            Object source = actionEvent.getSource();
+            if (source instanceof JCheckBoxMenuItem) {
+                JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
+                onTop = menuItem.isSelected();
+            } else {
+                throw new IllegalStateException("Don't know about source " + source);
+            }
+            setAlwaysOnTop(onTop);
+        });
+
+        subtitleAddSubtitleFileAction = createStandardAction("menu.subtitle.item.addSubtitleFile", (actionEvent) -> {
+            if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
+                File file = fileChooser.getSelectedFile();
+                mediaPlayerComponent.getMediaPlayer().setSubTitleFile(file);
+                enhancedTranslatorService.add(file);
+                Application.application().post(SubtitleAddedEvent.INSTANCE);
+            }
+        });
+
+        toolsEffectsAction = createStandardAction("menu.tools.item.effects",
+                (actionEvent) -> Application.application().post(ShowEffectsEvent.INSTANCE));
+
+        toolsMessagesAction = createStandardAction("menu.tools.item.messages",
+                (actionEvent) -> Application.application().post(ShowMessagesEvent.INSTANCE));
+
+        toolsDebugAction = createStandardAction("menu.tools.item.debug",
+                (actionEvent) -> Application.application().post(ShowDebugEvent.INSTANCE));
+
+        viewStatusBarAction = createStandardAction("menu.view.item.statusBar",
+                (actionEvent) -> {
+                    boolean visible;
+                    Object source = actionEvent.getSource();
+                    if (source instanceof JCheckBoxMenuItem) {
+                        JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
+                        visible = menuItem.isSelected();
+                    } else {
+                        throw new IllegalStateException("Don't know about source " + source);
+                    }
+                    statusBar.setVisible(visible);
+                    bottomPane.invalidate();
+                    bottomPane.revalidate();
+                    bottomPane.getParent().invalidate();
+                    bottomPane.getParent().revalidate();
+                    MainFrame.this.invalidate();
+                    MainFrame.this.revalidate();
+                });
+
+        helpAboutAction = createStandardAction("menu.help.item.about", (actionEvent) -> {
+            AboutDialog dialog = new AboutDialog(MainFrame.this);
+            dialog.setLocationRelativeTo(MainFrame.this);
+
+            dialog.setVisible(true);
+        });
+    }
+
     private ButtonGroup addActions(List<Action> actions, JMenu menu, boolean selectFirst) {
         ButtonGroup buttonGroup = addActions(actions, menu);
         if (selectFirst) {
@@ -552,5 +516,14 @@ public final class MainFrame extends BaseFrame {
     private ActionMap getActionMap() {
         JComponent c = (JComponent) getContentPane();
         return c.getActionMap();
+    }
+
+    private StandardAction createStandardAction(String title, Consumer<ActionEvent> consumer) {
+        return new StandardAction(Resource.resource(title)) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                consumer.accept(e);
+            }
+        };
     }
 }
