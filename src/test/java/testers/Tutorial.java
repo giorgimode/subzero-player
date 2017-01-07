@@ -43,6 +43,7 @@ public class Tutorial {
         jpanel = new JPanel();
         jpanel.setLayout(new BorderLayout());
         jpanel.add(mediaPlayerComponent.getVideoSurface(), BorderLayout.CENTER);
+/*
         Marquee marquee = Marquee.marquee()
                 .text("vlcj tutorial")
                 .size(40)
@@ -51,21 +52,18 @@ public class Tutorial {
                 .position(libvlc_marquee_position_e.bottom)
                 .opacity(0.8f)
                 .enable();
+*/
 
         controlsPanel = new JPanel();
         JButton applyButton2 = new JButton("Apply");
-        applyButton2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
+        applyButton2.addActionListener(evt ->
                 marquee()
-                        .text("my text")
-                        //     .location(x, y)
-                        .position(libvlc_marquee_position_e.centre)
-                        .opacity(255)
-                        .enable(true)
-                        .apply(mediaPlayerComponent.getMediaPlayer());
-            }
-        });
+                .text("my text")
+                //     .location(x, y)
+                .position(libvlc_marquee_position_e.centre)
+                .opacity(255)
+                .enable(true)
+                .apply(mediaPlayerComponent.getMediaPlayer()));
         controlsPanel.add(applyButton2);
 
         jpanel.add(controlsPanel, BorderLayout.SOUTH);
@@ -92,13 +90,13 @@ public class Tutorial {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        marquee()
+/*        marquee()
                 .text("my text")
                 //     .location(x, y)
                 .position(libvlc_marquee_position_e.centre)
                 .opacity(255)
                 .enable(true)
-                .apply(mediaPlayerComponent.getMediaPlayer());
+                .apply(mediaPlayerComponent.getMediaPlayer());*/
     }
 
     public class ControlsPanel extends JPanel {

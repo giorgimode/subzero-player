@@ -31,7 +31,7 @@ import com.giorgimode.subzero.view.BorderedStandardLabel;
 
 import com.google.common.eventbus.Subscribe;
 
-final class StatusBar extends JPanel {
+public final class StatusBar extends JPanel {
 
     private final JLabel titleLabel;
 
@@ -56,30 +56,30 @@ final class StatusBar extends JPanel {
         application().subscribe(this);
     }
 
-    void setTitle(String title) {
+    public void setTitle(String title) {
         titleLabel.setText(title);
     }
 
-    void setRate(String rate) {
+    public void setRate(String rate) {
         rateLabel.setText(rate);
     }
 
-    void setTime(long time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
-    void setDuration(long duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
         refresh();
     }
 
-    void clear() {
+    public void clear() {
         titleLabel.setText(null);
         rateLabel.setText(null);
         timeLabel.setText(null);
     }
 
-    void refresh() {
+    public void refresh() {
         timeLabel.setText(String.format("%s/%s", formatTime(time), formatTime(duration)));
     }
 

@@ -40,7 +40,7 @@ import com.giorgimode.subzero.view.StandardLabel;
 
 import com.google.common.eventbus.Subscribe;
 
-final class PositionPane extends JPanel {
+public final class PositionPane extends JPanel {
 
     private final JLabel timeLabel;
 
@@ -110,11 +110,11 @@ final class PositionPane extends JPanel {
         }
     }
 
-    void setTime(long time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
-    void setDuration(long duration) {
+    public void setDuration(long duration) {
         durationLabel.setText(formatTime(duration));
     }
 

@@ -2,6 +2,7 @@ package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.ClickListener;
+import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.event.AfterExitFullScreenEvent;
 import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
 import com.giorgimode.subzero.event.PausedEvent;
@@ -162,14 +163,12 @@ public final class MainFrame extends BaseFrame {
             }
         };
 
-        mediaPlayerComponent.getVideoSurface().addMouseListener(new ClickListener(){
-            public void singleClick(MouseEvent e)
-            {
+        mediaPlayerComponent.getVideoSurface().addMouseListener(new ClickListener() {
+            public void singleClick(MouseEvent e) {
                 mediaPlayerComponent.getMediaPlayer().pause();
             }
 
-            public void doubleClick(MouseEvent e)
-            {
+            public void doubleClick(MouseEvent e) {
                 mediaPlayerComponent.getMediaPlayer().toggleFullScreen();
             }
         });
@@ -180,10 +179,9 @@ public final class MainFrame extends BaseFrame {
                 boolean onTop;
                 Object source = e.getSource();
                 if (source instanceof JCheckBoxMenuItem) {
-                    JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem)source;
+                    JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
                     onTop = menuItem.isSelected();
-                }
-                else {
+                } else {
                     throw new IllegalStateException("Don't know about source " + source);
                 }
                 setAlwaysOnTop(onTop);
@@ -231,10 +229,9 @@ public final class MainFrame extends BaseFrame {
                 boolean visible;
                 Object source = e.getSource();
                 if (source instanceof JCheckBoxMenuItem) {
-                    JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem)source;
+                    JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
                     visible = menuItem.isSelected();
-                }
-                else {
+                } else {
                     throw new IllegalStateException("Don't know about source " + source);
                 }
                 statusBar.setVisible(visible);
@@ -414,76 +411,17 @@ public final class MainFrame extends BaseFrame {
         bottomPane.add(statusBar, BorderLayout.SOUTH);
 
         contentPane.add(bottomPane, BorderLayout.SOUTH);
+        mouseMovementDetector = new VideoMouseMovementDetector(mediaPlayerComponent.getVideoSurface(), 500, mediaPlayerComponent);
 
-        mediaPlayerComponent.getMediaPlayer().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
+        MediaPlayerEventAdapter playerEventAdapter = new VlcjPlayerEventAdapter()
+                .setMouseMovementDetector(mouseMovementDetector)
+                .setVideoContentPane(videoContentPane)
+                .setStatusBar(statusBar)
+                .setPositionPane(positionPane)
+                .setFileChooser(fileChooser)
+                .setParentComponent(this);
 
-            @Override
-            public void playing(MediaPlayer mediaPlayer) {
-                videoContentPane.showVideo();
-                mouseMovementDetector.start();
-                Application.application().post(PlayingEvent.INSTANCE);
-            }
-
-            @Override
-            public void paused(MediaPlayer mediaPlayer) {
-                mouseMovementDetector.stop();
-                Application.application().post(PausedEvent.INSTANCE);
-            }
-
-            @Override
-            public void stopped(MediaPlayer mediaPlayer) {
-                mouseMovementDetector.stop();
-                videoContentPane.showDefault();
-                Application.application().post(StoppedEvent.INSTANCE);
-            }
-
-            @Override
-            public void finished(MediaPlayer mediaPlayer) {
-                videoContentPane.showDefault();
-                mouseMovementDetector.stop();
-                Application.application().post(StoppedEvent.INSTANCE);
-            }
-
-            @Override
-            public void error(MediaPlayer mediaPlayer) {
-                videoContentPane.showDefault();
-                mouseMovementDetector.stop();
-                Application.application().post(StoppedEvent.INSTANCE);
-                JOptionPane.showMessageDialog(MainFrame.this, MessageFormat.format(Application.resources().getString("error.errorEncountered"), fileChooser.getSelectedFile().toString()), Application.resources().getString("dialog.errorEncountered"), JOptionPane.ERROR_MESSAGE);
-            }
-
-            @Override
-            public void mediaParsedChanged(MediaPlayer mediaPlayer, int newStatus) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        statusBar.setTitle(mediaPlayer.getMediaMeta().getTitle());
-                    }
-                });
-            }
-
-            @Override
-            public void mediaDurationChanged(MediaPlayer mediaPlayer, long newDuration) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        positionPane.setDuration(newDuration);
-                        statusBar.setDuration(newDuration);
-                    }
-                });
-            }
-
-            @Override
-            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        positionPane.setTime(newTime);
-                        statusBar.setTime(newTime);
-                    }
-                });
-            }
-        });
+        mediaPlayerComponent.getMediaPlayer().addMediaPlayerEventListener(playerEventAdapter);
 
         getActionMap().put(ACTION_EXIT_FULLSCREEN, new AbstractAction() {
             @Override
@@ -495,7 +433,6 @@ public final class MainFrame extends BaseFrame {
 
         applyPreferences();
 
-        mouseMovementDetector = new VideoMouseMovementDetector(mediaPlayerComponent.getVideoSurface(), 500, mediaPlayerComponent);
 
         setMinimumSize(new Dimension(370, 240));
     }
@@ -525,10 +462,10 @@ public final class MainFrame extends BaseFrame {
     private void applyPreferences() {
         Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
         setBounds(
-            prefs.getInt("frameX"     , 100),
-            prefs.getInt("frameY"     , 100),
-            prefs.getInt("frameWidth" , 800),
-            prefs.getInt("frameHeight", 600)
+                prefs.getInt("frameX", 100),
+                prefs.getInt("frameY", 100),
+                prefs.getInt("frameWidth", 800),
+                prefs.getInt("frameHeight", 600)
         );
         boolean alwaysOnTop = prefs.getBoolean("alwaysOnTop", false);
         setAlwaysOnTop(alwaysOnTop);
@@ -551,13 +488,13 @@ public final class MainFrame extends BaseFrame {
     protected void onShutdown() {
         if (wasShown()) {
             Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
-            prefs.putInt    ("frameX"          , getX     ());
-            prefs.putInt    ("frameY"          , getY     ());
-            prefs.putInt    ("frameWidth"      , getWidth ());
-            prefs.putInt    ("frameHeight"     , getHeight());
-            prefs.putBoolean("alwaysOnTop"     , isAlwaysOnTop());
-            prefs.putBoolean("statusBar"       , statusBar.isVisible());
-            prefs.put       ("chooserDirectory", fileChooser.getCurrentDirectory().toString());
+            prefs.putInt("frameX", getX());
+            prefs.putInt("frameY", getY());
+            prefs.putInt("frameWidth", getWidth());
+            prefs.putInt("frameHeight", getHeight());
+            prefs.putBoolean("alwaysOnTop", isAlwaysOnTop());
+            prefs.putBoolean("statusBar", statusBar.isVisible());
+            prefs.put("chooserDirectory", fileChooser.getCurrentDirectory().toString());
 
             String recentMedia;
             List<String> mrls = Application.application().recentMedia();
@@ -570,8 +507,7 @@ public final class MainFrame extends BaseFrame {
                     sb.append(mrl);
                 }
                 recentMedia = sb.toString();
-            }
-            else {
+            } else {
                 recentMedia = "";
             }
             prefs.put("recentMedia", recentMedia);

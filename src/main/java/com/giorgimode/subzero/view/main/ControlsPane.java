@@ -100,40 +100,23 @@ final class ControlsPane extends BasePanel {
         SliderUI sliderUI = CustomSliderUI.getSliderUI();
         volumeSlider.setUI(sliderUI);
 
-        volumeSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                Application.application().mediaPlayerComponent().getMediaPlayer().setVolume(volumeSlider.getValue());
-            }
-        });
+        volumeSlider.addChangeListener(e ->
+                Application.application().mediaPlayerComponent().getMediaPlayer().setVolume(volumeSlider.getValue()));
 
         // FIXME really these should share common actions
 
-        muteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (Application.application().mediaPlayerComponent().getMediaPlayer().isMute()) {
-                    muteButton.setIcon(volumeHighIcon);
-                } else {
-                    muteButton.setIcon(volumeMutedIcon);
-                }
-                Application.application().mediaPlayerComponent().getMediaPlayer().mute();
+        muteButton.addActionListener(e -> {
+            if (Application.application().mediaPlayerComponent().getMediaPlayer().isMute()) {
+                muteButton.setIcon(volumeHighIcon);
+            } else {
+                muteButton.setIcon(volumeMutedIcon);
             }
+            Application.application().mediaPlayerComponent().getMediaPlayer().mute();
         });
 
-        fullscreenButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.application().mediaPlayerComponent().getMediaPlayer().toggleFullScreen();
-            }
-        });
+        fullscreenButton.addActionListener(e -> Application.application().mediaPlayerComponent().getMediaPlayer().toggleFullScreen());
 
-        extendedButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Application.application().post(ShowEffectsEvent.INSTANCE);
-            }
-        });
+        extendedButton.addActionListener(e -> Application.application().post(ShowEffectsEvent.INSTANCE));
     }
 
     @Subscribe

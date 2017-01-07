@@ -57,12 +57,7 @@ public class MarqueeTest extends VlcjTest {
 
         setLookAndFeel();
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MarqueeTest().start("D:\\Torrents\\Horrible.Bosses.2.2014.1080p.BluRay.x264-SPARKS\\Horrible.Bosses.2.2014.1080p.BluRay.x264-SPARKS.mkv");
-            }
-        });
+        SwingUtilities.invokeLater(() -> new MarqueeTest().start("D:\\Torrents\\Horrible.Bosses.2.2014.1080p.BluRay.x264-SPARKS\\Horrible.Bosses.2.2014.1080p.BluRay.x264-SPARKS.mkv"));
     }
 
     public MarqueeTest() {
@@ -149,41 +144,28 @@ public class MarqueeTest extends VlcjTest {
                 }
             });
 
-            applyButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent evt) {
-                    int x = -1;
-                    int y = -1;
-                    try {
-                        x = Integer.parseInt(xTextField.getText());
-                        y = Integer.parseInt(yTextField.getText());
-                    }
-                    catch(NumberFormatException e) {
-                    }
-
-                    marquee()
-                            .text(textTextField.getText())
-                            .location(x, y)
-                            .position((libvlc_marquee_position_e)positionCombo.getSelectedItem())
-                            .opacity(opacitySlider.getValue())
-                            .enable(enableCheckBox.isSelected())
-                            .apply(mediaPlayerComponent.getMediaPlayer());
+            applyButton.addActionListener(evt -> {
+                int x = -1;
+                int y = -1;
+                try {
+                    x = Integer.parseInt(xTextField.getText());
+                    y = Integer.parseInt(yTextField.getText());
                 }
+                catch(NumberFormatException e) {
+                }
+
+                marquee()
+                        .text(textTextField.getText())
+                        .location(x, y)
+                        .position((libvlc_marquee_position_e)positionCombo.getSelectedItem())
+                        .opacity(opacitySlider.getValue())
+                        .enable(enableCheckBox.isSelected())
+                        .apply(mediaPlayerComponent.getMediaPlayer());
             });
 
-            enableButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mediaPlayerComponent.getMediaPlayer().enableMarquee(true);
-                }
-            });
+            enableButton.addActionListener(e -> mediaPlayerComponent.getMediaPlayer().enableMarquee(true));
 
-            disableButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mediaPlayerComponent.getMediaPlayer().enableMarquee(false);
-                }
-            });
+            disableButton.addActionListener(e -> mediaPlayerComponent.getMediaPlayer().enableMarquee(false));
         }
     }
 

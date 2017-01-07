@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 import com.giorgimode.subzero.view.image.ImagePane;
 
-final class VideoContentPane extends JPanel {
+public final class VideoContentPane extends JPanel {
 
     private static final String NAME_DEFAULT = "default";
 

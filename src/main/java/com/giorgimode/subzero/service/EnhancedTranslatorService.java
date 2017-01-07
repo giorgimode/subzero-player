@@ -9,6 +9,7 @@ import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.google.common.eventbus.Subscribe;
 import edu.mit.jwi.data.ILoadPolicy;
+import uk.co.caprica.vlcj.binding.internal.libvlc_marquee_position_e;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.giorgimode.subzero.Application.application;
+import static uk.co.caprica.vlcj.player.Marquee.marquee;
 
 public class EnhancedTranslatorService {
     protected final MediaPlayer mediaPlayer;
@@ -41,7 +43,7 @@ public class EnhancedTranslatorService {
     @Subscribe
     public void onPaused(PausedEvent event) {
         long start = System.currentTimeMillis();
-        if (subtitleService != null && dictionaryService != null) {
+/*        if (subtitleService != null && dictionaryService != null) {
             String[][] currentWords = subtitleService.getCurrentWords(mediaPlayer.getTime());
             String[] line1 = currentWords[0];
             System.out.println(Arrays.toString(line1));
@@ -51,7 +53,13 @@ public class EnhancedTranslatorService {
             //  definitions.entrySet().forEach(d -> System.out.println(d + "\n"));
         }
         long timespent = System.currentTimeMillis() - start;
-        System.out.println("TIME FOR GETTING DEFINITIONS:\n" + timespent);
+        System.out.println("TIME FOR GETTING DEFINITIONS:\n" + timespent);*/
+        marquee()
+                .text("experiment")
+                .position(libvlc_marquee_position_e.centre)
+                .opacity(255)
+                .enable(true)
+                .apply(mediaPlayer);
     }
 
     public Subtitle getCurrentSubtitle() {
