@@ -9,9 +9,11 @@ import uk.co.caprica.vlcj.runtime.x.LibXUtil;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JWindow;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultCaret;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -93,9 +95,6 @@ public class OverlayTest extends VlcjTest {
                         break;
 
                     case KeyEvent.VK_SPACE:
-                        overlay.setText("mama mia");
-                        mediaPlayer.enableOverlay(!mediaPlayer.overlayEnabled());
-                        mediaPlayer.enableOverlay(!mediaPlayer.overlayEnabled());
                         mediaPlayer.pause();
                         break;
                 }
@@ -124,31 +123,28 @@ public class OverlayTest extends VlcjTest {
 
         private static final long serialVersionUID = 1L;
         private String text = "texti full description wow so goood it must by amazing what by";
-        private boolean scrollBarEnabled;
         private boolean focused;
+        private final Window owner;
 
         public Overlay(Window owner) {
             super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
-            scrollBarEnabled = false;
+            this.owner = owner;
+            init();
+        }
+
+        private void init() {
             focused = false;
             AWTUtilities.setWindowOpaque(this, false);
-
             setLayout(null);
-            final JTextArea textArea = new JTextArea(2, 2);
+
+           // setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+            final JTextPane textArea = new JTextPane();
             String shortText = text.substring(0, text.length() / 3) + "...";
             textArea.setText(shortText);
             textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
-      /*      textArea.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    System.out.println("mouseClicked");
-                    scrollBarEnabled = !scrollBarEnabled;
-                    textArea.setText(textArea.getText().equals(text) ? shortText : text);
-                    textArea.repaint();
-                    //       System.out.println(textArea.getText());
-                    //    textArea.repaint();
-                }
-            });*/
+            textArea.setForeground(Color.WHITE);
+            DefaultCaret caret = (DefaultCaret) textArea.getCaret();
+            caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
             JScrollPane scrollPane = new JScrollPane(textArea) {
                 @Override
                 public void paint(Graphics g) {
@@ -161,26 +157,15 @@ public class OverlayTest extends VlcjTest {
                     g2.setPaint(new Color(255, 255, 255, 64));
 
                     g2.fillRect(0, 0, getWidth(), getHeight());
-
-                    //   g2.setPaint(new Color(0, 128, 0, 0));
-                    //   g2.setFont(new Font("Sansserif", Font.BOLD, 18));
-                    //  if (!scrollBarEnabled) g2.drawString("Translucent", 16, 26);
                 }
             };
             textArea.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                   /* System.out.println("mouseClicked" + Math.random());
-                    scrollBarEnabled = !scrollBarEnabled;
-                    textArea.setText(textArea.getText().equals(text) ? shortText : text);
-                    textArea.repaint();
-                    //       System.out.println(textArea.getText());
-                    //    textArea.repaint();*/
                     focused = true;
                     scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
                     scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
                     System.out.println("mouseClicked");
-                    scrollBarEnabled = true;
                     textArea.setText(text);
                     textArea.repaint();
                 }
@@ -189,8 +174,7 @@ public class OverlayTest extends VlcjTest {
                 public void mouseEntered(MouseEvent e) {
                     if (!focused) {
                         System.out.println("mouseEntered");
-                        scrollBarEnabled = true;
-                        textArea.setText(text.substring(0, text.length()/2)+ "...");
+                        textArea.setText(text.substring(0, text.length() / 2) + "...");
                         textArea.repaint();
                     }
                 }
@@ -199,7 +183,6 @@ public class OverlayTest extends VlcjTest {
                 public void mouseExited(MouseEvent e) {
                     if (!focused) {
                         System.out.println("mouseExited");
-                        scrollBarEnabled = false;
                         textArea.setText(shortText);
                         textArea.repaint();
                     }
@@ -223,34 +206,12 @@ public class OverlayTest extends VlcjTest {
             scrollPane.setBounds(100, 200, 300, 40);
             textArea.setBounds(100, 200, 300, 40);
             scrollPane.setBackground(Color.cyan);
+      //      scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+      //      scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
+           // setLocationRelativeTo(null);
             add(scrollPane);
-     /*       JButton b = new JButton("JButton");
-            b.setBounds(150, 150, 100, 24);
-            add(b);*/
 
-           /* TranslucentComponent c = new TranslucentComponent();
-            c.setOpaque(false);
-            c.getViewport().setOpaque(false);
-            c.setBounds(150, 200, 300, 40);
-            add(c);*/
         }
-
-    /*    @Override
-        public void paint(Graphics g) {
-            super.paint(g);
-
-            Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            GradientPaint gp = new GradientPaint(180.0f, 280.0f, new Color(255, 255, 255, 255), 250.0f, 380.0f, new Color(255, 255, 0, 0));
-            g2.setPaint(gp);
-            for (int i = 0; i < 3; i++) {
-                g2.drawOval(150, 280, 100, 100);
-                g2.drawString(getText(), 116, 26);
-                g2.fillOval(150, 280, 100, 100);
-                g2.translate(120, 20);
-            }
-        }*/
 
         public String getText() {
             return text;
