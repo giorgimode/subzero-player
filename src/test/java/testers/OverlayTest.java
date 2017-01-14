@@ -24,6 +24,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -32,6 +34,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A test player demonstrating how to achieve a transparent overlay and translucent painting.
@@ -89,7 +94,8 @@ public class OverlayTest extends VlcjTest {
         mediaPlayer.mute();
         System.out.println("==============================MUTED==============================");
 
-        Overlay overlay = new Overlay(f);
+        Overlay overlay = new Overlay(f, Collections.singletonList("texti full description wow so goood it must by amazing what by"));
+
         f.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -114,6 +120,13 @@ public class OverlayTest extends VlcjTest {
             }
         });
 
+        f.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                System.out.println("WINDOW STATE CHANGED");
+                overlay.updateLocationAll();
+            }
+        });
 
         mediaPlayer.setOverlay(overlay);
         mediaPlayer.enableOverlay(true);
@@ -126,14 +139,15 @@ public class OverlayTest extends VlcjTest {
     private class Overlay extends AbstractJWindowOverlayComponent {
 
         private static final long serialVersionUID = 1L;
-        private String text = "texti full description wow so goood it must by amazing what by";
         private final Window owner;
-        private JScrollPane scrollPane;
+        List<SubtitlePanel> subtitlePanelList;
 
-        public Overlay(Window owner) {
+        public Overlay(Window owner, List<String> translatedList) {
             super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
             this.owner = owner;
-            init();
+            subtitlePanelList = new ArrayList<>();
+
+            translatedList.forEach(this::init);
         }
 
         @Override
@@ -141,30 +155,37 @@ public class OverlayTest extends VlcjTest {
             return false;
         }
 
-        private void init() {
+        private void init(String text) {
 
             AWTUtilities.setWindowOpaque(this, false);
             setLayout(null);
-            System.out.println(isRootPaneCheckingEnabled() + "xxxxxxxxxxxxxxxxxxxxx");
 
 
             SubtitlePanel subtitlePanel = new SubtitlePanel(text);
-            subtitlePanel.setDebugGraphicsOptions(DebugGraphics.LOG_OPTION);
+            updateLocation(subtitlePanel);
+            subtitlePanelList.add(subtitlePanel);
             add(subtitlePanel);
 
+        }
+
+        public void updateLocation(SubtitlePanel subtitlePanel) {
+            System.out.println(owner.getWidth() + "--xxxxxxxxxxxxxxxxxxxxx--" + owner.getHeight());
+            int area51_below = owner.getHeight() / 4;
+            int area51_left = owner.getWidth() / 35;
+            int subtitlePanelHeight = owner.getHeight() / 20;
+
+            // subtitlePanel.setLocation(owner.getX() + 50, owner.getY() + 100);
+            subtitlePanel.setLocation(area51_left, owner.getHeight() - area51_below);
+            subtitlePanel.setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
+        }
+
+        public void updateLocationAll() {
+            subtitlePanelList.forEach(this::updateLocation);
         }
 
         @Override
         protected void onCreateOverlay() {
 
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public void setText(String text) {
-            this.text = text;
         }
     }
 
@@ -228,20 +249,16 @@ public class OverlayTest extends VlcjTest {
             textArea.setEditable(false);
             getViewport().setOpaque(false);
             //   setBounds(100, 200, 2, 2);
-            setLocation(100, 100);
+            //   setLocation(100, 100);
             //   textArea.setBounds(100, 200, 2, 2);
             setBackground(Color.cyan);
-            setSize(new Dimension(500, 100));
+            //  setSize(new Dimension(500, 100));
             //  textArea.setSize(new Dimension(500, 100));
             setMaximumSize(new Dimension(1000, 1000));
             //    getViewport().setSize(new Dimension(100, 100));
             // setAlignmentX(Component.RIGHT_ALIGNMENT);
             //      scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
             // setLocationRelativeTo(null);
-
-        }
-
-        void test() {
 
         }
 
