@@ -2,21 +2,22 @@ package testers;
 
 import com.sun.awt.AWTUtilities;
 import com.sun.jna.platform.WindowUtils;
+import uk.co.caprica.vlcj.component.overlay.AbstractJWindowOverlayComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.x.LibXUtil;
 
+import javax.swing.DebugGraphics;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
-import javax.swing.JWindow;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultCaret;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -84,8 +85,11 @@ public class OverlayTest extends VlcjTest {
         final EmbeddedMediaPlayer mediaPlayer = factory.newEmbeddedMediaPlayer();
         mediaPlayer.setVideoSurface(factory.newVideoSurface(vs));
 
-        Overlay overlay = new Overlay(f);
+        System.out.println("==============================MUTED==============================");
+        mediaPlayer.mute();
+        System.out.println("==============================MUTED==============================");
 
+        Overlay overlay = new Overlay(f);
         f.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -119,12 +123,12 @@ public class OverlayTest extends VlcjTest {
         LibXUtil.setFullScreenWindow(f, true);
     }
 
-    private class Overlay extends JWindow {
+    private class Overlay extends AbstractJWindowOverlayComponent {
 
         private static final long serialVersionUID = 1L;
         private String text = "texti full description wow so goood it must by amazing what by";
-        private boolean focused;
         private final Window owner;
+        private JScrollPane scrollPane;
 
         public Overlay(Window owner) {
             super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
@@ -132,84 +136,26 @@ public class OverlayTest extends VlcjTest {
             init();
         }
 
+        @Override
+        protected boolean onHideCursor() {
+            return false;
+        }
+
         private void init() {
-            focused = false;
+
             AWTUtilities.setWindowOpaque(this, false);
             setLayout(null);
+            System.out.println(isRootPaneCheckingEnabled() + "xxxxxxxxxxxxxxxxxxxxx");
 
-           // setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
-            final JTextPane textArea = new JTextPane();
-            String shortText = text.substring(0, text.length() / 3) + "...";
-            textArea.setText(shortText);
-            textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
-            textArea.setForeground(Color.WHITE);
-            DefaultCaret caret = (DefaultCaret) textArea.getCaret();
-            caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-            JScrollPane scrollPane = new JScrollPane(textArea) {
-                @Override
-                public void paint(Graphics g) {
-                    super.paint(g);
 
-                    Graphics2D g2 = (Graphics2D) g;
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+            SubtitlePanel subtitlePanel = new SubtitlePanel(text);
+            subtitlePanel.setDebugGraphicsOptions(DebugGraphics.LOG_OPTION);
+            add(subtitlePanel);
 
-                    g2.setPaint(new Color(255, 255, 255, 64));
+        }
 
-                    g2.fillRect(0, 0, getWidth(), getHeight());
-                }
-            };
-            textArea.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    focused = true;
-                    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-                    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-                    System.out.println("mouseClicked");
-                    textArea.setText(text);
-                    textArea.repaint();
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    if (!focused) {
-                        System.out.println("mouseEntered");
-                        textArea.setText(text.substring(0, text.length() / 2) + "...");
-                        textArea.repaint();
-                    }
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    if (!focused) {
-                        System.out.println("mouseExited");
-                        textArea.setText(shortText);
-                        textArea.repaint();
-                    }
-                }
-            });
-            textArea.addFocusListener(new FocusAdapter() {
-                @Override
-                public void focusLost(FocusEvent e) {
-                    focused = false;
-                    scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                    scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                    textArea.setText(shortText);
-                }
-            });
-            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-            scrollPane.setOpaque(false);
-            textArea.setOpaque(false);
-            textArea.setEditable(false);
-            scrollPane.getViewport().setOpaque(false);
-            scrollPane.setBounds(100, 200, 300, 40);
-            textArea.setBounds(100, 200, 300, 40);
-            scrollPane.setBackground(Color.cyan);
-      //      scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
-      //      scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
-           // setLocationRelativeTo(null);
-            add(scrollPane);
+        @Override
+        protected void onCreateOverlay() {
 
         }
 
@@ -222,34 +168,103 @@ public class OverlayTest extends VlcjTest {
         }
     }
 
-    private class TranslucentComponent extends JScrollPane {
+    private static class SubtitlePanel extends JScrollPane {
+        private boolean focused = false;
+        static final JTextPane textArea = new JTextPane();
 
-        private static final long serialVersionUID = 1L;
+        public SubtitlePanel(String text) {
+            super(textArea);
 
-        public TranslucentComponent() {
+            String shortText = text.substring(0, text.length() / 3) + "...";
+            textArea.setText(shortText);
+            textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
+            textArea.setForeground(Color.WHITE);
+            DefaultCaret caret = (DefaultCaret) textArea.getCaret();
+            caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+            //   setViewportView(textArea);
+
+            textArea.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    setFocused(true);
+                    setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+                    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+                    System.out.println("mouseClicked");
+                    textArea.setText(text);
+                    textArea.repaint();
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    if (!isFocused()) {
+                        System.out.println("mouseEntered");
+                        textArea.setText(text.substring(0, text.length() / 2) + "...");
+                        textArea.repaint();
+                    }
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    if (!isFocused()) {
+                        System.out.println("mouseExited");
+                        textArea.setText(shortText);
+                        textArea.repaint();
+                    }
+                }
+            });
+            textArea.addFocusListener(new FocusAdapter() {
+                @Override
+                public void focusLost(FocusEvent e) {
+                    setFocused(false);
+                    setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+                    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+                    textArea.setText(shortText);
+                }
+            });
+            setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
             setOpaque(false);
+            textArea.setOpaque(false);
+            textArea.setEditable(false);
             getViewport().setOpaque(false);
-            JTextArea textArea = new JTextArea(20, 80);
-            textArea.setText("dfsfsdfsd");
-            setViewportView(textArea);
-            setBounds(100, 200, 300, 40);
+            //   setBounds(100, 200, 2, 2);
+            setLocation(100, 100);
+            //   textArea.setBounds(100, 200, 2, 2);
+            setBackground(Color.cyan);
+            setSize(new Dimension(500, 100));
+            //  textArea.setSize(new Dimension(500, 100));
+            setMaximumSize(new Dimension(1000, 1000));
+            //    getViewport().setSize(new Dimension(100, 100));
+            // setAlignmentX(Component.RIGHT_ALIGNMENT);
+            //      scrollPane.setAlignmentY(Component.CENTER_ALIGNMENT);
+            // setLocationRelativeTo(null);
 
         }
 
-     /*   @Override
-        protected void paintComponent(Graphics g) {
+        void test() {
+
+        }
+
+        @Override
+        public void paint(Graphics g) {
+            super.paint(g);
+
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 
-            g2.setPaint(new Color(255, 128, 128, 64));
+            g2.setPaint(new Color(255, 255, 255, 64));
 
-          *//*  g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
             g2.fillRect(0, 0, getWidth(), getHeight());
+        }
 
-            g2.setPaint(new Color(0, 0, 0, 128));
-            g2.setFont(new Font("Sansserif", Font.BOLD, 18));
-            g2.drawString("Translucent", 16, 26);*//*
-        }*/
+
+        public boolean isFocused() {
+            return focused;
+        }
+
+        public void setFocused(boolean focused) {
+            this.focused = focused;
+        }
     }
 }
