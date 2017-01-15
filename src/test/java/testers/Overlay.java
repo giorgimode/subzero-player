@@ -43,6 +43,7 @@ public class Overlay extends JWindow {
         subtitlePanelList.get(subtitlePanelList.size() - 1).setLocation(area51_left, owner.getHeight() - area51_below);
         subtitlePanelList.get(subtitlePanelList.size() - 1).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
         updateFont(subtitlePanelList.get(subtitlePanelList.size() - 1));
+        subtitlePanelList.get(subtitlePanelList.size() - 1).setMaximumAllowedHeight(owner.getHeight());
 
         if (subtitlePanelList.size() < 2) {
             return;
@@ -52,6 +53,7 @@ public class Overlay extends JWindow {
             subtitlePanelList.get(i).setLocation(area51_left, previousSubtitleHeight - spaceBetweenPanels - subtitlePanelHeight);
             subtitlePanelList.get(i).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
             updateFont(subtitlePanelList.get(i));
+            subtitlePanelList.get(i).setMaximumAllowedHeight(owner.getHeight());
         }
     }
 

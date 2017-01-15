@@ -19,6 +19,7 @@ public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
     private JTextPane textArea = new JTextPane();
     private Dimension panelDimension = new Dimension();
+    private int maximumAllowedHeight = getHeight();
 
     public SubtitlePanel(String text) {
         getViewport().setView(textArea);
@@ -32,11 +33,11 @@ public class SubtitlePanel extends JScrollPane {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setFocused(true);
-                setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-                setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-                SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) SubtitlePanel.this.getPreferredSize().getHeight());
-                textArea.setSize((int) panelDimension.getWidth(), (int) SubtitlePanel.this.getPreferredSize().getHeight());
-                System.out.println("mouseClicked");
+                setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
+                SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
+                textArea.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
+
                 setOpaque(true);
                 textArea.setForeground(null);
             }
@@ -45,8 +46,9 @@ public class SubtitlePanel extends JScrollPane {
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
                     System.out.println("mouseEntered");
-                    SubtitlePanel.this.setSize((int) panelDimension.getWidth(), 2 * (int) panelDimension.getHeight());
-                    textArea.setSize((int) panelDimension.getWidth(), 2 * (int) panelDimension.getHeight());
+                    int maxSize = (int) SubtitlePanel.this.getPreferredSize().getHeight();
+                    SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
+                    textArea.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
                     setOpaque(true);
                     textArea.setForeground(null);
                 }
@@ -67,7 +69,6 @@ public class SubtitlePanel extends JScrollPane {
             @Override
             public void focusLost(FocusEvent e) {
                 setFocused(false);
-                setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
                 SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                 textArea.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
@@ -121,5 +122,9 @@ public class SubtitlePanel extends JScrollPane {
     public void setSize(Dimension d) {
         super.setSize(d);
         panelDimension.setSize(d.getWidth(), d.getHeight());
+    }
+
+    public void setMaximumAllowedHeight(int windowHeight) {
+        maximumAllowedHeight = windowHeight - getY() - windowHeight / 5;
     }
 }
