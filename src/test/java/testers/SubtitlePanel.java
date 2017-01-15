@@ -18,14 +18,15 @@ import java.awt.event.MouseEvent;
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
     private JTextPane textArea = new JTextPane();
+    private Dimension panelDimension = new Dimension();
 
     public SubtitlePanel(String text) {
         getViewport().setView(textArea);
 
-        String shortText = text.substring(0, text.length() / 3) + "...";
-        textArea.setText(shortText);
+        textArea.setText(text);
         textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
         textArea.setForeground(Color.WHITE);
+        panelDimension.setSize(getWidth(), getHeight());
 
         textArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -34,16 +35,14 @@ public class SubtitlePanel extends JScrollPane {
                 setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
                 System.out.println("mouseClicked");
-                textArea.setText(text);
-                textArea.repaint();
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
                     System.out.println("mouseEntered");
-                    textArea.setText(text.substring(0, text.length() / 2) + "...");
-                    textArea.repaint();
+                    SubtitlePanel.this.setSize((int) panelDimension.getWidth(), 2 * (int) panelDimension.getHeight());
+                    textArea.setSize((int) panelDimension.getWidth(), 2 * (int) panelDimension.getHeight());
                 }
             }
 
@@ -51,8 +50,8 @@ public class SubtitlePanel extends JScrollPane {
             public void mouseExited(MouseEvent e) {
                 if (!isFocused()) {
                     System.out.println("mouseExited");
-                    textArea.setText(shortText);
-                    textArea.repaint();
+                    SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
+                    textArea.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                 }
             }
         });
@@ -62,7 +61,8 @@ public class SubtitlePanel extends JScrollPane {
                 setFocused(false);
                 setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                textArea.setText(shortText);
+                SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
+                textArea.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
             }
         });
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -105,5 +105,11 @@ public class SubtitlePanel extends JScrollPane {
 
     public void setTextArea(JTextPane textArea) {
         this.textArea = textArea;
+    }
+
+    @Override
+    public void setSize(Dimension d) {
+        super.setSize(d);
+        panelDimension.setSize(d.getWidth(), d.getHeight());
     }
 }

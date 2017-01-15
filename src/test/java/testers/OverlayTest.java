@@ -1,28 +1,21 @@
 package testers;
 
-import com.sun.awt.AWTUtilities;
-import com.sun.jna.platform.WindowUtils;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.x.LibXUtil;
 
 import javax.swing.ImageIcon;
-import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
-import java.awt.Window;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,6 +61,7 @@ public class OverlayTest extends VlcjTest {
                 "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
                 "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
                 "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
                 "finally it also works");
 
         Overlay overlay = new Overlay(f, strings);
@@ -112,55 +106,5 @@ public class OverlayTest extends VlcjTest {
         LibXUtil.setFullScreenWindow(f, true);
     }
 
-    private class Overlay extends JWindow {
 
-        private static final long serialVersionUID = 1L;
-        private final Window owner;
-        List<SubtitlePanel> subtitlePanelList;
-
-        public Overlay(Window owner, List<String> translatedList) {
-            super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
-            this.owner = owner;
-            subtitlePanelList = new ArrayList<>();
-            AWTUtilities.setWindowOpaque(this, false);
-            setLayout(null);
-            translatedList.forEach(this::addSubtitlePanel);
-            updateLocationAll();
-        }
-
-
-        private void addSubtitlePanel(String text) {
-            SubtitlePanel subtitlePanel = new SubtitlePanel(text);
-            subtitlePanelList.add(subtitlePanel);
-            add(subtitlePanel);
-        }
-
-        public void updateLocationAll() {
-            int spaceBetweenPanels = owner.getHeight() / 18;
-            int subtitlePanelHeight = owner.getHeight() / 25;
-
-            int area51_below = owner.getHeight() / 4;
-            int area51_left = owner.getWidth() / 35;
-
-            subtitlePanelList.get(subtitlePanelList.size() - 1).setLocation(area51_left, owner.getHeight() - area51_below);
-            subtitlePanelList.get(subtitlePanelList.size() - 1).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
-            updateFont(subtitlePanelList.get(subtitlePanelList.size() - 1));
-
-            System.out.println("Height1 = " + subtitlePanelList.get(subtitlePanelList.size() - 1).getHeight());
-            if (subtitlePanelList.size() < 2) {
-                return;
-            }
-            for (int i = subtitlePanelList.size() - 2; i >= 0; i--) {
-                int previousSubtitleHeight = (int) subtitlePanelList.get(i + 1).getLocation().getY();
-                subtitlePanelList.get(i).setLocation(area51_left, previousSubtitleHeight - spaceBetweenPanels - subtitlePanelHeight);
-                subtitlePanelList.get(i).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
-                updateFont(subtitlePanelList.get(i));
-            }
-        }
-
-        private void updateFont(SubtitlePanel subtitlePanel) {
-            Font oldfont = subtitlePanel.getTextArea().getFont();
-            subtitlePanel.getTextArea().setFont(new Font(oldfont.getName(), oldfont.getStyle(), owner.getHeight() / 50));
-        }
-    }
 }
