@@ -60,4 +60,11 @@ public class Overlay extends JWindow {
         subtitlePanel.getTextArea().setFont(new Font(oldfont.getName(), oldfont.getStyle(), owner.getHeight() / 50));
 
     }
+
+    public void populateNewWords(List<String> translatedList) {
+        subtitlePanelList.forEach(this::remove);
+        subtitlePanelList = new ArrayList<>();
+        translatedList.forEach(this::addSubtitlePanel);
+        updateLocationAll();
+    }
 }

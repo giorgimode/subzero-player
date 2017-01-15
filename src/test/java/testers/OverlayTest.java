@@ -76,6 +76,8 @@ public class OverlayTest extends VlcjTest {
 
                     case KeyEvent.VK_SPACE:
                         mediaPlayer.pause();
+                 //       overlay.populateNewWords(Arrays.asList("new word 1", "new word 2"));
+                        mediaPlayer.enableOverlay(!mediaPlayer.overlayEnabled());
                         break;
                 }
             }
@@ -99,7 +101,7 @@ public class OverlayTest extends VlcjTest {
         });
 
         mediaPlayer.setOverlay(overlay);
-        mediaPlayer.enableOverlay(true);
+        mediaPlayer.enableOverlay(false);
 
         mediaPlayer.playMedia(mrl);
 
