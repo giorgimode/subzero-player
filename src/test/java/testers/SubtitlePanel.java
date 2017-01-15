@@ -20,16 +20,12 @@ public class SubtitlePanel extends JScrollPane {
     private JTextPane textArea = new JTextPane();
 
     public SubtitlePanel(String text) {
-        //  super(new JTextPane());
         getViewport().setView(textArea);
-        textArea = (JTextPane) getViewport().getView();
 
         String shortText = text.substring(0, text.length() / 3) + "...";
         textArea.setText(shortText);
         textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
         textArea.setForeground(Color.WHITE);
-        DefaultCaret caret = (DefaultCaret) textArea.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 
         textArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -77,6 +73,8 @@ public class SubtitlePanel extends JScrollPane {
         getViewport().setOpaque(false);
         setBackground(Color.cyan);
         setMaximumSize(new Dimension(1000, 1000));
+        DefaultCaret caret = (DefaultCaret) textArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
     }
 
     @Override
@@ -93,11 +91,19 @@ public class SubtitlePanel extends JScrollPane {
     }
 
 
-    public boolean isFocused() {
+    private boolean isFocused() {
         return focused;
     }
 
-    public void setFocused(boolean focused) {
+    private void setFocused(boolean focused) {
         this.focused = focused;
+    }
+
+    public JTextPane getTextArea() {
+        return textArea;
+    }
+
+    public void setTextArea(JTextPane textArea) {
+        this.textArea = textArea;
     }
 }

@@ -13,6 +13,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
@@ -25,31 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * A test player demonstrating how to achieve a transparent overlay and translucent painting.
- * <p>
- * Press SPACE to pause the video play-back.
- * <p>
- * Press F11 to toggle the overlay.
- * <p>
- * If the video looks darker with the overlay enabled, then most likely you are using a compositing
- * window manager that is doing some fancy blending of the overlay window and the main application
- * window. You have to turn off those window effects.
- * <p>
- * Note that it is not possible to use this approach if you also want to use Full-Screen Exclusive
- * Mode. If you want to use an overlay and you need full- screen, then you have to emulate
- * full-screen by changing your window bounds rather than using FSEM.
- * <p>
- * This approach <em>does</em> work in full-screen mode if you use your desktop window manager to
- * put your application into full-screen rather than using the Java FSEM.
- * <p>
- * If you want to provide an overlay that dynamically updates, e.g. if you want some animation, then
- * your overlay should sub-class <code>JWindow</code> rather than <code>Window</code> since you will
- * get double-buffering and eliminate flickering. Since the overlay is transparent you must take
- * care to erase the overlay background properly.
- * <p>
- * Specify a single MRL to play on the command-line.
- */
 public class OverlayTest extends VlcjTest {
 
     public static void main(final String[] args) throws Exception {
@@ -64,7 +40,7 @@ public class OverlayTest extends VlcjTest {
     public OverlayTest(String mrl) {
         Frame f = new Frame("Test Player");
         f.setIconImage(new ImageIcon(getClass().getResource("/vlcj-logo.png")).getImage());
-        f.setSize(800, 600);
+        f.setSize(1200, 800);
         f.setBackground(Color.black);
 
         f.setLayout(new BorderLayout());
@@ -81,7 +57,17 @@ public class OverlayTest extends VlcjTest {
         mediaPlayer.mute();
         System.out.println("==============================MUTED==============================");
 
-        List<String> strings = Arrays.asList("texti full description wow so goood it must by amazing what by", "wow it really worked???",
+        List<String> strings = Arrays.asList(
+                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
+                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English",
                 "finally it also works");
 
         Overlay overlay = new Overlay(f, strings);
@@ -149,26 +135,17 @@ public class OverlayTest extends VlcjTest {
             add(subtitlePanel);
         }
 
-        public void updateLocation(SubtitlePanel subtitlePanel) {
-            System.out.println(owner.getWidth() + "--xxxxxxxxxxxxxxxxxxxxx--" + owner.getHeight());
-            int area51_below = owner.getHeight() / 4;
-            int area51_left = owner.getWidth() / 35;
-            int subtitlePanelHeight = owner.getHeight() / 20;
-
-            // subtitlePanel.setLocation(owner.getX() + 50, owner.getY() + 100);
-            subtitlePanel.setLocation(area51_left, owner.getHeight() - area51_below);
-            subtitlePanel.setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
-        }
-
         public void updateLocationAll() {
-            int spaceBetweenPanels = owner.getHeight() / 14;
-            int subtitlePanelHeight = owner.getHeight() / 20;
+            int spaceBetweenPanels = owner.getHeight() / 18;
+            int subtitlePanelHeight = owner.getHeight() / 25;
 
             int area51_below = owner.getHeight() / 4;
             int area51_left = owner.getWidth() / 35;
 
             subtitlePanelList.get(subtitlePanelList.size() - 1).setLocation(area51_left, owner.getHeight() - area51_below);
             subtitlePanelList.get(subtitlePanelList.size() - 1).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
+            updateFont(subtitlePanelList.get(subtitlePanelList.size() - 1));
+
             System.out.println("Height1 = " + subtitlePanelList.get(subtitlePanelList.size() - 1).getHeight());
             if (subtitlePanelList.size() < 2) {
                 return;
@@ -177,12 +154,13 @@ public class OverlayTest extends VlcjTest {
                 int previousSubtitleHeight = (int) subtitlePanelList.get(i + 1).getLocation().getY();
                 subtitlePanelList.get(i).setLocation(area51_left, previousSubtitleHeight - spaceBetweenPanels - subtitlePanelHeight);
                 subtitlePanelList.get(i).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
-                System.out.println("Height" + i + ": " + subtitlePanelList.get(i).getLocation().getY());
+                updateFont(subtitlePanelList.get(i));
             }
-
-
         }
 
-
+        private void updateFont(SubtitlePanel subtitlePanel) {
+            Font oldfont = subtitlePanel.getTextArea().getFont();
+            subtitlePanel.getTextArea().setFont(new Font(oldfont.getName(), oldfont.getStyle(), owner.getHeight() / 50));
+        }
     }
 }
