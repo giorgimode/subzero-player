@@ -83,7 +83,6 @@ public class SubtitlePanel extends JScrollPane {
         textArea.setOpaque(false);
         getViewport().setOpaque(false);
         setBackground(Color.white);
-        setMaximumSize(new Dimension(1000, 1000));
         DefaultCaret caret = (DefaultCaret) textArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
     }
