@@ -1,4 +1,4 @@
-package com.giorgimode.subzero.util;
+package com.giorgimode.subzero.view;
 
 import com.sun.java.swing.plaf.windows.WindowsSliderUI;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;

@@ -2,7 +2,7 @@ package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.event.ShowEffectsEvent;
-import com.giorgimode.subzero.util.CustomSliderUI;
+import com.giorgimode.subzero.view.CustomSliderUI;
 import com.giorgimode.subzero.view.BasePanel;
 import com.google.common.eventbus.Subscribe;
 import net.miginfocom.swing.MigLayout;
@@ -17,11 +17,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.SliderUI;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 final class ControlsPane extends BasePanel {
 

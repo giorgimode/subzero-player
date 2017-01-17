@@ -32,7 +32,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.SliderUI;
 
 import com.giorgimode.subzero.Application;
-import com.giorgimode.subzero.util.CustomSliderUI;
+import com.giorgimode.subzero.view.CustomSliderUI;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import com.giorgimode.subzero.event.TickEvent;
