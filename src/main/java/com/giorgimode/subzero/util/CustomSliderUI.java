@@ -3,7 +3,7 @@ package com.giorgimode.subzero.util;
 import com.sun.java.swing.plaf.windows.WindowsSliderUI;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 
-import javax.swing.*;
+import javax.swing.JSlider;
 import javax.swing.plaf.SliderUI;
 import javax.swing.plaf.basic.BasicSliderUI;
 
@@ -12,41 +12,36 @@ import javax.swing.plaf.basic.BasicSliderUI;
  */
 public class CustomSliderUI {
 
-    public static SliderUI getSliderUI (){
+    public static SliderUI getSliderUI() {
         if (RuntimeUtil.isWindows()) {
-           return new WindowsSliderUI(null) {
-               protected void scrollDueToClickInTrack(int direction) {
-                   // this is the default behaviour, let's comment that out
-                   //scrollByBlock(direction);
+            return new WindowsSliderUI(null) {
+                protected void scrollDueToClickInTrack(int direction) {
+                    updateSliderValue(this, slider);
 
-                   int value = slider.getValue();
+                }
 
-                   if (slider.getOrientation() == JSlider.HORIZONTAL) {
-                       value = this.valueForXPosition(slider.getMousePosition().x);
-                   } else if (slider.getOrientation() == JSlider.VERTICAL) {
-                       value = this.valueForYPosition(slider.getMousePosition().y);
-                   }
-                   slider.setValue(value);
-               }
-           };
-        }
 
-        else {
+            };
+        } else {
             return new BasicSliderUI(null) {
                 protected void scrollDueToClickInTrack(int direction) {
-                    // this is the default behaviour, let's comment that out
-                    //scrollByBlock(direction);
-
-                    int value = slider.getValue();
-
-                    if (slider.getOrientation() == JSlider.HORIZONTAL) {
-                        value = this.valueForXPosition(slider.getMousePosition().x);
-                    } else if (slider.getOrientation() == JSlider.VERTICAL) {
-                        value = this.valueForYPosition(slider.getMousePosition().y);
-                    }
-                    slider.setValue(value);
+                    updateSliderValue(this, slider);
                 }
             };
         }
+    }
+
+    private static void updateSliderValue(BasicSliderUI sliderUI, JSlider slider) {
+        // this is the default behaviour, let's comment that out
+        //scrollByBlock(direction);
+
+        int value = slider.getValue();
+
+        if (slider.getOrientation() == JSlider.HORIZONTAL) {
+            value = sliderUI.valueForXPosition(slider.getMousePosition().x);
+        } else if (slider.getOrientation() == JSlider.VERTICAL) {
+            value = sliderUI.valueForYPosition(slider.getMousePosition().y);
+        }
+        slider.setValue(value);
     }
 }
