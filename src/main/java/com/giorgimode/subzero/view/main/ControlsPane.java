@@ -11,6 +11,7 @@ import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.StoppedEvent;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -18,6 +19,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JSlider;
 import javax.swing.plaf.SliderUI;
+
+import static com.giorgimode.subzero.Application.application;
 
 final class ControlsPane extends BasePanel {
 
@@ -57,7 +60,10 @@ final class ControlsPane extends BasePanel {
 
     private final JSlider volumeSlider;
 
+    private final EmbeddedMediaPlayer mediaPlayer;
+
     ControlsPane(MediaPlayerActions mediaPlayerActions) {
+        mediaPlayer = application().mediaPlayerComponent().getMediaPlayer();
         playPauseButton = new BigButton();
         playPauseButton.setAction(mediaPlayerActions.playbackPlayAction());
         previousButton = new StandardButton();
@@ -97,26 +103,27 @@ final class ControlsPane extends BasePanel {
         volumeSlider.setUI(sliderUI);
 
         volumeSlider.addChangeListener(e ->
-                Application.application().mediaPlayerComponent().getMediaPlayer().setVolume(volumeSlider.getValue()));
+                mediaPlayer.setVolume(volumeSlider.getValue()));
 
         // FIXME really these should share common actions
 
         muteButton.addActionListener(e -> {
-            if (Application.application().mediaPlayerComponent().getMediaPlayer().isMute()) {
+            if (mediaPlayer.isMute()) {
                 muteButton.setIcon(volumeHighIcon);
             } else {
                 muteButton.setIcon(volumeMutedIcon);
             }
-            Application.application().mediaPlayerComponent().getMediaPlayer().mute();
+            mediaPlayer.mute();
         });
 
-        fullscreenButton.addActionListener(e -> Application.application().mediaPlayerComponent().getMediaPlayer().toggleFullScreen());
+        fullscreenButton.addActionListener(e -> mediaPlayer.toggleFullScreen());
 
         extendedButton.addActionListener(e -> Application.application().post(ShowEffectsEvent.INSTANCE));
     }
 
     @Subscribe
     public void onPlaying(PlayingEvent event) {
+        mediaPlayer.enableOverlay(false);
         playPauseButton.setIcon(pauseIcon); // FIXME best way to do this? should be via the action really?
     }
 

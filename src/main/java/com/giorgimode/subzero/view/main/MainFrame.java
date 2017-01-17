@@ -16,11 +16,13 @@ import com.giorgimode.subzero.view.MouseMovementDetector;
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.StandardAction;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
+import com.giorgimode.subzero.view.effects.overlay.Overlay;
 import com.giorgimode.subzero.view.snapshot.SnapshotView;
 import com.google.common.eventbus.Subscribe;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -41,8 +43,11 @@ import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -123,24 +128,29 @@ public final class MainFrame extends BaseFrame {
 
     private final MouseMovementDetector mouseMovementDetector;
 
+    private final Overlay overlay;
+
+    private final EmbeddedMediaPlayer mediaPlayer;
+
     public MainFrame() {
         super("SubZero player");
 
         this.mediaPlayerComponent = Application.application().mediaPlayerComponent();
+        mediaPlayer = mediaPlayerComponent.getMediaPlayer();
         mediaPlayerComponent.getVideoSurface().addMouseListener(new ClickListener() {
             public void singleClick(MouseEvent e) {
-                mediaPlayerComponent.getMediaPlayer().pause();
+                mediaPlayer.pause();
             }
 
             public void doubleClick(MouseEvent e) {
-                mediaPlayerComponent.getMediaPlayer().toggleFullScreen();
+                mediaPlayer.toggleFullScreen();
             }
         });
         MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
 
         createStandardActions();
 
-        enhancedTranslatorService = new EnhancedTranslatorService(mediaPlayerComponent.getMediaPlayer());
+        enhancedTranslatorService = new EnhancedTranslatorService();
 
         menuBar = new JMenuBar();
 
@@ -274,7 +284,7 @@ public final class MainFrame extends BaseFrame {
         contentPane.setTransferHandler(new MediaTransferHandler() {
             @Override
             protected void onMediaDropped(String[] uris) {
-                mediaPlayerComponent.getMediaPlayer().playMedia(uris[0]);
+                mediaPlayer.playMedia(uris[0]);
             }
         });
 
@@ -288,7 +298,7 @@ public final class MainFrame extends BaseFrame {
         JPanel bottomControlsPane = new JPanel();
         bottomControlsPane.setLayout(new MigLayout("fill, insets 0 n n n", "[grow]", "[]0[]"));
 
-        positionPane = new PositionPane(mediaPlayerComponent.getMediaPlayer());
+        positionPane = new PositionPane(mediaPlayer);
         bottomControlsPane.add(positionPane, "grow, wrap");
 
         controlsPane = new ControlsPane(mediaPlayerActions);
@@ -309,15 +319,25 @@ public final class MainFrame extends BaseFrame {
                 .setFileChooser(fileChooser)
                 .setParentComponent(this);
 
-        mediaPlayerComponent.getMediaPlayer().addMediaPlayerEventListener(playerEventAdapter);
+        mediaPlayer.addMediaPlayerEventListener(playerEventAdapter);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                overlay.updateLocationAll();
+            }
+        });
 
         getActionMap().put(ACTION_EXIT_FULLSCREEN, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mediaPlayerComponent.getMediaPlayer().toggleFullScreen();
+                mediaPlayer.toggleFullScreen();
                 videoFullscreenAction.select(false);
             }
         });
+
+        overlay = new Overlay(this, new ArrayList<>());
+        mediaPlayer.setOverlay(overlay);
+        mediaPlayer.enableOverlay(false);
 
         applyPreferences();
 
@@ -331,7 +351,7 @@ public final class MainFrame extends BaseFrame {
                 File file = fileChooser.getSelectedFile();
                 String mrl = file.getAbsolutePath();
                 Application.application().addRecentMedia(mrl);
-                mediaPlayerComponent.getMediaPlayer().playMedia(mrl);
+                mediaPlayer.playMedia(mrl);
             }
         });
 
@@ -341,7 +361,7 @@ public final class MainFrame extends BaseFrame {
         });
 
         videoFullscreenAction = createStandardAction("menu.video.item.fullscreen",
-                (actionEvent) -> mediaPlayerComponent.getMediaPlayer().toggleFullScreen());
+                (actionEvent) -> mediaPlayer.toggleFullScreen());
 
 
         videoAlwaysOnTopAction = createStandardAction("menu.video.item.alwaysOnTop", (actionEvent) -> {
@@ -359,7 +379,7 @@ public final class MainFrame extends BaseFrame {
         subtitleAddSubtitleFileAction = createStandardAction("menu.subtitle.item.addSubtitleFile", (actionEvent) -> {
             if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
                 File file = fileChooser.getSelectedFile();
-                mediaPlayerComponent.getMediaPlayer().setSubTitleFile(file);
+                mediaPlayer.setSubTitleFile(file);
                 enhancedTranslatorService.add(file);
                 Application.application().post(SubtitleAddedEvent.INSTANCE);
             }
