@@ -85,6 +85,7 @@ public class SubtitlePanel extends JScrollPane {
         setBackground(Color.white);
         DefaultCaret caret = (DefaultCaret) textArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+        textArea.setCaretPosition(0);
     }
 
     @Override
