@@ -46,7 +46,7 @@ public class SubtitlePanel extends JScrollPane {
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
                     System.out.println("mouseEntered");
-                    int maxSize = (int) SubtitlePanel.this.getPreferredSize().getHeight();
+                    int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
                     SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
                     textArea.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
                     setOpaque(true);
