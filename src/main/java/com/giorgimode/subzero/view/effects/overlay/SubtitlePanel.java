@@ -3,6 +3,7 @@ package com.giorgimode.subzero.view.effects.overlay;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,18 +15,26 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.Map;
 
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
     private JTextPane textArea = new JTextPane();
     private Dimension panelDimension = new Dimension();
     private int maximumAllowedHeight = getHeight();
+    private final PanelStyle panelStyle = new SubtitlePanelStyle();
 
-    public SubtitlePanel(String text) {
+    public SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         getViewport().setView(textArea);
 
-        textArea.setText(text);
         textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
+        try {
+            panelStyle.applyStyle(textArea, wordDefinitionEntryMap);
+        } catch (BadLocationException e) {
+            System.out.println("ERROR OCCURED: " + e.getMessage());
+        }
+
         textArea.setForeground(Color.white);
         panelDimension.setSize(getWidth(), getHeight());
 

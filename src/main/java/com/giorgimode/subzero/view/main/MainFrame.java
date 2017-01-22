@@ -47,10 +47,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.prefs.Preferences;
@@ -335,7 +335,7 @@ public final class MainFrame extends BaseFrame {
             }
         });
 
-        overlay = new Overlay(this, new ArrayList<>());
+        overlay = new Overlay(this, new HashMap<>());
         mediaPlayer.setOverlay(overlay);
         mediaPlayer.enableOverlay(false);
 

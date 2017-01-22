@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Overlay extends JWindow {
 
@@ -21,13 +22,13 @@ public class Overlay extends JWindow {
     private int area51_left;
     private final int numberOfPanelsAllowed;
 
-    public Overlay(Window owner, List<String> translatedList) {
+    public Overlay(Window owner, Map<String, Map<String, List<String>>> translatedList) {
         super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
         this.owner = owner;
         subtitlePanelList = new ArrayList<>();
         AWTUtilities.setWindowOpaque(this, false);
         setLayout(null);
-        translatedList.forEach(this::addSubtitlePanel);
+        translatedList.entrySet().forEach(this::addSubtitlePanel);
         setDimensions(owner);
         numberOfPanelsAllowed = (int) Math.ceil((double) (owner.getHeight() - area51_below) / (subtitlePanelHeight + spaceBetweenPanels));
         updateLocationAll();
@@ -42,8 +43,8 @@ public class Overlay extends JWindow {
     }
 
 
-    private void addSubtitlePanel(String text) {
-        SubtitlePanel subtitlePanel = new SubtitlePanel(text);
+    private void addSubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
+        SubtitlePanel subtitlePanel = new SubtitlePanel(wordDefinitionEntryMap);
         subtitlePanelList.add(subtitlePanel);
         add(subtitlePanel);
     }
@@ -85,10 +86,10 @@ public class Overlay extends JWindow {
 
     }
 
-    public void populateNewWords(List<String> translatedList) {
+    public void populateNewWords(Map<String, Map<String, List<String>>> translatedList) {
         subtitlePanelList.forEach(this::remove);
         subtitlePanelList = new ArrayList<>();
-        translatedList.forEach(this::addSubtitlePanel);
+        translatedList.entrySet().forEach(this::addSubtitlePanel);
         updateLocationAll();
     }
 }
