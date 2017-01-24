@@ -33,30 +33,34 @@ public class SubtitlePanelStyle implements PanelStyle {
 
         Map<String, List<String>> definitionList = wordDefinitionEntryMap.getValue();
         for (Map.Entry<String, List<String>> lists : definitionList.entrySet()) {
-            String synset = lists.getKey();
-            styledDocument.insertString(styledDocument.getLength(), String.format("(%s) ", synset), styledDocument.getStyle("synsetStyle"));
+            String synset = String.format("(%s) ", lists.getKey());
+            synset = synset.concat(lists.getValue().size() > 0 ? "\n" : "");
+            styledDocument.insertString(styledDocument.getLength(), synset, styledDocument.getStyle("synsetStyle"));
 
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < lists.getValue().size(); i++) {
                 String counter = lists.getValue().size() > 1 ? (i + 1 + ") ") : "";
                 builder
+                        .append(getSpaces(" ", 50))
                         .append(counter)
                         .append(lists.getValue().get(i))
                         .append("\n");
 
             }
-            styledDocument.insertString(styledDocument.getLength(), getSpaces(synset.length()) + builder.toString(), styledDocument.getStyle("normal"));
+            styledDocument.insertString(styledDocument.getLength(), getSpaces(" ", 50) + builder.toString().trim() + "\n", styledDocument.getStyle("normal"));
+            styledDocument.insertString(styledDocument.getLength(), getSpaces("_", 100) + "\n", styledDocument.getStyle("normal"));
+       //     styledDocument.insertString(styledDocument.getLength(), "<html>Abovce<hr size=5>Below</html>", styledDocument.getStyle("normal"));
 
         }
 
         styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
     }
 
-    private String getSpaces(int synsetLength) {
-        int length = synsetLength < 50 ? 50 - synsetLength : 100 - synsetLength;
-        String s = " ";
-        for (int i = 0; i < length; i++) {
-            s = s.concat(" ");
+    private String getSpaces(String symbol, int times) {
+        //  int length = synsetLength < 50 ? 50 - synsetLength : 100 - synsetLength;
+        String s = "";
+        for (int i = 0; i < times; i++) {
+            s = s.concat(symbol);
         }
         return s;
     }
