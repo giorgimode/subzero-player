@@ -20,35 +20,35 @@ import java.util.Map;
 
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
-    private JTextPane textArea = new JTextPane();
+    private JTextPane jTextPane = new JTextPane();
     private Dimension panelDimension = new Dimension();
     private int maximumAllowedHeight = getHeight();
     private final PanelStyle panelStyle = new SubtitlePanelStyle();
 
     public SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
-        getViewport().setView(textArea);
+        getViewport().setView(jTextPane);
 
-        textArea.setFont(new Font("Sansserif", Font.BOLD, 18));
+        jTextPane.setFont(new Font("Sansserif", Font.BOLD, 18));
         try {
-            panelStyle.applyStyle(textArea, wordDefinitionEntryMap);
+            panelStyle.applyStyle(jTextPane, wordDefinitionEntryMap);
         } catch (BadLocationException e) {
             System.out.println("ERROR OCCURED: " + e.getMessage());
         }
 
-        textArea.setForeground(Color.white);
+        jTextPane.setForeground(Color.white);
         panelDimension.setSize(getWidth(), getHeight());
 
-        textArea.addMouseListener(new MouseAdapter() {
+        jTextPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setFocused(true);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
                 int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
                 SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
-                textArea.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
+                jTextPane.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
 
                 setOpaque(true);
-                textArea.setForeground(null);
+                jTextPane.setForeground(null);
             }
 
             @Override
@@ -57,9 +57,9 @@ public class SubtitlePanel extends JScrollPane {
                     System.out.println("mouseEntered");
                     int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
                     SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
-                    textArea.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
+                    jTextPane.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
                     setOpaque(true);
-                    textArea.setForeground(null);
+                    jTextPane.setForeground(null);
                 }
             }
 
@@ -68,33 +68,33 @@ public class SubtitlePanel extends JScrollPane {
                 if (!isFocused()) {
                     System.out.println("mouseExited");
                     SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
-                    textArea.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
+                    jTextPane.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                     setOpaque(false);
-                    textArea.setForeground(Color.white);
+                    jTextPane.setForeground(Color.white);
                 }
             }
         });
-        textArea.addFocusListener(new FocusAdapter() {
+        jTextPane.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 setFocused(false);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
                 SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
-                textArea.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
+                jTextPane.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                 setOpaque(false);
-                textArea.setForeground(Color.white);
+                jTextPane.setForeground(Color.white);
             }
         });
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        textArea.setEditable(false);
+        jTextPane.setEditable(false);
         setOpaque(false);
-        textArea.setOpaque(false);
+        jTextPane.setOpaque(false);
         getViewport().setOpaque(false);
         setBackground(Color.white);
-        DefaultCaret caret = (DefaultCaret) textArea.getCaret();
+        DefaultCaret caret = (DefaultCaret) jTextPane.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-        textArea.setCaretPosition(0);
+        jTextPane.setCaretPosition(0);
     }
 
     @Override
@@ -119,12 +119,12 @@ public class SubtitlePanel extends JScrollPane {
         this.focused = focused;
     }
 
-    public JTextPane getTextArea() {
-        return textArea;
+    public JTextPane getjTextPane() {
+        return jTextPane;
     }
 
-    public void setTextArea(JTextPane textArea) {
-        this.textArea = textArea;
+    public void setjTextPane(JTextPane jTextPane) {
+        this.jTextPane = jTextPane;
     }
 
     @Override

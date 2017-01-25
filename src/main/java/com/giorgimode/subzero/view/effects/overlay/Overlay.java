@@ -81,8 +81,8 @@ public class Overlay extends JWindow {
     }
 
     private void updateFont(SubtitlePanel subtitlePanel) {
-        Font oldfont = subtitlePanel.getTextArea().getFont();
-        subtitlePanel.getTextArea().setFont(new Font(oldfont.getName(), oldfont.getStyle(), owner.getHeight() / 50));
+        Font oldfont = subtitlePanel.getjTextPane().getFont();
+        subtitlePanel.getjTextPane().setFont(new Font(oldfont.getName(), oldfont.getStyle(), owner.getHeight() / 50));
 
     }
 
