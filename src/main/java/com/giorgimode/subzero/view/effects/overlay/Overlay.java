@@ -5,7 +5,6 @@ import com.sun.jna.platform.WindowUtils;
 
 import javax.swing.JWindow;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
@@ -81,9 +80,7 @@ public class Overlay extends JWindow {
     }
 
     private void updateFont(SubtitlePanel subtitlePanel) {
-        Font oldfont = subtitlePanel.getjTextPane().getFont();
-        subtitlePanel.getjTextPane().setFont(new Font(oldfont.getName(), oldfont.getStyle(), owner.getHeight() / 50));
-
+        new SubtitlePanelStyle().applyStyle(subtitlePanel);
     }
 
     public void populateNewWords(Map<String, Map<String, List<String>>> translatedList) {

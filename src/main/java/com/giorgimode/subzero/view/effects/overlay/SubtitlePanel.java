@@ -3,7 +3,6 @@ package com.giorgimode.subzero.view.effects.overlay;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,17 +22,12 @@ public class SubtitlePanel extends JScrollPane {
     private JTextPane jTextPane = new JTextPane();
     private Dimension panelDimension = new Dimension();
     private int maximumAllowedHeight = getHeight();
-    private final PanelStyle panelStyle = new SubtitlePanelStyle();
+    private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
 
     public SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         getViewport().setView(jTextPane);
-
-        jTextPane.setFont(new Font("Sansserif", Font.BOLD, 18));
-        try {
-            panelStyle.applyStyle(jTextPane, wordDefinitionEntryMap);
-        } catch (BadLocationException e) {
-            System.out.println("ERROR OCCURED: " + e.getMessage());
-        }
+        this.wordDefinitionEntryMap = wordDefinitionEntryMap;
+        jTextPane.setFont(new Font("Sansserif", Font.BOLD, 3));
 
         jTextPane.setForeground(Color.white);
         panelDimension.setSize(getWidth(), getHeight());
@@ -123,10 +117,6 @@ public class SubtitlePanel extends JScrollPane {
         return jTextPane;
     }
 
-    public void setjTextPane(JTextPane jTextPane) {
-        this.jTextPane = jTextPane;
-    }
-
     @Override
     public void setSize(Dimension d) {
         super.setSize(d);
@@ -135,5 +125,9 @@ public class SubtitlePanel extends JScrollPane {
 
     public void setMaximumAllowedHeight(int windowHeight) {
         maximumAllowedHeight = windowHeight - getY() - windowHeight / 5;
+    }
+
+    public Map.Entry<String, Map<String, List<String>>> getWordDefinitionEntryMap() {
+        return wordDefinitionEntryMap;
     }
 }
