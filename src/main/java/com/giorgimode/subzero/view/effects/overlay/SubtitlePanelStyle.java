@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by modeg on 1/22/2017.
+ *  Created by modeg on 1/22/2017.
  */
 public class SubtitlePanelStyle implements PanelStyle {
 
@@ -43,41 +43,40 @@ public class SubtitlePanelStyle implements PanelStyle {
         StyleConstants.setFontSize(definitionStyle, definitionFontSize);
 
         String rootWord = wordDefinitionEntryMap.getKey();
-        insertText(styledDocument, rootStyle, rootWord);
+        insertText(styledDocument, rootStyle, rootWord + "\n");
 
         Map<String, List<String>> definitionList = wordDefinitionEntryMap.getValue();
         for (Map.Entry<String, List<String>> lists : definitionList.entrySet()) {
             String synset = String.format("(%s) ", lists.getKey());
-            synset = synset.concat(lists.getValue().size() > 0 ? "\n" : "");
-            // styledDocument.insertString(styledDocument.getLength(), synset, synsetStyle);
+            synset = synset.concat(lists.getValue().size() > 1 ? "\n" : "");
             insertText(styledDocument, synsetStyle, synset);
 
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < lists.getValue().size(); i++) {
                 String counter = lists.getValue().size() > 1 ? (i + 1 + ") ") : "";
                 builder
-                        .append(getSpaces(" ", 50))
+                        .append(repeatedSymbols(" ", 50))
                         .append(counter)
-                        .append(lists.getValue().get(i))
-                        .append("\n");
+                        .append(lists.getValue().get(i));
 
+                builder.append(lists.getValue().size() > 1 ? "\n" : "");
             }
-            insertText(styledDocument, definitionStyle, getSpaces(" ", 50) + builder.toString().trim() + "\n");
-            insertText(styledDocument, definitionStyle, getSpaces("_", 100));
+            insertText(styledDocument, definitionStyle, repeatedSymbols(" ", 50) + builder.toString().trim());
+            insertText(styledDocument, rootStyle, "   " + repeatedSymbols("_", 100) + "\n");
         }
 
         styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
     }
 
-    private void insertText(StyledDocument styledDocument, Style style, String word) {
+    private void insertText(StyledDocument styledDocument, Style style, String text) {
         try {
-            styledDocument.insertString(styledDocument.getLength(), word + "\n", style);
+            styledDocument.insertString(styledDocument.getLength(), text, style);
         } catch (BadLocationException e) {
             e.printStackTrace();
         }
     }
 
-    private String getSpaces(String symbol, int times) {
+    private static String repeatedSymbols(String symbol, int times) {
         String s = "";
         for (int i = 0; i < times; i++) {
             s = s.concat(symbol);
