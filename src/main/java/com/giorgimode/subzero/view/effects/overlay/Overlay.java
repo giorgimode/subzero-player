@@ -9,6 +9,7 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Overlay extends JWindow {
 
@@ -43,10 +44,30 @@ public class Overlay extends JWindow {
 
 
     private void addSubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
+        String preview = createPreview(wordDefinitionEntryMap.getValue());
         SubtitlePanel subtitlePanel = new SubtitlePanel(wordDefinitionEntryMap);
         subtitlePanelList.add(subtitlePanel);
         add(subtitlePanel);
     }
+
+    private String createPreview(Map<String, List<String>> wordDefinitionEntryMap) {
+        List<String> preview = wordDefinitionEntryMap.values()
+                .stream()
+                .map(strings -> strings.stream().collect(Collectors.joining(", ")))
+                .collect(Collectors.toList());
+
+        if (preview.size() < 2) {
+            return preview.get(0);
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < preview.size(); i++) {
+            builder.append(i + i).append(") ")
+                    .append(preview.get(i))
+                    .append("; ");
+        }
+        return builder.toString();
+    }
+
 
     public void updateOverlay() {
         if (subtitlePanelList.isEmpty()) {
