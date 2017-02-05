@@ -154,8 +154,8 @@ public final class MainFrame extends BaseFrame {
 
         menuBar = new JMenuBar();
 
-        mediaMenu = new JMenu(Resource.resource("menu.media").name());
-        mediaMenu.setMnemonic(Resource.resource("menu.media").mnemonic());
+        mediaMenu = new JMenu(resourceName("menu.media"));
+        mediaMenu.setMnemonic(resourceMnemonic("menu.media"));
         mediaMenu.add(new JMenuItem(mediaOpenAction));
         mediaRecentMenu = new RecentMediaMenu(Resource.resource("menu.media.item.recent")).menu();
         mediaMenu.add(mediaRecentMenu);
@@ -163,8 +163,8 @@ public final class MainFrame extends BaseFrame {
         mediaMenu.add(new JMenuItem(mediaQuitAction));
         menuBar.add(mediaMenu);
 
-        playbackMenu = new JMenu(Resource.resource("menu.playback").name());
-        playbackMenu.setMnemonic(Resource.resource("menu.playback").mnemonic());
+        playbackMenu = new JMenu(resourceName("menu.playback"));
+        playbackMenu.setMnemonic(resourceMnemonic("menu.playback"));
 
         playbackTitleMenu = new TitleTrackMenu().menu();
 
@@ -176,8 +176,8 @@ public final class MainFrame extends BaseFrame {
 
         playbackMenu.add(playbackChapterMenu);
         playbackMenu.add(new JSeparator());
-        playbackSpeedMenu = new JMenu(Resource.resource("menu.playback.item.speed").name());
-        playbackSpeedMenu.setMnemonic(Resource.resource("menu.playback.item.speed").mnemonic());
+        playbackSpeedMenu = new JMenu(resourceName("menu.playback.item.speed"));
+        playbackSpeedMenu.setMnemonic(resourceMnemonic("menu.playback.item.speed"));
         for (Action action : mediaPlayerActions.playbackSpeedActions()) {
             playbackSpeedMenu.add(new JMenuItem(action));
         }
@@ -201,16 +201,16 @@ public final class MainFrame extends BaseFrame {
         }
         menuBar.add(playbackMenu);
 
-        audioMenu = new JMenu(Resource.resource("menu.audio").name());
-        audioMenu.setMnemonic(Resource.resource("menu.audio").mnemonic());
+        audioMenu = new JMenu(resourceName("menu.audio"));
+        audioMenu.setMnemonic(resourceMnemonic("menu.audio"));
 
         audioTrackMenu = new AudioTrackMenu().menu();
 
         audioMenu.add(audioTrackMenu);
         audioDeviceMenu = new AudioDeviceMenu().menu();
         audioMenu.add(audioDeviceMenu);
-        audioStereoMenu = new JMenu(Resource.resource("menu.audio.item.stereoMode").name());
-        audioStereoMenu.setMnemonic(Resource.resource("menu.audio.item.stereoMode").mnemonic());
+        audioStereoMenu = new JMenu(resourceName("menu.audio.item.stereoMode"));
+        audioStereoMenu.setMnemonic(resourceMnemonic("menu.audio.item.stereoMode"));
         for (Action action : mediaPlayerActions.audioStereoModeActions()) {
             audioStereoMenu.add(new JRadioButtonMenuItem(action));
         }
@@ -221,8 +221,8 @@ public final class MainFrame extends BaseFrame {
         }
         menuBar.add(audioMenu);
 
-        videoMenu = new JMenu(Resource.resource("menu.video").name());
-        videoMenu.setMnemonic(Resource.resource("menu.video").mnemonic());
+        videoMenu = new JMenu(resourceName("menu.video"));
+        videoMenu.setMnemonic(resourceMnemonic("menu.video"));
 
         videoTrackMenu = new VideoTrackMenu().menu();
 
@@ -231,24 +231,24 @@ public final class MainFrame extends BaseFrame {
         videoMenu.add(new JCheckBoxMenuItem(videoFullscreenAction));
         videoMenu.add(new JCheckBoxMenuItem(videoAlwaysOnTopAction));
         videoMenu.add(new JSeparator());
-        videoZoomMenu = new JMenu(Resource.resource("menu.video.item.zoom").name());
-        videoZoomMenu.setMnemonic(Resource.resource("menu.video.item.zoom").mnemonic());
+        videoZoomMenu = new JMenu(resourceName("menu.video.item.zoom"));
+        videoZoomMenu.setMnemonic(resourceMnemonic("menu.video.item.zoom"));
         addActions(mediaPlayerActions.videoZoomActions(), videoZoomMenu/*, true*/); // FIXME how to handle zoom 1:1 and fit to window - also, probably should not use addActions to select
         videoMenu.add(videoZoomMenu);
-        videoAspectRatioMenu = new JMenu(Resource.resource("menu.video.item.aspectRatio").name());
-        videoAspectRatioMenu.setMnemonic(Resource.resource("menu.video.item.aspectRatio").mnemonic());
+        videoAspectRatioMenu = new JMenu(resourceName("menu.video.item.aspectRatio"));
+        videoAspectRatioMenu.setMnemonic(resourceMnemonic("menu.video.item.aspectRatio"));
         addActions(mediaPlayerActions.videoAspectRatioActions(), videoAspectRatioMenu, true);
         videoMenu.add(videoAspectRatioMenu);
-        videoCropMenu = new JMenu(Resource.resource("menu.video.item.crop").name());
-        videoCropMenu.setMnemonic(Resource.resource("menu.video.item.crop").mnemonic());
+        videoCropMenu = new JMenu(resourceName("menu.video.item.crop"));
+        videoCropMenu.setMnemonic(resourceMnemonic("menu.video.item.crop"));
         addActions(mediaPlayerActions.videoCropActions(), videoCropMenu, true);
         videoMenu.add(videoCropMenu);
         videoMenu.add(new JSeparator());
         videoMenu.add(new JMenuItem(mediaPlayerActions.videoSnapshotAction()));
         menuBar.add(videoMenu);
 
-        subtitleMenu = new JMenu(Resource.resource("menu.subtitle").name());
-        subtitleMenu.setMnemonic(Resource.resource("menu.subtitle").mnemonic());
+        subtitleMenu = new JMenu(resourceName("menu.subtitle"));
+        subtitleMenu.setMnemonic(resourceMnemonic("menu.subtitle"));
         subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction));
 
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
@@ -256,21 +256,21 @@ public final class MainFrame extends BaseFrame {
         subtitleMenu.add(subtitleTrackMenu);
         menuBar.add(subtitleMenu);
 
-        toolsMenu = new JMenu(Resource.resource("menu.tools").name());
-        toolsMenu.setMnemonic(Resource.resource("menu.tools").mnemonic());
+        toolsMenu = new JMenu(resourceName("menu.tools"));
+        toolsMenu.setMnemonic(resourceMnemonic("menu.tools"));
         toolsMenu.add(new JMenuItem(toolsEffectsAction));
         toolsMenu.add(new JMenuItem(toolsMessagesAction));
         toolsMenu.add(new JSeparator());
         toolsMenu.add(new JMenuItem(toolsDebugAction));
         menuBar.add(toolsMenu);
 
-        viewMenu = new JMenu(Resource.resource("menu.view").name());
-        viewMenu.setMnemonic(Resource.resource("menu.view").mnemonic());
+        viewMenu = new JMenu(resourceName("menu.view"));
+        viewMenu.setMnemonic(resourceMnemonic("menu.view"));
         viewMenu.add(new JCheckBoxMenuItem(viewStatusBarAction));
         menuBar.add(viewMenu);
 
-        helpMenu = new JMenu(Resource.resource("menu.help").name());
-        helpMenu.setMnemonic(Resource.resource("menu.help").mnemonic());
+        helpMenu = new JMenu(resourceName("menu.help"));
+        helpMenu.setMnemonic(resourceMnemonic("menu.help"));
         helpMenu.add(new JMenuItem(helpAboutAction));
         menuBar.add(helpMenu);
 
@@ -323,7 +323,7 @@ public final class MainFrame extends BaseFrame {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                overlay.updateLocationAll();
+                overlay.updateOverlay();
             }
         });
 
@@ -343,6 +343,14 @@ public final class MainFrame extends BaseFrame {
 
 
         setMinimumSize(new Dimension(370, 240));
+    }
+
+    private Integer resourceMnemonic(String id) {
+        return Resource.resource(id).mnemonic();
+    }
+
+    private String resourceName(String id) {
+        return Resource.resource(id).name();
     }
 
     private void createStandardActions() {

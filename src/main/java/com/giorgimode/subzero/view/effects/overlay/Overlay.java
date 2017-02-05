@@ -30,14 +30,14 @@ public class Overlay extends JWindow {
         translatedList.entrySet().forEach(this::addSubtitlePanel);
         setDimensions(owner);
         numberOfPanelsAllowed = (int) Math.ceil((double) (owner.getHeight() - area51_below) / (subtitlePanelHeight + spaceBetweenPanels));
-        updateLocationAll();
+        updateOverlay();
     }
 
     private void setDimensions(Window owner) {
         spaceBetweenPanels = owner.getHeight() / 25;
         subtitlePanelHeight = owner.getHeight() / 25;
 
-        area51_below = owner.getHeight() / 4;
+        area51_below = owner.getHeight() * 3 / 8;
         area51_left = owner.getWidth() / 35;
     }
 
@@ -48,7 +48,7 @@ public class Overlay extends JWindow {
         add(subtitlePanel);
     }
 
-    public void updateLocationAll() {
+    public void updateOverlay() {
         if (subtitlePanelList.isEmpty()) {
             return;
         }
@@ -59,7 +59,7 @@ public class Overlay extends JWindow {
         subtitlePanelList.get(subtitlePanelList.size() - 1).setLocation(area51_left, owner.getHeight() - area51_below);
         subtitlePanelList.get(subtitlePanelList.size() - 1).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
         updateFont(subtitlePanelList.get(subtitlePanelList.size() - 1));
-        subtitlePanelList.get(subtitlePanelList.size() - 1).setMaximumAllowedHeight(owner.getHeight() + area51_below);
+        subtitlePanelList.get(subtitlePanelList.size() - 1).setMaximumAllowedHeight(owner.getHeight() + area51_below / 5);
 
         if (subtitlePanelList.size() < 2) {
             return;
@@ -87,6 +87,6 @@ public class Overlay extends JWindow {
         subtitlePanelList.forEach(this::remove);
         subtitlePanelList = new ArrayList<>();
         translatedList.entrySet().forEach(this::addSubtitlePanel);
-        updateLocationAll();
+        updateOverlay();
     }
 }
