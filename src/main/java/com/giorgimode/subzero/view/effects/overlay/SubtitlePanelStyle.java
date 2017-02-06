@@ -1,6 +1,5 @@
 package com.giorgimode.subzero.view.effects.overlay;
 
-import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *  Created by modeg on 1/22/2017.
+ * Created by modeg on 1/22/2017.
  */
 public class SubtitlePanelStyle implements PanelStyle {
 
@@ -18,11 +17,9 @@ public class SubtitlePanelStyle implements PanelStyle {
     private static final String SYNSET_STYLE_NAME = "synsetStyle";
     private static final String ROOT_STYLE_NAME = "rootStyle";
 
-    public void applyStyle(SubtitlePanel subtitlePanel) {
-        JTextPane textPane = subtitlePanel.getjTextPane();
+    public void createStyle(SubtitlePanel subtitlePanel) {
         Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = subtitlePanel.getWordDefinitionEntryMap();
         StyledDocument styledDocument = new DefaultStyledDocument();
-        textPane.setStyledDocument(styledDocument);
 
         int mainHeight = subtitlePanel.getHeight();
         int mainWidth = subtitlePanel.getWidth();
@@ -66,6 +63,7 @@ public class SubtitlePanelStyle implements PanelStyle {
         }
 
         styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
+        subtitlePanel.setOriginalStyledDocument(styledDocument);
     }
 
     private void insertText(StyledDocument styledDocument, Style style, String text) {
