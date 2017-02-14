@@ -1,7 +1,6 @@
 package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.subzero.Application;
-import com.giorgimode.subzero.customHandler.ClickListener;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.event.AfterExitFullScreenEvent;
 import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
@@ -45,6 +44,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Arrays;
@@ -137,17 +137,17 @@ public final class MainFrame extends BaseFrame {
 
         this.mediaPlayerComponent = Application.application().mediaPlayerComponent();
         mediaPlayer = mediaPlayerComponent.getMediaPlayer();
-        mediaPlayerComponent.getVideoSurface().addMouseListener(new ClickListener() {
-            public void singleClick(MouseEvent e) {
-                mediaPlayer.pause();
-            }
-
-            public void doubleClick(MouseEvent e) {
-                mediaPlayer.toggleFullScreen();
+        mediaPlayerComponent.getVideoSurface().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    mediaPlayer.toggleFullScreen();
+                }
             }
         });
         MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
-
+        //TODO remove mute for prod
+        mediaPlayer.mute();
         createStandardActions();
 
         enhancedTranslatorService = new EnhancedTranslatorService();
@@ -233,7 +233,8 @@ public final class MainFrame extends BaseFrame {
         videoMenu.add(new JSeparator());
         videoZoomMenu = new JMenu(resourceName("menu.video.item.zoom"));
         videoZoomMenu.setMnemonic(resourceMnemonic("menu.video.item.zoom"));
-        addActions(mediaPlayerActions.videoZoomActions(), videoZoomMenu/*, true*/); // FIXME how to handle zoom 1:1 and fit to window - also, probably should not use addActions to select
+        addActions(mediaPlayerActions
+                .videoZoomActions(), videoZoomMenu/*, true*/); // FIXME how to handle zoom 1:1 and fit to window - also, probably should not use addActions to select
         videoMenu.add(videoZoomMenu);
         videoAspectRatioMenu = new JMenu(resourceName("menu.video.item.aspectRatio"));
         videoAspectRatioMenu.setMnemonic(resourceMnemonic("menu.video.item.aspectRatio"));
@@ -458,7 +459,7 @@ public final class MainFrame extends BaseFrame {
                 prefs.getInt("frameY", 100),
                 prefs.getInt("frameWidth", 800),
                 prefs.getInt("frameHeight", 600)
-        );
+                 );
         boolean alwaysOnTop = prefs.getBoolean("alwaysOnTop", false);
         setAlwaysOnTop(alwaysOnTop);
         videoAlwaysOnTopAction.select(alwaysOnTop);
