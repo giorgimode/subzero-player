@@ -82,23 +82,24 @@ public class Overlay extends JWindow {
             resizeSubtitlePanels(subtitlePanelList.size());
         }
         SubtitlePanel lowestPanel = subtitlePanelList.get(subtitlePanelList.size() - 1);
-        lowestPanel.setLocation(area51_left, owner.getHeight() - area51_below);
-        lowestPanel.setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
-        lowestPanel.getjTextPane().setFont(new Font("Sansserif", Font.BOLD, owner.getWidth() / 200 + owner.getHeight() / 100));
-        createOnClickStyle(lowestPanel);
-        lowestPanel.setMaximumAllowedHeight(owner.getHeight() + area51_below / 5);
+        updatePanelProperties(lowestPanel, owner.getHeight() - area51_below, owner.getHeight() + area51_below / 5);
 
         if (subtitlePanelList.size() < 2) {
             return;
         }
         for (int i = subtitlePanelList.size() - 2; i >= 0; i--) {
             int previousSubtitleHeight = (int) subtitlePanelList.get(i + 1).getLocation().getY();
-            subtitlePanelList.get(i).setLocation(area51_left, previousSubtitleHeight - spaceBetweenPanels - subtitlePanelHeight);
-            subtitlePanelList.get(i).setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
-            createOnClickStyle(subtitlePanelList.get(i));
-            subtitlePanelList.get(i).setMaximumAllowedHeight(owner.getHeight());
-            subtitlePanelList.get(i).getjTextPane().setFont(new Font("Sansserif", Font.BOLD, owner.getWidth() / 200 + owner.getHeight() / 100));
+            int locationY = previousSubtitleHeight - spaceBetweenPanels - subtitlePanelHeight;
+            updatePanelProperties(subtitlePanelList.get(i), locationY, owner.getHeight());
         }
+    }
+
+    private void updatePanelProperties(SubtitlePanel subtitlePanel, int locationY, int maxHeight) {
+        subtitlePanel.setLocation(area51_left, locationY);
+        subtitlePanel.setSize(new Dimension(owner.getWidth() - 3 * area51_left, subtitlePanelHeight));
+        createOnClickStyle(subtitlePanel);
+        subtitlePanel.setMaximumAllowedHeight(maxHeight);
+        subtitlePanel.getjTextPane().setFont(new Font("Sansserif", Font.BOLD, owner.getWidth() / 200 + owner.getHeight() / 100));
     }
 
     private void resizeSubtitlePanels(int numberOfPanels) {

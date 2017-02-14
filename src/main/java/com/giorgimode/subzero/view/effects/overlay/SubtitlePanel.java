@@ -4,13 +4,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.DefaultCaret;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Style;
-import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -45,31 +41,23 @@ public class SubtitlePanel extends JScrollPane {
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
                 jTextPane.setText(null);
                 jTextPane.setStyledDocument(SubtitlePanel.this.getOriginalStyledDocument());
+
                 int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
-                jTextPane.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
-                SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
-                setOpaque(true);
-                jTextPane.setForeground(null);
+                updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), null, true);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
                     int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
-                    SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
-                    jTextPane.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
-                    setOpaque(true);
-                    jTextPane.setForeground(null);
+                    updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), null, true);
                 }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!isFocused()) {
-                    SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
-                    jTextPane.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
-                    setOpaque(false);
-                    jTextPane.setForeground(Color.white);
+                    SubtitlePanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.white, false);
                 }
             }
         });
@@ -78,18 +66,9 @@ public class SubtitlePanel extends JScrollPane {
             public void focusLost(FocusEvent e) {
                 setFocused(false);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
-                jTextPane.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
-                setOpaque(false);
-                jTextPane.setStyledDocument(new DefaultStyledDocument());
-                Style defaultStyle = StyleContext.
-                        getDefaultStyleContext().
-                        getStyle(StyleContext.DEFAULT_STYLE);
-                jTextPane.setParagraphAttributes(defaultStyle, true);
-                jTextPane.setCharacterAttributes(defaultStyle, true);
+                updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), jTextPane.getForeground(), false);
                 jTextPane.refresh();
-                updateJtextPane();
-                jTextPane.setFont(new Font("Sansserif", Font.BOLD, 16));
+                restorePreview();
             }
         });
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -97,10 +76,10 @@ public class SubtitlePanel extends JScrollPane {
         setOpaque(false);
         getViewport().setOpaque(false);
         setBackground(Color.white);
-        updateJtextPane();
+        restorePreview();
     }
 
-    private void updateJtextPane() {
+    private void restorePreview() {
         jTextPane.setForeground(Color.white);
         jTextPane.setText(preview);
         jTextPane.setEditable(false);
@@ -108,6 +87,13 @@ public class SubtitlePanel extends JScrollPane {
         DefaultCaret caret = (DefaultCaret) jTextPane.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         jTextPane.setCaretPosition(0);
+    }
+
+    private void updateOnEvent(int width, int height, Color foregroundColor, boolean isOpaque) {
+        setSize(width, height);
+        jTextPane.setSize(width, height);
+        setOpaque(isOpaque);
+        jTextPane.setForeground(foregroundColor);
     }
 
     @Override
