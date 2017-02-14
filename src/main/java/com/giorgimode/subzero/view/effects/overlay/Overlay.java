@@ -124,7 +124,8 @@ public class Overlay extends JWindow {
         result = result.replaceAll("\\{.*?} ?", "")
                        .replaceAll("\\[.*?] ?", "")
                        .replaceAll("<.*?> ?", "")
-                       .replaceAll("\\(.*?\\) ?", "");
+                       .replaceAll("\\(.*?\\) ?", "")
+                        .replace(" ,", ",");
         return result;
     }
 }

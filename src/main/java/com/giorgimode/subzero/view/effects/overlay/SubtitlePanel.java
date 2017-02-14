@@ -19,15 +19,15 @@ import java.util.Map;
 
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
-    private final SubtitleTextPane jTextPane;
-    private final Dimension panelDimension;
-    private int maximumAllowedHeight;
-    private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
-    private StyledDocument originalStyledDocument;
-    private StyledDocument previewStyledDocument;
+    private final JTextPane                                    jTextPane;
+    private final Dimension                                    panelDimension;
+    private       int                                          maximumAllowedHeight;
+    private       Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
+    private       StyledDocument                               originalStyledDocument;
+    private       StyledDocument                               previewStyledDocument;
 
     SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
-        jTextPane = new SubtitleTextPane();
+        jTextPane = new JTextPane();
         panelDimension = new Dimension();
         getViewport().setView(jTextPane);
         maximumAllowedHeight = getHeight();
@@ -65,7 +65,6 @@ public class SubtitlePanel extends JScrollPane {
                 setFocused(false);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
                 updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), jTextPane.getForeground(), false);
-                jTextPane.cleanStyling();
                 applyPreview();
             }
         });
