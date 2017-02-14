@@ -24,22 +24,20 @@ public class SubtitlePanel extends JScrollPane {
     private int maximumAllowedHeight;
     private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
     private StyledDocument originalStyledDocument;
-    private final String preview;
+    private StyledDocument previewStyledDocument;
 
-    SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap, String preview) {
+    SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         jTextPane = new SubtitleTextPane();
         panelDimension = new Dimension();
         getViewport().setView(jTextPane);
         maximumAllowedHeight = getHeight();
         this.wordDefinitionEntryMap = wordDefinitionEntryMap;
-        this.preview = preview;
         panelDimension.setSize(getWidth(), getHeight());
         jTextPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setFocused(true);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-                jTextPane.setText(null);
                 jTextPane.setStyledDocument(SubtitlePanel.this.getOriginalStyledDocument());
 
                 int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
@@ -67,8 +65,8 @@ public class SubtitlePanel extends JScrollPane {
                 setFocused(false);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
                 updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), jTextPane.getForeground(), false);
-                jTextPane.refresh();
-                restorePreview();
+                jTextPane.cleanStyling();
+                applyPreview();
             }
         });
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -76,12 +74,14 @@ public class SubtitlePanel extends JScrollPane {
         setOpaque(false);
         getViewport().setOpaque(false);
         setBackground(Color.white);
-        restorePreview();
+        applyPreview();
     }
 
-    private void restorePreview() {
+    private void applyPreview() {
         jTextPane.setForeground(Color.white);
-        jTextPane.setText(preview);
+        if (previewStyledDocument != null) {
+            jTextPane.setStyledDocument(previewStyledDocument);
+        }
         jTextPane.setEditable(false);
         jTextPane.setOpaque(false);
         DefaultCaret caret = (DefaultCaret) jTextPane.getCaret();
@@ -140,5 +140,9 @@ public class SubtitlePanel extends JScrollPane {
 
     void setOriginalStyledDocument(StyledDocument originalStyledDocument) {
         this.originalStyledDocument = originalStyledDocument;
+    }
+
+    void setPreviewStyledDocument(StyledDocument previewStyledDocument) {
+        this.previewStyledDocument = previewStyledDocument;
     }
 }

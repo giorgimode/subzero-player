@@ -9,7 +9,7 @@ import javax.swing.text.StyleContext;
  * Created by modeg on 2/14/2017.
  */
 public class SubtitleTextPane extends JTextPane {
-    public void refresh() {
+    public void cleanStyling() {
         setStyledDocument(new DefaultStyledDocument());
         Style defaultStyle = StyleContext.
                 getDefaultStyleContext().

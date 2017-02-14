@@ -17,7 +17,7 @@ public class SubtitlePanelStyle implements PanelStyle {
     private static final String SYNSET_STYLE_NAME = "synsetStyle";
     private static final String ROOT_STYLE_NAME = "rootStyle";
 
-    public void createStyle(SubtitlePanel subtitlePanel) {
+    public void createOnClickStyle(SubtitlePanel subtitlePanel) {
         Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = subtitlePanel.getWordDefinitionEntryMap();
         StyledDocument styledDocument = new DefaultStyledDocument();
 
@@ -28,16 +28,13 @@ public class SubtitlePanelStyle implements PanelStyle {
         int synsetFontSize = definitionFontSize * 2 / 3;
 
         Style rootStyle = styledDocument.addStyle(ROOT_STYLE_NAME, null);
-        StyleConstants.setBold(rootStyle, true);
-        StyleConstants.setFontSize(rootStyle, rootFontSize);
+        setStyle(rootStyle, rootFontSize, false, false, true);
 
         Style synsetStyle = styledDocument.addStyle(SYNSET_STYLE_NAME, null);
-        StyleConstants.setFontSize(synsetStyle, synsetFontSize);
-        StyleConstants.setItalic(synsetStyle, true);
-        StyleConstants.setUnderline(synsetStyle, true);
+        setStyle(synsetStyle, synsetFontSize, true, true, false);
 
         Style definitionStyle = styledDocument.addStyle(DEFINITION_STYLE_NAME, null);
-        StyleConstants.setFontSize(definitionStyle, definitionFontSize);
+        setStyle(definitionStyle, definitionFontSize, false, false, false);
 
         String rootWord = wordDefinitionEntryMap.getKey();
         insertText(styledDocument, rootStyle, rootWord + "\n");
@@ -55,7 +52,6 @@ public class SubtitlePanelStyle implements PanelStyle {
                         .append(repeatedSymbols(" ", 50))
                         .append(counter)
                         .append(lists.getValue().get(i));
-
                 builder.append(lists.getValue().size() > 1 ? "\n" : "");
             }
             insertText(styledDocument, definitionStyle, repeatedSymbols(" ", 50) + builder.toString().trim());
@@ -64,6 +60,34 @@ public class SubtitlePanelStyle implements PanelStyle {
 
         styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
         subtitlePanel.setOriginalStyledDocument(styledDocument);
+    }
+
+    private void setStyle(Style synsetStyle, int synsetFontSize, boolean isItalic, boolean isUnderLined, boolean isBold) {
+        StyleConstants.setFontSize(synsetStyle, synsetFontSize);
+        StyleConstants.setItalic(synsetStyle, isItalic);
+        StyleConstants.setUnderline(synsetStyle, isUnderLined);
+        StyleConstants.setBold(synsetStyle, isBold);
+        StyleConstants.setFontFamily(synsetStyle, "Sansserif");
+    }
+
+    public void createPreviewStyle(SubtitlePanel subtitlePanel, String root, String body) {
+        StyledDocument styledDocument = new DefaultStyledDocument();
+
+        Style rootStyle = styledDocument.addStyle("rootWordStyle", null);
+        StyleConstants.setBold(rootStyle, true);
+        StyleConstants.setFontSize(rootStyle, 18);
+        StyleConstants.setFontFamily(rootStyle, "Sansserif");
+
+        Style normalStyle = styledDocument.addStyle("previewStyle", null);
+        StyleConstants.setFontSize(normalStyle, 15);
+        StyleConstants.setFontFamily(normalStyle, "Sansserif");
+
+        insertText(styledDocument, rootStyle, root + ": ");
+        insertText(styledDocument, normalStyle, body);
+
+        styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
+        subtitlePanel.setPreviewStyledDocument(styledDocument);
+        subtitlePanel.getjTextPane().setStyledDocument(styledDocument);
     }
 
     private void insertText(StyledDocument styledDocument, Style style, String text) {
