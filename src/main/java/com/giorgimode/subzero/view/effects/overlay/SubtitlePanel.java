@@ -5,6 +5,8 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.Style;
+import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,26 +23,27 @@ import java.util.Map;
 
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
-    private JTextPane jTextPane = new JTextPane();
-    private Dimension panelDimension = new Dimension();
-    private int maximumAllowedHeight = getHeight();
+    private final SubtitleTextPane jTextPane;
+    private final Dimension panelDimension;
+    private int maximumAllowedHeight;
     private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
     private StyledDocument originalStyledDocument;
+    private final String preview;
 
-
-    public SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap, String preview) {
+    SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap, String preview) {
+        jTextPane = new SubtitleTextPane();
+        panelDimension = new Dimension();
         getViewport().setView(jTextPane);
+        maximumAllowedHeight = getHeight();
         this.wordDefinitionEntryMap = wordDefinitionEntryMap;
-
-        jTextPane.setForeground(Color.white);
+        this.preview = preview;
         panelDimension.setSize(getWidth(), getHeight());
-        jTextPane.setText(preview);
-
         jTextPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 setFocused(true);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                jTextPane.setText(null);
                 jTextPane.setStyledDocument(SubtitlePanel.this.getOriginalStyledDocument());
                 int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
                 jTextPane.setSize((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight));
@@ -52,7 +55,6 @@ public class SubtitlePanel extends JScrollPane {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
-                    System.out.println("mouseEntered");
                     int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
                     SubtitlePanel.this.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
                     jTextPane.setSize((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize));
@@ -64,7 +66,6 @@ public class SubtitlePanel extends JScrollPane {
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!isFocused()) {
-                    System.out.println("mouseExited");
                     SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                     jTextPane.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                     setOpaque(false);
@@ -80,19 +81,30 @@ public class SubtitlePanel extends JScrollPane {
                 SubtitlePanel.this.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                 jTextPane.setSize((int) panelDimension.getWidth(), (int) panelDimension.getHeight());
                 setOpaque(false);
-                jTextPane.setForeground(Color.white);
                 jTextPane.setStyledDocument(new DefaultStyledDocument());
-                jTextPane.setText(preview);
-                jTextPane.setFont(new Font("Sansserif", Font.BOLD, 5));
+                Style defaultStyle = StyleContext.
+                        getDefaultStyleContext().
+                        getStyle(StyleContext.DEFAULT_STYLE);
+                jTextPane.setParagraphAttributes(defaultStyle, true);
+                jTextPane.setCharacterAttributes(defaultStyle, true);
+                jTextPane.refresh();
+                updateJtextPane();
+                jTextPane.setFont(new Font("Sansserif", Font.BOLD, 16));
             }
         });
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        jTextPane.setEditable(false);
         setOpaque(false);
-        jTextPane.setOpaque(false);
         getViewport().setOpaque(false);
         setBackground(Color.white);
+        updateJtextPane();
+    }
+
+    private void updateJtextPane() {
+        jTextPane.setForeground(Color.white);
+        jTextPane.setText(preview);
+        jTextPane.setEditable(false);
+        jTextPane.setOpaque(false);
         DefaultCaret caret = (DefaultCaret) jTextPane.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         jTextPane.setCaretPosition(0);
@@ -105,9 +117,7 @@ public class SubtitlePanel extends JScrollPane {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-
         g2.setPaint(new Color(255, 255, 255, 64));
-
         g2.fillRect(0, 0, getWidth(), getHeight());
     }
 
@@ -120,7 +130,7 @@ public class SubtitlePanel extends JScrollPane {
         this.focused = focused;
     }
 
-    public JTextPane getjTextPane() {
+    JTextPane getjTextPane() {
         return jTextPane;
     }
 
@@ -130,19 +140,19 @@ public class SubtitlePanel extends JScrollPane {
         panelDimension.setSize(d.getWidth(), d.getHeight());
     }
 
-    public void setMaximumAllowedHeight(int windowHeight) {
+    void setMaximumAllowedHeight(int windowHeight) {
         maximumAllowedHeight = windowHeight - getY() - windowHeight / 5;
     }
 
-    public Map.Entry<String, Map<String, List<String>>> getWordDefinitionEntryMap() {
+    Map.Entry<String, Map<String, List<String>>> getWordDefinitionEntryMap() {
         return wordDefinitionEntryMap;
     }
 
-    public StyledDocument getOriginalStyledDocument() {
+    private StyledDocument getOriginalStyledDocument() {
         return originalStyledDocument;
     }
 
-    public void setOriginalStyledDocument(StyledDocument originalStyledDocument) {
+    void setOriginalStyledDocument(StyledDocument originalStyledDocument) {
         this.originalStyledDocument = originalStyledDocument;
     }
 }
