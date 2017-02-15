@@ -20,10 +20,10 @@ import java.util.Map;
 import static com.giorgimode.subzero.Application.application;
 
 public class EnhancedTranslatorService {
-    private Subtitle currentSubtitle;
-    private Map<Integer, File> subtitleMap;
-    private SubtitleService subtitleService;
-    private DictionaryService dictionaryService;
+    private       Subtitle            currentSubtitle;
+    private       Map<Integer, File>  subtitleMap;
+    private       SubtitleService     subtitleService;
+    private       DictionaryService   dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
 
     public EnhancedTranslatorService() {
@@ -45,9 +45,9 @@ public class EnhancedTranslatorService {
         if (subtitleService != null && dictionaryService != null) {
             String[][] currentWords = subtitleService.getCurrentWords(mediaPlayer.getTime());
             String[] allWords = Arrays.stream(currentWords)
-                    .filter(sArray -> sArray.length > 0)
-                    .reduce(ArrayUtils::addAll)
-                    .orElse(new String[0]);
+                                      .filter(sArray -> sArray.length > 0)
+                                      .reduce(ArrayUtils::addAll)
+                                      .orElse(new String[0]);
 
             System.out.println("=======================");
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
@@ -72,7 +72,6 @@ public class EnhancedTranslatorService {
         int trackId = mediaPlayer.getSpuCount();
         subtitleMap.put(trackId, subtitleFile);
         subtitleService = new SubtitleService(subtitleFile);
-        System.out.println("zaza");
     }
 
     private void loadDictionary() {

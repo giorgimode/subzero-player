@@ -4,6 +4,8 @@ import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.event.AfterExitFullScreenEvent;
 import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
+import com.giorgimode.subzero.event.PausedEvent;
+import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.ShowDebugEvent;
 import com.giorgimode.subzero.event.ShowEffectsEvent;
 import com.giorgimode.subzero.event.ShowMessagesEvent;
@@ -33,7 +35,6 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
@@ -44,6 +45,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -84,7 +87,7 @@ public final class MainFrame extends BaseFrame {
 
     private Action helpAboutAction;
 
-    private final JMenuBar menuBar;
+    private final PlayerMenuBar menuBar;
 
     private final JMenu mediaMenu;
     private final JMenu mediaRecentMenu;
@@ -145,6 +148,15 @@ public final class MainFrame extends BaseFrame {
                 }
             }
         });
+
+        mediaPlayerComponent.getVideoSurface().addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                menuBar.processKeyEvent(e, mediaPlayer.isFullScreen());
+                menuBar.setVisible(!mediaPlayer.isFullScreen());
+            }
+        });
+
         MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
         //TODO remove mute for prod
         mediaPlayer.mute();
@@ -152,7 +164,7 @@ public final class MainFrame extends BaseFrame {
 
         enhancedTranslatorService = new EnhancedTranslatorService();
 
-        menuBar = new JMenuBar();
+        menuBar = new PlayerMenuBar();
 
         mediaMenu = new JMenu(resourceName("menu.media"));
         mediaMenu.setMnemonic(resourceMnemonic("menu.media"));
@@ -339,7 +351,7 @@ public final class MainFrame extends BaseFrame {
         overlay = new Overlay(this, new HashMap<>());
         mediaPlayer.setOverlay(overlay);
         mediaPlayer.enableOverlay(false);
-
+        mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();
 
 
@@ -365,6 +377,9 @@ public final class MainFrame extends BaseFrame {
         });
 
         mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) -> {
+            if (overlay != null) {
+                overlay.dispose();
+            }
             dispose();
             System.exit(0);
         });
@@ -525,6 +540,18 @@ public final class MainFrame extends BaseFrame {
     @Subscribe
     public void onSnapshotImage(SnapshotImageEvent event) {
         new SnapshotView(event.image());
+    }
+
+    @Subscribe
+    public void onPaused(PausedEvent event) {
+        bottomPane.setVisible(true);
+    }
+
+    @Subscribe
+    public void onPlaying(PlayingEvent event) {
+        if (mediaPlayer.isFullScreen()) {
+            bottomPane.setVisible(false);
+        }
     }
 
     private void registerEscapeBinding() {
