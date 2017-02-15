@@ -12,10 +12,14 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import java.util.Map;
+
+import static com.giorgimode.subzero.Application.application;
 
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
@@ -68,6 +72,14 @@ public class SubtitlePanel extends JScrollPane {
                 applyPreview();
             }
         });
+
+        jTextPane.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                application().mediaPlayerComponent().getVideoSurface().dispatchEvent(e);
+            }
+        });
+
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
         setOpaque(false);

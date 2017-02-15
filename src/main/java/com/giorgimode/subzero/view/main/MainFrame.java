@@ -552,6 +552,7 @@ public final class MainFrame extends BaseFrame {
         if (mediaPlayer.isFullScreen()) {
             bottomPane.setVisible(false);
         }
+        mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
     }
 
     private void registerEscapeBinding() {

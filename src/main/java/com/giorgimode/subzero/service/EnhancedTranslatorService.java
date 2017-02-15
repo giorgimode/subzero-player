@@ -20,7 +20,6 @@ import java.util.Map;
 import static com.giorgimode.subzero.Application.application;
 
 public class EnhancedTranslatorService {
-    private       Subtitle            currentSubtitle;
     private       Map<Integer, File>  subtitleMap;
     private       SubtitleService     subtitleService;
     private       DictionaryService   dictionaryService;
@@ -59,14 +58,6 @@ public class EnhancedTranslatorService {
         mediaPlayer.enableOverlay(true);
     }
 
-    public Subtitle getCurrentSubtitle() {
-        return currentSubtitle;
-    }
-
-    public void setCurrentSubtitle(Subtitle currentSubtitle) {
-        this.currentSubtitle = currentSubtitle;
-    }
-
     public void add(File subtitleFile) {
         // mediaPlayer.getSpuDescriptions()
         int trackId = mediaPlayer.getSpuCount();
@@ -79,16 +70,4 @@ public class EnhancedTranslatorService {
         String path = "D:\\coding\\workspace\\projects\\Dictionary-parser\\src\\main\\resources\\cc\\";
         dictionaryService = CcDictionaryService.getInMemoryInstance(CcLanguageEnum.EN_DE, path);
     }
-
-
-    private void print(Map<String, Map<String, List<String>>> definitions) {
-        definitions.entrySet().forEach(map -> {
-            map.getValue().entrySet().forEach(list -> {
-                System.out.println(list.getKey() + ": ");
-                list.getValue().forEach(word -> System.out.println(word));
-            });
-        });
-    }
-
-
 }
