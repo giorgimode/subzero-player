@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 public class Overlay extends JWindow {
 
     private static final long serialVersionUID = 1L;
-    private final Window              owner;
-    private       List<SubtitlePanel> subtitlePanelList;
-    private       int                 spaceBetweenPanels;
-    private       int                 subtitlePanelHeight;
-    private       int                 area51Below;
-    private       int                 area51Left;
-    private final int                 numberOfPanelsAllowed;
-    private       PanelStyle          subtitlePanelStyle;
+    private final Window owner;
+    private List<SubtitlePanel> subtitlePanelList;
+    private int spaceBetweenPanels;
+    private int subtitlePanelHeight;
+    private int area51Below;
+    private int area51Left;
+    private final int numberOfPanelsAllowed;
+    private PanelStyle subtitlePanelStyle;
 
     public Overlay(Window owner, Map<String, Map<String, List<String>>> translatedList) {
         super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
@@ -84,7 +84,8 @@ public class Overlay extends JWindow {
 
     private void updatePanelProperties(SubtitlePanel subtitlePanel, int locationY, int maxHeight) {
         subtitlePanel.setLocation(area51Left, locationY);
-        subtitlePanel.setSize(new Dimension(owner.getWidth() - 3 * area51Left, subtitlePanelHeight));
+        int preferredHeight = (int) subtitlePanel.getjTextPane().getPreferredSize().getHeight();
+        subtitlePanel.setSize(new Dimension(owner.getWidth() - 3 * area51Left, Math.min(2 * preferredHeight, subtitlePanelHeight)));
         subtitlePanel.setMaximumAllowedHeight(maxHeight);
         subtitlePanelStyle.createOnClickStyle(subtitlePanel);
         subtitlePanel.getjTextPane().setFont(new Font("Sansserif", Font.BOLD, 12));
@@ -92,7 +93,7 @@ public class Overlay extends JWindow {
 
     private void resizeSubtitlePanels(int numberOfPanels) {
         double newSize = (numberOfPanels * (subtitlePanelHeight + spaceBetweenPanels) - owner.getHeight()
-                          + area51Below) / (double) (2 * numberOfPanels);
+                + area51Below) / (double) (2 * numberOfPanels);
         subtitlePanelHeight = (int) (subtitlePanelHeight - newSize);
         spaceBetweenPanels = (int) (spaceBetweenPanels - newSize);
     }
@@ -100,9 +101,9 @@ public class Overlay extends JWindow {
 
     private String createPreview(Map<String, List<String>> wordDefinitionEntryMap) {
         List<String> preview = wordDefinitionEntryMap.values()
-                                                     .stream()
-                                                     .map(strings -> strings.stream().collect(Collectors.joining(", ")))
-                                                     .collect(Collectors.toList());
+                .stream()
+                .map(strings -> strings.stream().collect(Collectors.joining(", ")))
+                .collect(Collectors.toList());
 
         if (preview.isEmpty()) {
             return null;
@@ -112,8 +113,8 @@ public class Overlay extends JWindow {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < preview.size(); i++) {
             builder.append(i + 1).append(") ")
-                   .append(preview.get(i).trim())
-                   .append(" ");
+                    .append(preview.get(i).trim())
+                    .append(" ");
         }
         String result = builder.toString();
         result = sanitize(result);
@@ -122,10 +123,10 @@ public class Overlay extends JWindow {
 
     private String sanitize(String result) {
         result = result.replaceAll("\\{.*?} ?", "")
-                       .replaceAll("\\[.*?] ?", "")
-                       .replaceAll("<.*?> ?", "")
-                       .replaceAll("\\(.*?\\) ?", "")
-                        .replace(" ,", ",");
+                .replaceAll("\\[.*?] ?", "")
+                .replaceAll("<.*?> ?", "")
+                .replaceAll("\\(.*?\\) ?", "")
+                .replace(" ,", ",");
         return result;
     }
 }

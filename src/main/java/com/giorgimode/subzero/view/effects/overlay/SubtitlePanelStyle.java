@@ -62,25 +62,14 @@ public class SubtitlePanelStyle implements PanelStyle {
         subtitlePanel.setOriginalStyledDocument(styledDocument);
     }
 
-    private void setStyle(Style synsetStyle, int synsetFontSize, boolean isItalic, boolean isUnderLined, boolean isBold) {
-        StyleConstants.setFontSize(synsetStyle, synsetFontSize);
-        StyleConstants.setItalic(synsetStyle, isItalic);
-        StyleConstants.setUnderline(synsetStyle, isUnderLined);
-        StyleConstants.setBold(synsetStyle, isBold);
-        StyleConstants.setFontFamily(synsetStyle, "Sansserif");
-    }
-
     public void createPreviewStyle(SubtitlePanel subtitlePanel, String root, String body) {
         StyledDocument styledDocument = new DefaultStyledDocument();
 
         Style rootStyle = styledDocument.addStyle("rootWordStyle", null);
-        StyleConstants.setBold(rootStyle, true);
-        StyleConstants.setFontSize(rootStyle, 18);
-        StyleConstants.setFontFamily(rootStyle, "Sansserif");
+        setStyle(rootStyle, 18, false, false, true);
 
         Style normalStyle = styledDocument.addStyle("previewStyle", null);
-        StyleConstants.setFontSize(normalStyle, 15);
-        StyleConstants.setFontFamily(normalStyle, "Sansserif");
+        setStyle(normalStyle, 15, false, false, false);
 
         insertText(styledDocument, rootStyle, root + ": ");
         insertText(styledDocument, normalStyle, body);
@@ -88,6 +77,14 @@ public class SubtitlePanelStyle implements PanelStyle {
         styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
         subtitlePanel.setPreviewStyledDocument(styledDocument);
         subtitlePanel.getjTextPane().setStyledDocument(styledDocument);
+    }
+
+    private void setStyle(Style synsetStyle, int synsetFontSize, boolean isItalic, boolean isUnderLined, boolean isBold) {
+        StyleConstants.setFontSize(synsetStyle, synsetFontSize);
+        StyleConstants.setItalic(synsetStyle, isItalic);
+        StyleConstants.setUnderline(synsetStyle, isUnderLined);
+        StyleConstants.setBold(synsetStyle, isBold);
+        StyleConstants.setFontFamily(synsetStyle, "Sansserif");
     }
 
     private void insertText(StyledDocument styledDocument, Style style, String text) {
