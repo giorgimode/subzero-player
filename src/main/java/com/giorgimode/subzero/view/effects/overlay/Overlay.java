@@ -10,7 +10,6 @@ import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Overlay extends JWindow {
 
@@ -74,10 +73,8 @@ public class Overlay extends JWindow {
     }
 
     private void addSubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
-        String preview = createPreview(wordDefinitionEntryMap.getValue());
         SubtitlePanel subtitlePanel = new SubtitlePanel(wordDefinitionEntryMap);
-        subtitlePanelStyle.createPreviewStyle(subtitlePanel, wordDefinitionEntryMap.getKey(), preview);
-
+        subtitlePanelStyle.createPreviewStyle(subtitlePanel, wordDefinitionEntryMap);
         subtitlePanelList.add(subtitlePanel);
         add(subtitlePanel);
     }
@@ -96,37 +93,5 @@ public class Overlay extends JWindow {
                 + area51Below) / (double) (2 * numberOfPanels);
         subtitlePanelHeight = (int) (subtitlePanelHeight - newSize);
         spaceBetweenPanels = (int) (spaceBetweenPanels - newSize);
-    }
-
-
-    private String createPreview(Map<String, List<String>> wordDefinitionEntryMap) {
-        List<String> preview = wordDefinitionEntryMap.values()
-                .stream()
-                .map(strings -> strings.stream().collect(Collectors.joining(", ")))
-                .collect(Collectors.toList());
-
-        if (preview.isEmpty()) {
-            return null;
-        } else if (preview.size() < 2) {
-            return sanitize(preview.get(0));
-        }
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < preview.size(); i++) {
-            builder.append(i + 1).append(") ")
-                    .append(preview.get(i).trim())
-                    .append(" ");
-        }
-        String result = builder.toString();
-        result = sanitize(result);
-        return result;
-    }
-
-    private String sanitize(String result) {
-        result = result.replaceAll("\\{.*?} ?", "")
-                .replaceAll("\\[.*?] ?", "")
-                .replaceAll("<.*?> ?", "")
-                .replaceAll("\\(.*?\\) ?", "")
-                .replace(" ,", ",");
-        return result;
     }
 }

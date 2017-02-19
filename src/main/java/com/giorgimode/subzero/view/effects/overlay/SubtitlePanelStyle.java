@@ -5,8 +5,10 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by modeg on 1/22/2017.
@@ -62,19 +64,17 @@ public class SubtitlePanelStyle implements PanelStyle {
         subtitlePanel.setOriginalStyledDocument(styledDocument);
     }
 
-    public void createPreviewStyle(SubtitlePanel subtitlePanel, String root, String body) {
+    public void createPreviewStyle(SubtitlePanel subtitlePanel, Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         StyledDocument styledDocument = new DefaultStyledDocument();
 
-        Style rootStyle = styledDocument.addStyle("rootWordStyle", null);
-        setStyle(rootStyle, 18, false, false, true);
+        Style previewRootStyle = styledDocument.addStyle("previewRootStyle", null);
+        setStyle(previewRootStyle, 18, false, false, true);
+        insertText(styledDocument, previewRootStyle, wordDefinitionEntryMap.getKey() + ": ");
 
-        Style normalStyle = styledDocument.addStyle("previewStyle", null);
-        setStyle(normalStyle, 15, false, false, false);
+        List<String> previewTranslations = createPreview(wordDefinitionEntryMap.getValue());
+        createPreviewBody(styledDocument, previewTranslations);
 
-        insertText(styledDocument, rootStyle, root + ": ");
-        insertText(styledDocument, normalStyle, body);
-
-        styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
+        styledDocument.setParagraphAttributes(0, 1, previewRootStyle, false);
         subtitlePanel.setPreviewStyledDocument(styledDocument);
         subtitlePanel.getjTextPane().setStyledDocument(styledDocument);
     }
@@ -101,5 +101,42 @@ public class SubtitlePanelStyle implements PanelStyle {
             s = s.concat(symbol);
         }
         return s;
+    }
+
+    private void createPreviewBody(StyledDocument styledDocument, List<String> preview) {
+        Style normalStyle = styledDocument.addStyle("previewStyle", null);
+        setStyle(normalStyle, 15, false, false, false);
+
+        Style numberStyle = styledDocument.addStyle("previewStyle", null);
+        setStyle(numberStyle, 15, false, false, true);
+        StyleConstants.setForeground(numberStyle, Color.BLUE);
+
+        if (preview.isEmpty()) {
+            return;
+        } else if (preview.size() < 2) {
+            insertText(styledDocument, normalStyle, sanitize(preview.get(0)));
+            return;
+        }
+
+        for (int i = 0; i < preview.size(); i++) {
+            insertText(styledDocument, numberStyle, i + 1 + ") ");
+            insertText(styledDocument, normalStyle, sanitize(preview.get(i).trim()) + " ");
+        }
+    }
+
+    private String sanitize(String result) {
+        result = result.replaceAll("\\{.*?} ?", "")
+                .replaceAll("\\[.*?] ?", "")
+                .replaceAll("<.*?> ?", "")
+                .replaceAll("\\(.*?\\) ?", "")
+                .replace(" ,", ",");
+        return result;
+    }
+
+    private List<String> createPreview(Map<String, List<String>> wordDefinitionEntryMap) {
+        return wordDefinitionEntryMap.values()
+                .stream()
+                .map(strings -> strings.stream().collect(Collectors.joining(", ")))
+                .collect(Collectors.toList());
     }
 }
