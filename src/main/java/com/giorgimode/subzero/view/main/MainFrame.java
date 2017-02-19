@@ -149,6 +149,16 @@ public final class MainFrame extends BaseFrame {
             }
         });
 
+        mediaPlayerComponent.getVideoSurface().addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                if (mediaPlayer.isFullScreen() && mediaPlayer.isPlaying()) {
+                    menuBar.setVisible(e.getYOnScreen() < mediaPlayerComponent.getVideoSurface().getHeight() * 0.1);
+                    bottomPane.setVisible(e.getYOnScreen() > mediaPlayerComponent.getVideoSurface().getHeight() * 0.85);
+                }
+            }
+        });
+
         mediaPlayerComponent.getVideoSurface().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -474,7 +484,7 @@ public final class MainFrame extends BaseFrame {
                 prefs.getInt("frameY", 100),
                 prefs.getInt("frameWidth", 800),
                 prefs.getInt("frameHeight", 600)
-                 );
+        );
         boolean alwaysOnTop = prefs.getBoolean("alwaysOnTop", false);
         setAlwaysOnTop(alwaysOnTop);
         videoAlwaysOnTopAction.select(alwaysOnTop);
