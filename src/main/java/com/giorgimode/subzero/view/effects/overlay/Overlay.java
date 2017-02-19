@@ -74,7 +74,6 @@ public class Overlay extends JWindow {
 
     private void addSubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         SubtitlePanel subtitlePanel = new SubtitlePanel(wordDefinitionEntryMap);
-        subtitlePanelStyle.createPreviewStyle(subtitlePanel, wordDefinitionEntryMap);
         subtitlePanelList.add(subtitlePanel);
         add(subtitlePanel);
     }
@@ -86,6 +85,7 @@ public class Overlay extends JWindow {
         subtitlePanel.setMaximumAllowedHeight(maxHeight);
         subtitlePanelStyle.createOnClickStyle(subtitlePanel);
         subtitlePanel.getjTextPane().setFont(new Font("Sansserif", Font.BOLD, 12));
+        subtitlePanelStyle.createPreviewStyle(subtitlePanel);
     }
 
     private void resizeSubtitlePanels(int numberOfPanels) {

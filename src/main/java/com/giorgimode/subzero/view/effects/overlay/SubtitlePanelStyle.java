@@ -64,15 +64,21 @@ public class SubtitlePanelStyle implements PanelStyle {
         subtitlePanel.setOriginalStyledDocument(styledDocument);
     }
 
-    public void createPreviewStyle(SubtitlePanel subtitlePanel, Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
+    public void createPreviewStyle(SubtitlePanel subtitlePanel) {
         StyledDocument styledDocument = new DefaultStyledDocument();
+        int mainHeight = subtitlePanel.getHeight();
+        int mainWidth = subtitlePanel.getWidth();
+        int rootFontSize = (int) (mainWidth / 100.0 + mainHeight / 10.0);
+        int previewFontSize = mainWidth / 100 + mainHeight / 20;
+
+        Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = subtitlePanel.getWordDefinitionEntryMap();
 
         Style previewRootStyle = styledDocument.addStyle("previewRootStyle", null);
-        setStyle(previewRootStyle, 18, false, false, true);
+        setStyle(previewRootStyle, rootFontSize, false, false, true);
         insertText(styledDocument, previewRootStyle, wordDefinitionEntryMap.getKey() + ": ");
 
-        List<String> previewTranslations = createPreview(wordDefinitionEntryMap.getValue());
-        createPreviewBody(styledDocument, previewTranslations);
+        List<String> previewTranslations = createPreviewTranslations(wordDefinitionEntryMap.getValue());
+        createPreviewBody(styledDocument, previewTranslations, previewFontSize);
 
         styledDocument.setParagraphAttributes(0, 1, previewRootStyle, false);
         subtitlePanel.setPreviewStyledDocument(styledDocument);
@@ -103,13 +109,12 @@ public class SubtitlePanelStyle implements PanelStyle {
         return s;
     }
 
-    private void createPreviewBody(StyledDocument styledDocument, List<String> preview) {
+    private void createPreviewBody(StyledDocument styledDocument, List<String> preview, int previewFontSize) {
         Style normalStyle = styledDocument.addStyle("previewStyle", null);
-        setStyle(normalStyle, 15, false, false, false);
+        setStyle(normalStyle, previewFontSize, false, false, false);
 
         Style numberStyle = styledDocument.addStyle("previewStyle", null);
-        setStyle(numberStyle, 15, false, false, true);
-        StyleConstants.setForeground(numberStyle, Color.BLUE);
+        setStyle(numberStyle, previewFontSize * 6 / 5, false, false, true);
 
         if (preview.isEmpty()) {
             return;
@@ -133,7 +138,7 @@ public class SubtitlePanelStyle implements PanelStyle {
         return result;
     }
 
-    private List<String> createPreview(Map<String, List<String>> wordDefinitionEntryMap) {
+    private List<String> createPreviewTranslations(Map<String, List<String>> wordDefinitionEntryMap) {
         return wordDefinitionEntryMap.values()
                 .stream()
                 .map(strings -> strings.stream().collect(Collectors.joining(", ")))

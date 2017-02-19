@@ -52,7 +52,7 @@ public class SubtitlePanel extends JScrollPane {
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
                     int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
-                    updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), Color.RED);
+                    updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), Color.BLUE);
                 }
             }
 
