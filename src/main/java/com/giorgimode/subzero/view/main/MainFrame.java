@@ -168,8 +168,6 @@ public final class MainFrame extends BaseFrame {
         });
 
         MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
-        //TODO remove mute for prod
-        mediaPlayer.mute();
         createStandardActions();
 
         enhancedTranslatorService = new EnhancedTranslatorService();
