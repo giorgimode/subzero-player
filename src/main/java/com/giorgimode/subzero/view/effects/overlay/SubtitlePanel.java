@@ -23,12 +23,12 @@ import static com.giorgimode.subzero.Application.application;
 
 public class SubtitlePanel extends JScrollPane {
     private boolean focused = false;
-    private final JTextPane                                    jTextPane;
-    private final Dimension                                    panelDimension;
-    private       int                                          maximumAllowedHeight;
-    private       Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
-    private       StyledDocument                               originalStyledDocument;
-    private       StyledDocument                               previewStyledDocument;
+    private final JTextPane jTextPane;
+    private final Dimension panelDimension;
+    private int maximumAllowedHeight;
+    private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
+    private StyledDocument originalStyledDocument;
+    private StyledDocument previewStyledDocument;
 
     SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         jTextPane = new JTextPane();
@@ -45,21 +45,21 @@ public class SubtitlePanel extends JScrollPane {
                 jTextPane.setStyledDocument(SubtitlePanel.this.getOriginalStyledDocument());
 
                 int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
-                updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), null, true);
+                updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), Color.BLACK);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
                     int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
-                    updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), null, true);
+                    updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), Color.RED);
                 }
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!isFocused()) {
-                    SubtitlePanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.white, false);
+                    SubtitlePanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
                 }
             }
         });
@@ -68,7 +68,7 @@ public class SubtitlePanel extends JScrollPane {
             public void focusLost(FocusEvent e) {
                 setFocused(false);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), jTextPane.getForeground(), false);
+                updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
                 applyPreview();
             }
         });
@@ -82,29 +82,25 @@ public class SubtitlePanel extends JScrollPane {
 
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-        setOpaque(false);
+        setOpaque(true);
         getViewport().setOpaque(false);
-        setBackground(Color.white);
         applyPreview();
     }
 
     private void applyPreview() {
-        jTextPane.setForeground(Color.white);
         if (previewStyledDocument != null) {
             jTextPane.setStyledDocument(previewStyledDocument);
         }
         jTextPane.setEditable(false);
-        jTextPane.setOpaque(false);
         DefaultCaret caret = (DefaultCaret) jTextPane.getCaret();
         caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
         jTextPane.setCaretPosition(0);
     }
 
-    private void updateOnEvent(int width, int height, Color foregroundColor, boolean isOpaque) {
+    private void updateOnEvent(int width, int height, Color color) {
         setSize(width, height);
         jTextPane.setSize(width, height);
-        setOpaque(isOpaque);
-        jTextPane.setForeground(foregroundColor);
+        jTextPane.setForeground(color);
     }
 
     @Override
@@ -114,8 +110,6 @@ public class SubtitlePanel extends JScrollPane {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-        g2.setPaint(new Color(255, 255, 255, 64));
-        g2.fillRect(0, 0, getWidth(), getHeight());
     }
 
 
