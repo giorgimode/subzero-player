@@ -1,16 +1,17 @@
 package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.subzero.Application;
+import com.giorgimode.subzero.event.MuteEvent;
+import com.giorgimode.subzero.event.PausedEvent;
+import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.ShowEffectsEvent;
-import com.giorgimode.subzero.view.CustomSliderUI;
+import com.giorgimode.subzero.event.StoppedEvent;
 import com.giorgimode.subzero.view.BasePanel;
+import com.giorgimode.subzero.view.CustomSliderUI;
+import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.google.common.eventbus.Subscribe;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.binding.LibVlcConst;
-import com.giorgimode.subzero.event.PausedEvent;
-import com.giorgimode.subzero.event.PlayingEvent;
-import com.giorgimode.subzero.event.StoppedEvent;
-import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.BorderFactory;
@@ -107,14 +108,7 @@ final class ControlsPane extends BasePanel {
 
         // FIXME really these should share common actions
 
-        muteButton.addActionListener(e -> {
-            if (mediaPlayer.isMute()) {
-                muteButton.setIcon(volumeHighIcon);
-            } else {
-                muteButton.setIcon(volumeMutedIcon);
-            }
-            mediaPlayer.mute();
-        });
+        muteButton.addActionListener(e -> Application.application().post(MuteEvent.INSTANCE));
 
         fullscreenButton.addActionListener(e -> mediaPlayer.toggleFullScreen());
 
@@ -129,12 +123,22 @@ final class ControlsPane extends BasePanel {
 
     @Subscribe
     public void onPaused(PausedEvent event) {
-        playPauseButton.setIcon(playIcon); // FIXME best way to do this? should be via the action really?
+        playPauseButton.setIcon(playIcon);
     }
 
     @Subscribe
     public void onStopped(StoppedEvent event) {
         playPauseButton.setIcon(playIcon); // FIXME best way to do this? should be via the action really?
+    }
+
+    @Subscribe
+    public void onMuted(MuteEvent event) {
+        if (mediaPlayer.isMute()) {
+            muteButton.setIcon(volumeHighIcon);
+        } else {
+            muteButton.setIcon(volumeMutedIcon);
+        }
+        mediaPlayer.mute();
     }
 
     private class BigButton extends JButton {
