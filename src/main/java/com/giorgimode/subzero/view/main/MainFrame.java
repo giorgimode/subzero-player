@@ -2,47 +2,31 @@ package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
-import com.giorgimode.subzero.event.AfterExitFullScreenEvent;
-import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
-import com.giorgimode.subzero.event.PausedEvent;
-import com.giorgimode.subzero.event.PlayingEvent;
-import com.giorgimode.subzero.event.ShowDebugEvent;
-import com.giorgimode.subzero.event.ShowEffectsEvent;
-import com.giorgimode.subzero.event.ShowMessagesEvent;
-import com.giorgimode.subzero.event.SnapshotImageEvent;
-import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.giorgimode.subzero.service.EnhancedTranslatorService;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.giorgimode.subzero.view.MouseMovementDetector;
+import com.giorgimode.subzero.view.action.ActionFactory;
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.StandardAction;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.giorgimode.subzero.view.effects.overlay.Overlay;
-import com.giorgimode.subzero.view.snapshot.SnapshotView;
-import com.google.common.eventbus.Subscribe;
+import lombok.Getter;
+import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Action;
-import javax.swing.ActionMap;
-import javax.swing.ButtonGroup;
-import javax.swing.InputMap;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-import javax.swing.KeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
@@ -52,42 +36,42 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.prefs.Preferences;
 
 @SuppressWarnings("serial")
 public final class MainFrame extends BaseFrame {
 
-    private static final String ACTION_EXIT_FULLSCREEN = "exit-fullscreen";
-
-    private static final KeyStroke KEYSTROKE_ESCAPE = KeyStroke.getKeyStroke("ESCAPE");
-
-    private static final KeyStroke KEYSTROKE_TOGGLE_FULLSCREEN = KeyStroke.getKeyStroke("F11");
+    public static final String ACTION_EXIT_FULLSCREEN = "exit-fullscreen";
 
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
-
+    private final ActionFactory actionFactory;
+    @Setter
     private Action mediaOpenAction;
+    @Setter
     private Action mediaQuitAction;
-
+    @Setter
+    @Getter
     private StandardAction videoFullscreenAction;
+    @Setter
     private StandardAction videoAlwaysOnTopAction;
-
-    private EnhancedTranslatorService enhancedTranslatorService;
-
+    @Getter
+    private EnhancedTranslatorService translatorService;
+    @Setter
     private Action subtitleAddSubtitleFileAction;
-
+    @Setter
     private Action toolsEffectsAction;
+    @Setter
     private Action toolsMessagesAction;
+    @Setter
     private Action toolsDebugAction;
-
+    @Setter
     private StandardAction viewStatusBarAction;
-
+    @Setter
     private Action helpAboutAction;
-
-    private final PlayerMenuBar menuBar;
+    @Getter
+    private final PlayerMenuBar playerMenuBar;
 
     private final JMenu mediaMenu;
     private final JMenu mediaRecentMenu;
@@ -116,21 +100,21 @@ public final class MainFrame extends BaseFrame {
     private final JMenu viewMenu;
 
     private final JMenu helpMenu;
-
+    @Getter
     private JFileChooser fileChooser;
 
     private final PositionPane positionPane;
 
     private final ControlsPane controlsPane;
-
+    @Getter
     private StatusBar statusBar;
 
     private final VideoContentPane videoContentPane;
-
+    @Getter
     private JPanel bottomPane;
 
     private final MouseMovementDetector mouseMovementDetector;
-
+    @Getter
     private final Overlay overlay;
 
     private final EmbeddedMediaPlayer mediaPlayer;
@@ -140,6 +124,8 @@ public final class MainFrame extends BaseFrame {
 
         this.mediaPlayerComponent = Application.application().mediaPlayerComponent();
         mediaPlayer = mediaPlayerComponent.getMediaPlayer();
+        actionFactory = new ActionFactory(this);
+        new MainEventHandler(this);
         mediaPlayerComponent.getVideoSurface().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -153,7 +139,7 @@ public final class MainFrame extends BaseFrame {
             @Override
             public void mouseMoved(MouseEvent e) {
                 if (mediaPlayer.isFullScreen() && mediaPlayer.isPlaying()) {
-                    menuBar.setVisible(e.getYOnScreen() < mediaPlayerComponent.getVideoSurface().getHeight() * 0.1);
+                    playerMenuBar.setVisible(e.getYOnScreen() < mediaPlayerComponent.getVideoSurface().getHeight() * 0.1);
                     bottomPane.setVisible(e.getYOnScreen() > mediaPlayerComponent.getVideoSurface().getHeight() * 0.85);
                 }
             }
@@ -162,17 +148,17 @@ public final class MainFrame extends BaseFrame {
         mediaPlayerComponent.getVideoSurface().addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                menuBar.processKeyEvent(e, mediaPlayer.isFullScreen());
-                menuBar.setVisible(!mediaPlayer.isFullScreen());
+                playerMenuBar.processKeyEvent(e, mediaPlayer.isFullScreen());
+                playerMenuBar.setVisible(!mediaPlayer.isFullScreen());
             }
         });
 
         MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
         createStandardActions();
 
-        enhancedTranslatorService = new EnhancedTranslatorService();
+        translatorService = new EnhancedTranslatorService();
 
-        menuBar = new PlayerMenuBar();
+        playerMenuBar = new PlayerMenuBar();
 
         mediaMenu = new JMenu(resourceName("menu.media"));
         mediaMenu.setMnemonic(resourceMnemonic("menu.media"));
@@ -181,7 +167,7 @@ public final class MainFrame extends BaseFrame {
         mediaMenu.add(mediaRecentMenu);
         mediaMenu.add(new JSeparator());
         mediaMenu.add(new JMenuItem(mediaQuitAction));
-        menuBar.add(mediaMenu);
+        playerMenuBar.add(mediaMenu);
 
         playbackMenu = new JMenu(resourceName("menu.playback"));
         playbackMenu.setMnemonic(resourceMnemonic("menu.playback"));
@@ -219,7 +205,7 @@ public final class MainFrame extends BaseFrame {
                 }
             });
         }
-        menuBar.add(playbackMenu);
+        playerMenuBar.add(playbackMenu);
 
         audioMenu = new JMenu(resourceName("menu.audio"));
         audioMenu.setMnemonic(resourceMnemonic("menu.audio"));
@@ -239,7 +225,7 @@ public final class MainFrame extends BaseFrame {
         for (Action action : mediaPlayerActions.audioControlActions()) {
             audioMenu.add(new JMenuItem(action));
         }
-        menuBar.add(audioMenu);
+        playerMenuBar.add(audioMenu);
 
         videoMenu = new JMenu(resourceName("menu.video"));
         videoMenu.setMnemonic(resourceMnemonic("menu.video"));
@@ -253,20 +239,20 @@ public final class MainFrame extends BaseFrame {
         videoMenu.add(new JSeparator());
         videoZoomMenu = new JMenu(resourceName("menu.video.item.zoom"));
         videoZoomMenu.setMnemonic(resourceMnemonic("menu.video.item.zoom"));
-        addActions(mediaPlayerActions
+        actionFactory.addActions(mediaPlayerActions
                 .videoZoomActions(), videoZoomMenu/*, true*/); // FIXME how to handle zoom 1:1 and fit to window - also, probably should not use addActions to select
         videoMenu.add(videoZoomMenu);
         videoAspectRatioMenu = new JMenu(resourceName("menu.video.item.aspectRatio"));
         videoAspectRatioMenu.setMnemonic(resourceMnemonic("menu.video.item.aspectRatio"));
-        addActions(mediaPlayerActions.videoAspectRatioActions(), videoAspectRatioMenu, true);
+        actionFactory.addActions(mediaPlayerActions.videoAspectRatioActions(), videoAspectRatioMenu, true);
         videoMenu.add(videoAspectRatioMenu);
         videoCropMenu = new JMenu(resourceName("menu.video.item.crop"));
         videoCropMenu.setMnemonic(resourceMnemonic("menu.video.item.crop"));
-        addActions(mediaPlayerActions.videoCropActions(), videoCropMenu, true);
+        actionFactory.addActions(mediaPlayerActions.videoCropActions(), videoCropMenu, true);
         videoMenu.add(videoCropMenu);
         videoMenu.add(new JSeparator());
         videoMenu.add(new JMenuItem(mediaPlayerActions.videoSnapshotAction()));
-        menuBar.add(videoMenu);
+        playerMenuBar.add(videoMenu);
 
         subtitleMenu = new JMenu(resourceName("menu.subtitle"));
         subtitleMenu.setMnemonic(resourceMnemonic("menu.subtitle"));
@@ -275,7 +261,7 @@ public final class MainFrame extends BaseFrame {
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
 
         subtitleMenu.add(subtitleTrackMenu);
-        menuBar.add(subtitleMenu);
+        playerMenuBar.add(subtitleMenu);
 
         toolsMenu = new JMenu(resourceName("menu.tools"));
         toolsMenu.setMnemonic(resourceMnemonic("menu.tools"));
@@ -283,19 +269,19 @@ public final class MainFrame extends BaseFrame {
         toolsMenu.add(new JMenuItem(toolsMessagesAction));
         toolsMenu.add(new JSeparator());
         toolsMenu.add(new JMenuItem(toolsDebugAction));
-        menuBar.add(toolsMenu);
+        playerMenuBar.add(toolsMenu);
 
         viewMenu = new JMenu(resourceName("menu.view"));
         viewMenu.setMnemonic(resourceMnemonic("menu.view"));
         viewMenu.add(new JCheckBoxMenuItem(viewStatusBarAction));
-        menuBar.add(viewMenu);
+        playerMenuBar.add(viewMenu);
 
         helpMenu = new JMenu(resourceName("menu.help"));
         helpMenu.setMnemonic(resourceMnemonic("menu.help"));
         helpMenu.add(new JMenuItem(helpAboutAction));
-        menuBar.add(helpMenu);
+        playerMenuBar.add(helpMenu);
 
-        setJMenuBar(menuBar);
+        setJMenuBar(playerMenuBar);
 
         videoContentPane = new VideoContentPane();
 
@@ -348,14 +334,6 @@ public final class MainFrame extends BaseFrame {
             }
         });
 
-        getActionMap().put(ACTION_EXIT_FULLSCREEN, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mediaPlayer.toggleFullScreen();
-                videoFullscreenAction.select(false);
-            }
-        });
-
         overlay = new Overlay(this, new HashMap<>());
         mediaPlayer.setOverlay(overlay);
         mediaPlayer.enableOverlay(false);
@@ -375,104 +353,18 @@ public final class MainFrame extends BaseFrame {
     }
 
     private void createStandardActions() {
-        mediaOpenAction = createStandardAction("menu.media.item.openFile", (actionEvent) -> {
-            if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
-                File file = fileChooser.getSelectedFile();
-                String mrl = file.getAbsolutePath();
-                Application.application().addRecentMedia(mrl);
-                mediaPlayer.playMedia(mrl);
-            }
-        });
-
-        mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) -> {
-            if (overlay != null) {
-                overlay.dispose();
-            }
-            dispose();
-            System.exit(0);
-        });
-
-        videoFullscreenAction = createStandardAction("menu.video.item.fullscreen",
-                (actionEvent) -> mediaPlayer.toggleFullScreen());
-
-
-        videoAlwaysOnTopAction = createStandardAction("menu.video.item.alwaysOnTop", (actionEvent) -> {
-            boolean onTop;
-            Object source = actionEvent.getSource();
-            if (source instanceof JCheckBoxMenuItem) {
-                JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
-                onTop = menuItem.isSelected();
-            } else {
-                throw new IllegalStateException("Don't know about source " + source);
-            }
-            setAlwaysOnTop(onTop);
-        });
-
-        subtitleAddSubtitleFileAction = createStandardAction("menu.subtitle.item.addSubtitleFile", (actionEvent) -> {
-            if (JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(MainFrame.this)) {
-                File file = fileChooser.getSelectedFile();
-                mediaPlayer.setSubTitleFile(file);
-                enhancedTranslatorService.add(file);
-                Application.application().post(SubtitleAddedEvent.INSTANCE);
-            }
-        });
-
-        toolsEffectsAction = createStandardAction("menu.tools.item.effects",
-                (actionEvent) -> Application.application().post(ShowEffectsEvent.INSTANCE));
-
-        toolsMessagesAction = createStandardAction("menu.tools.item.messages",
-                (actionEvent) -> Application.application().post(ShowMessagesEvent.INSTANCE));
-
-        toolsDebugAction = createStandardAction("menu.tools.item.debug",
-                (actionEvent) -> Application.application().post(ShowDebugEvent.INSTANCE));
-
-        viewStatusBarAction = createStandardAction("menu.view.item.statusBar",
-                (actionEvent) -> {
-                    boolean visible;
-                    Object source = actionEvent.getSource();
-                    if (source instanceof JCheckBoxMenuItem) {
-                        JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) source;
-                        visible = menuItem.isSelected();
-                    } else {
-                        throw new IllegalStateException("Don't know about source " + source);
-                    }
-                    statusBar.setVisible(visible);
-                    bottomPane.invalidate();
-                    bottomPane.revalidate();
-                    bottomPane.getParent().invalidate();
-                    bottomPane.getParent().revalidate();
-                    MainFrame.this.invalidate();
-                    MainFrame.this.revalidate();
-                });
-
-        helpAboutAction = createStandardAction("menu.help.item.about", (actionEvent) -> {
-            AboutDialog dialog = new AboutDialog(MainFrame.this);
-            dialog.setLocationRelativeTo(MainFrame.this);
-
-            dialog.setVisible(true);
-        });
-    }
-
-    private ButtonGroup addActions(List<Action> actions, JMenu menu, boolean selectFirst) {
-        ButtonGroup buttonGroup = addActions(actions, menu);
-        if (selectFirst) {
-            Enumeration<AbstractButton> en = buttonGroup.getElements();
-            if (en.hasMoreElements()) {
-                StandardAction action = (StandardAction) en.nextElement().getAction();
-                action.select(true);
-            }
-        }
-        return buttonGroup;
-    }
-
-    private ButtonGroup addActions(List<Action> actions, JMenu menu) {
-        ButtonGroup buttonGroup = new ButtonGroup();
-        for (Action action : actions) {
-            JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(action);
-            buttonGroup.add(menuItem);
-            menu.add(menuItem);
-        }
-        return buttonGroup;
+        actionFactory.mediaOpenAction();
+        actionFactory.mediaQuitAction();
+        actionFactory.videoFullscreenAction();
+        actionFactory.videoAlwaysOnTopAction();
+        actionFactory.subtitleAddSubtitleFileAction();
+        actionFactory.subtitleAddSubtitleFileAction();
+        actionFactory.toolsEffectsAction();
+        actionFactory.toolsMessagesAction();
+        actionFactory.toolsDebugAction();
+        actionFactory.viewStatusBarAction();
+        actionFactory.helpAboutAction();
+        actionFactory.exitFullScreenAction();
     }
 
     private void applyPreferences() {
@@ -528,67 +420,5 @@ public final class MainFrame extends BaseFrame {
             }
             prefs.put("recentMedia", recentMedia);
         }
-    }
-
-    @Subscribe
-    public void onBeforeEnterFullScreen(BeforeEnterFullScreenEvent event) {
-        menuBar.setVisible(false);
-        bottomPane.setVisible(false);
-        // As the menu is now hidden, the shortcut will not work, so register a temporary key-binding
-        registerEscapeBinding();
-    }
-
-    @Subscribe
-    public void onAfterExitFullScreen(AfterExitFullScreenEvent event) {
-        deregisterEscapeBinding();
-        menuBar.setVisible(true);
-        bottomPane.setVisible(true);
-    }
-
-    @Subscribe
-    public void onSnapshotImage(SnapshotImageEvent event) {
-        new SnapshotView(event.image());
-    }
-
-    @Subscribe
-    public void onPaused(PausedEvent event) {
-        bottomPane.setVisible(true);
-    }
-
-    @Subscribe
-    public void onPlaying(PlayingEvent event) {
-        if (mediaPlayer.isFullScreen()) {
-            bottomPane.setVisible(false);
-        }
-        mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
-    }
-
-    private void registerEscapeBinding() {
-        getInputMap().put(KEYSTROKE_ESCAPE, ACTION_EXIT_FULLSCREEN);
-        getInputMap().put(KEYSTROKE_TOGGLE_FULLSCREEN, ACTION_EXIT_FULLSCREEN);
-    }
-
-    private void deregisterEscapeBinding() {
-        getInputMap().remove(KEYSTROKE_ESCAPE);
-        getInputMap().remove(KEYSTROKE_TOGGLE_FULLSCREEN);
-    }
-
-    private InputMap getInputMap() {
-        JComponent c = (JComponent) getContentPane();
-        return c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-    }
-
-    private ActionMap getActionMap() {
-        JComponent c = (JComponent) getContentPane();
-        return c.getActionMap();
-    }
-
-    private StandardAction createStandardAction(String title, Consumer<ActionEvent> consumer) {
-        return new StandardAction(Resource.resource(title)) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                consumer.accept(e);
-            }
-        };
     }
 }

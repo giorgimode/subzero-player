@@ -21,16 +21,15 @@ import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.Info;
 import uk.co.caprica.vlcj.version.LibVlcVersion;
 
-final class AboutDialog extends JDialog {
+public final class AboutDialog extends JDialog {
 
-    AboutDialog(Window owner) {
+    public AboutDialog(Window owner) {
         super(owner, Application.resources().getString("dialog.about"), Dialog.ModalityType.DOCUMENT_MODAL);
 
         Properties properties = new Properties();
         try {
             properties.load(getClass().getResourceAsStream("/application.properties"));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to load build.properties", e);
         }
 
