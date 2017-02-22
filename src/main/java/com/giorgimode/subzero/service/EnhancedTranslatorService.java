@@ -20,9 +20,9 @@ import java.util.Map;
 import static com.giorgimode.subzero.Application.application;
 
 public class EnhancedTranslatorService {
-    private       Map<Integer, File>  subtitleMap;
-    private       SubtitleService     subtitleService;
-    private       DictionaryService   dictionaryService;
+    private Map<Integer, File> subtitleMap;
+    private SubtitleService subtitleService;
+    private DictionaryService dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
 
     public EnhancedTranslatorService() {
@@ -39,23 +39,17 @@ public class EnhancedTranslatorService {
 
     @Subscribe
     public void onPaused(PausedEvent event) {
-        Overlay overlay = (Overlay) mediaPlayer.getOverlay();
-        long start = System.currentTimeMillis();
         if (subtitleService != null && dictionaryService != null) {
             String[][] currentWords = subtitleService.getCurrentWords(mediaPlayer.getTime());
             String[] allWords = Arrays.stream(currentWords)
-                                      .filter(sArray -> sArray.length > 0)
-                                      .reduce(ArrayUtils::addAll)
-                                      .orElse(new String[0]);
+                    .filter(sArray -> sArray.length > 0)
+                    .reduce(ArrayUtils::addAll)
+                    .orElse(new String[0]);
 
-            System.out.println("=======================");
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
-            overlay.populateNewWords(definitions);
+//            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(true);
+            ((Overlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
         }
-
-        long timespent = System.currentTimeMillis() - start;
-        System.out.println("TIME FOR GETTING DEFINITIONS:\n" + timespent);
-        mediaPlayer.enableOverlay(true);
     }
 
     public void add(File subtitleFile) {

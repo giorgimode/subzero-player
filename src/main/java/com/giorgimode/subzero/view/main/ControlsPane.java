@@ -6,6 +6,7 @@ import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.ShowEffectsEvent;
 import com.giorgimode.subzero.event.StoppedEvent;
+import com.giorgimode.subzero.event.VolumeEvent;
 import com.giorgimode.subzero.view.BasePanel;
 import com.giorgimode.subzero.view.CustomSliderUI;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
@@ -129,6 +130,11 @@ final class ControlsPane extends BasePanel {
     @Subscribe
     public void onStopped(StoppedEvent event) {
         playPauseButton.setIcon(playIcon); // FIXME best way to do this? should be via the action really?
+    }
+
+    @Subscribe
+    public void onVolumeChanged(VolumeEvent event) {
+        volumeSlider.setValue(mediaPlayer.getVolume());
     }
 
     @Subscribe
