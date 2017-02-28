@@ -2,7 +2,7 @@ package com.giorgimode.subzero.service;
 
 import com.giorgimode.dictionary.api.DictionaryService;
 import com.giorgimode.dictionary.impl.CcDictionaryService;
-import com.giorgimode.dictionary.impl.CcLanguageEnum;
+import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subtitle.api.SubtitleService;
 import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
@@ -47,7 +47,7 @@ public class EnhancedTranslatorService {
                     .orElse(new String[0]);
 
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
-//            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(true);
+            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(true);
             ((Overlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
         }
     }
@@ -62,6 +62,6 @@ public class EnhancedTranslatorService {
     private void loadDictionary() {
         //    dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD);
         String path = "D:\\coding\\workspace\\projects\\Dictionary-parser\\src\\main\\resources\\cc\\";
-        dictionaryService = CcDictionaryService.getInMemoryInstance(CcLanguageEnum.EN_DE, path);
+        dictionaryService = CcDictionaryService.getInMemoryInstance(LanguageEnum.EN_DE, path);
     }
 }

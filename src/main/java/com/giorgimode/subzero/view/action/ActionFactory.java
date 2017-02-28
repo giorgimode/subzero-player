@@ -99,6 +99,17 @@ public class ActionFactory {
         mainFrame.setSubtitleAddSubtitleFileAction(subtitleAddSubtitleFileAction);
     }
 
+    public void subtitleAddSubtitleFileAction2() {
+        StandardAction subtitleAddSubtitleFileAction2 = createStandardAction("menu.subtitle.item.addSubtitleFile2", (actionEvent) -> {
+            if (JFileChooser.APPROVE_OPTION == mainFrame.getFileChooser().showOpenDialog(mainFrame)) {
+                File file = mainFrame.getFileChooser().getSelectedFile();
+//                mediaPlayer.setSubTitleFile(file);
+//                Application.application().post(SubtitleAddedEvent.INSTANCE);
+            }
+        });
+        mainFrame.setSubtitleAddSubtitleFileAction2(subtitleAddSubtitleFileAction2);
+    }
+
     public void toolsEffectsAction() {
         Action toolsEffectsAction = createStandardAction("menu.tools.item.effects",
                 (actionEvent) -> Application.application().post(ShowEffectsEvent.INSTANCE));

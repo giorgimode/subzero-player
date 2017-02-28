@@ -1,5 +1,6 @@
 package com.giorgimode.subzero.view.main;
 
+import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.service.EnhancedTranslatorService;
@@ -61,6 +62,8 @@ public final class MainFrame extends BaseFrame {
     @Setter
     private Action subtitleAddSubtitleFileAction;
     @Setter
+    private Action subtitleAddSubtitleFileAction2;
+    @Setter
     private Action toolsEffectsAction;
     @Setter
     private Action toolsMessagesAction;
@@ -94,6 +97,7 @@ public final class MainFrame extends BaseFrame {
 
     private final JMenu subtitleMenu;
     private final JMenu subtitleTrackMenu;
+    private final JMenu languagePackMenu;
 
     private final JMenu toolsMenu;
 
@@ -257,10 +261,12 @@ public final class MainFrame extends BaseFrame {
         subtitleMenu = new JMenu(resourceName("menu.subtitle"));
         subtitleMenu.setMnemonic(resourceMnemonic("menu.subtitle"));
         subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction));
+        subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction2));
 
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
-
+        languagePackMenu = new LanguagePackMenu().menu();
         subtitleMenu.add(subtitleTrackMenu);
+        subtitleMenu.add(languagePackMenu);
         playerMenuBar.add(subtitleMenu);
 
         toolsMenu = new JMenu(resourceName("menu.tools"));
@@ -358,7 +364,7 @@ public final class MainFrame extends BaseFrame {
         actionFactory.videoFullscreenAction();
         actionFactory.videoAlwaysOnTopAction();
         actionFactory.subtitleAddSubtitleFileAction();
-        actionFactory.subtitleAddSubtitleFileAction();
+        actionFactory.subtitleAddSubtitleFileAction2();
         actionFactory.toolsEffectsAction();
         actionFactory.toolsMessagesAction();
         actionFactory.toolsDebugAction();
@@ -390,6 +396,11 @@ public final class MainFrame extends BaseFrame {
                 Application.application().addRecentMedia(mrl);
             }
         }
+        String languagePack = prefs.get("languagePack", "");
+        if (languagePack != null && !languagePack.isEmpty()) {
+            Application.application().setLanguageEnum(LanguageEnum.valueOf(languagePack));
+        }
+
     }
 
     @Override
@@ -403,6 +414,10 @@ public final class MainFrame extends BaseFrame {
             prefs.putBoolean("alwaysOnTop", isAlwaysOnTop());
             prefs.putBoolean("statusBar", statusBar.isVisible());
             prefs.put("chooserDirectory", fileChooser.getCurrentDirectory().toString());
+            LanguageEnum languageEnum = Application.application().languageEnum();
+            if (languageEnum != null) {
+                prefs.put("languagePack", languageEnum.getValue());
+            }
 
             String recentMedia;
             List<String> mrls = Application.application().recentMedia();
