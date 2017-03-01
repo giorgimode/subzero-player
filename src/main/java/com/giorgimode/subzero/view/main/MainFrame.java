@@ -160,8 +160,6 @@ public final class MainFrame extends BaseFrame {
         MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
         createStandardActions();
 
-        translatorService = new EnhancedTranslatorService();
-
         playerMenuBar = new PlayerMenuBar();
 
         mediaMenu = new JMenu(resourceName("menu.media"));
@@ -345,6 +343,7 @@ public final class MainFrame extends BaseFrame {
         mediaPlayer.enableOverlay(false);
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();
+        translatorService = new EnhancedTranslatorService();
 
 
         setMinimumSize(new Dimension(370, 240));
@@ -398,7 +397,7 @@ public final class MainFrame extends BaseFrame {
         }
         String languagePack = prefs.get("languagePack", "");
         if (languagePack != null && !languagePack.isEmpty()) {
-            Application.application().setLanguageEnum(LanguageEnum.valueOf(languagePack));
+            Application.application().setLanguageEnum(LanguageEnum.fromString(languagePack));
         }
 
     }

@@ -2,17 +2,14 @@ package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.view.OnDemandMenu;
-import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.mediaplayer.LanguagePackAction;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.EnumUtils;
 
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +22,7 @@ import static com.giorgimode.subzero.view.action.Resource.resource;
 final class LanguagePackMenu extends OnDemandMenu {
 
     LanguagePackMenu() {
-        super(resource("menu.subtitle.item.language"));
+        super(resource("menu.subtitle.item.language"), true);
     }
 
     @Override
@@ -34,7 +31,6 @@ final class LanguagePackMenu extends OnDemandMenu {
         LanguageEnum selectedLanguage = onGetSelectedLanguage();
         for (LanguageEnum language : onGetLanguages()) {
             JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(createAction(language));
-//            menuItem.putClientProperty(KEY_TRACK_DESCRIPTION, language);
             buttonGroup.add(menuItem);
             menu.add(menuItem);
             if (selectedLanguage == language) {
@@ -44,12 +40,12 @@ final class LanguagePackMenu extends OnDemandMenu {
     }
 
 
-    protected Action createAction(LanguageEnum lang) {
-        return new LanguagePackAction(lang.getValue(), application().mediaPlayerComponent().getMediaPlayer());
+    private Action createAction(LanguageEnum lang) {
+        return new LanguagePackAction(lang, application().mediaPlayerComponent().getMediaPlayer());
     }
 
-    protected List<LanguageEnum> onGetLanguages() {
-        String parentDir = getAppDir();
+    private List<LanguageEnum> onGetLanguages() {
+        String parentDir = application().parentDir();
 
         File file = new File(parentDir);
         File[] directories = file.listFiles(File::isDirectory);
@@ -63,16 +59,7 @@ final class LanguagePackMenu extends OnDemandMenu {
                 .collect(Collectors.toList());
     }
 
-    private String getAppDir() {
-        String parentDir;
-        try {
-            return new File(".").getCanonicalFile().getParent() + "/lang";
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
-    protected LanguageEnum onGetSelectedLanguage() {
+    private LanguageEnum onGetSelectedLanguage() {
         return application().languageEnum();
     }
 

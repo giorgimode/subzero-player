@@ -1,5 +1,7 @@
 package com.giorgimode.subzero;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -58,7 +60,7 @@ public final class Application {
         mediaPlayerComponent = new EmbeddedMediaPlayerComponent() {
             @Override
             protected String[] onGetMediaPlayerFactoryExtraArgs() {
-                return new String[] {"--no-osd"}; // Disables the display of the snapshot filename (amongst other things)
+                return new String[]{"--no-osd"}; // Disables the display of the snapshot filename (amongst other things)
             }
         };
         mediaPlayerActions = new MediaPlayerActions(mediaPlayerComponent.getMediaPlayer());
@@ -78,14 +80,8 @@ public final class Application {
         // Events are always posted and processed on the Swing Event Dispatch thread
         if (SwingUtilities.isEventDispatchThread()) {
             eventBus.post(event);
-        }
-        else {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    eventBus.post(event);
-                }
-            });
+        } else {
+            SwingUtilities.invokeLater(() -> eventBus.post(event));
         }
     }
 
@@ -121,5 +117,13 @@ public final class Application {
 
     public void setLanguageEnum(LanguageEnum languageEnum) {
         this.languageEnum = languageEnum;
+    }
+
+    public String parentDir() {
+        try {
+            return new File(".").getCanonicalFile().getParent() + "\\lang\\";
+        } catch (IOException e) {
+            return "";
+        }
     }
 }
