@@ -1,5 +1,6 @@
 package com.giorgimode.subzero;
 
+import com.giorgimode.subzero.translator.LanguagePackFrame;
 import com.giorgimode.subzero.view.debug.DebugFrame;
 import com.giorgimode.subzero.view.messages.NativeLogFrame;
 import com.sun.jna.NativeLibrary;
@@ -48,6 +49,9 @@ public class VlcjPlayer {
 
     @SuppressWarnings("unused")
     private final JFrame debugFrame;
+
+    @SuppressWarnings("unused")
+    private final JFrame languagePackFrame;
 
     private final NativeLog nativeLog;
     private static final String NATIVE_LIBRARY_SEARCH_PATH = "./lib";
@@ -113,6 +117,7 @@ public class VlcjPlayer {
         messagesFrame = new NativeLogFrame(nativeLog);
         effectsFrame = new EffectsFrame();
         debugFrame = new DebugFrame();
+        languagePackFrame = new LanguagePackFrame();
     }
 
     private void start() {

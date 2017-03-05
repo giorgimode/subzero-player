@@ -3,7 +3,7 @@ package com.giorgimode.subzero.view.main;
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
-import com.giorgimode.subzero.service.EnhancedTranslatorService;
+import com.giorgimode.subzero.translator.TranslatorService;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.giorgimode.subzero.view.MouseMovementDetector;
 import com.giorgimode.subzero.view.action.ActionFactory;
@@ -58,11 +58,13 @@ public final class MainFrame extends BaseFrame {
     @Setter
     private StandardAction videoAlwaysOnTopAction;
     @Getter
-    private EnhancedTranslatorService translatorService;
+    private TranslatorService translatorService;
     @Setter
     private Action subtitleAddSubtitleFileAction;
     @Setter
     private Action subtitleAddSubtitleFileAction2;
+    @Setter
+    private Action languagePackAction;
     @Setter
     private Action toolsEffectsAction;
     @Setter
@@ -260,6 +262,7 @@ public final class MainFrame extends BaseFrame {
         subtitleMenu.setMnemonic(resourceMnemonic("menu.subtitle"));
         subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction));
         subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction2));
+        subtitleMenu.add(new JMenuItem(languagePackAction));
 
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
         languagePackMenu = new LanguagePackMenu().menu();
@@ -343,7 +346,7 @@ public final class MainFrame extends BaseFrame {
         mediaPlayer.enableOverlay(false);
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();
-        translatorService = new EnhancedTranslatorService();
+        translatorService = new TranslatorService();
 
 
         setMinimumSize(new Dimension(370, 240));
@@ -364,6 +367,7 @@ public final class MainFrame extends BaseFrame {
         actionFactory.videoAlwaysOnTopAction();
         actionFactory.subtitleAddSubtitleFileAction();
         actionFactory.subtitleAddSubtitleFileAction2();
+        actionFactory.languagePacksAction();
         actionFactory.toolsEffectsAction();
         actionFactory.toolsMessagesAction();
         actionFactory.toolsDebugAction();

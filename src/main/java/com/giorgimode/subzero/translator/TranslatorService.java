@@ -1,4 +1,4 @@
-package com.giorgimode.subzero.service;
+package com.giorgimode.subzero.translator;
 
 import com.giorgimode.dictionary.api.DictionaryService;
 import com.giorgimode.dictionary.impl.CcDictionaryService;
@@ -20,13 +20,13 @@ import java.util.Map;
 
 import static com.giorgimode.subzero.Application.application;
 
-public class EnhancedTranslatorService {
+public class TranslatorService {
     private Map<Integer, File> subtitleMap;
     private SubtitleService subtitleService;
     private DictionaryService dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
 
-    public EnhancedTranslatorService() {
+    public TranslatorService() {
         application().subscribe(this);
         mediaPlayer = application().mediaPlayerComponent().getMediaPlayer();
         subtitleMap = new HashMap<>();

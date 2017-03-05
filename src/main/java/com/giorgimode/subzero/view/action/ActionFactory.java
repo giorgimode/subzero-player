@@ -116,6 +116,12 @@ public class ActionFactory {
         mainFrame.setToolsEffectsAction(toolsEffectsAction);
     }
 
+    public void languagePacksAction() {
+        Action languagePacksAction = createStandardAction("menu.subtitle.item.languagepack",
+                (actionEvent) -> Application.application().post(SubtitleAddedEvent.INSTANCE));
+        mainFrame.setLanguagePackAction(languagePacksAction);
+    }
+
     public void toolsMessagesAction() {
         Action toolsMessagesAction = createStandardAction("menu.tools.item.messages",
                 (actionEvent) -> Application.application().post(ShowMessagesEvent.INSTANCE));

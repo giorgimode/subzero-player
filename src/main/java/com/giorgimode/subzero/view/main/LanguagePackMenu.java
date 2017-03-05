@@ -6,7 +6,7 @@ import com.giorgimode.subzero.view.action.mediaplayer.LanguagePackAction;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.swing.Action;
-import javax.swing.ButtonGroup;
+import javax.swing.Box;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
 import java.io.File;
@@ -27,11 +27,13 @@ final class LanguagePackMenu extends OnDemandMenu {
 
     @Override
     protected final void onPrepareMenu(JMenu menu) {
-        ButtonGroup buttonGroup = new ButtonGroup();
+//        ButtonGroup buttonGroup = new ButtonGroup();
         LanguageEnum selectedLanguage = onGetSelectedLanguage();
         for (LanguageEnum language : onGetLanguages()) {
             JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(createAction(language));
-            buttonGroup.add(menuItem);
+//            menu.setLayout(new GridLayout(4, 4));
+//            buttonGroup.add(menuItem);
+            menu.add(Box.createVerticalGlue());
             menu.add(menuItem);
             if (selectedLanguage == language) {
                 menuItem.setSelected(true);
@@ -49,7 +51,7 @@ final class LanguagePackMenu extends OnDemandMenu {
 
         File file = new File(parentDir);
         File[] directories = file.listFiles(File::isDirectory);
-        if (ArrayUtils.isEmpty(directories)) {
+        if (ArrayUtils.isEmpty(directories) || ArrayUtils.isEmpty(directories[0].listFiles())) {
             return new ArrayList<>();
         }
         return Arrays.stream(directories)
