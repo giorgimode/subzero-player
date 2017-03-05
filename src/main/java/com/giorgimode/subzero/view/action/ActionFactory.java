@@ -1,7 +1,7 @@
 package com.giorgimode.subzero.view.action;
 
 import com.giorgimode.subzero.Application;
-import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
+import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.ShowDebugEvent;
 import com.giorgimode.subzero.event.ShowEffectsEvent;
 import com.giorgimode.subzero.event.ShowMessagesEvent;
@@ -119,7 +119,7 @@ public class ActionFactory {
 
     public void languagePacksAction() {
         Action languagePacksAction = createStandardAction("menu.subtitle.item.languagepack",
-                (actionEvent) -> Application.application().post(LanguagePairSwitchEvent.INSTANCE));
+                (actionEvent) -> Application.application().post(LanguagePairMenuEvent.INSTANCE));
         mainFrame.setLanguagePackAction(languagePacksAction);
     }
 

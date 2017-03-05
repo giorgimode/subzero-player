@@ -2,6 +2,7 @@ package com.giorgimode.subzero.translator;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.Application;
+import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.google.common.eventbus.Subscribe;
@@ -28,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -38,6 +38,7 @@ import static com.giorgimode.subzero.Application.application;
 public class LanguagePackFrame extends BaseFrame {
     private ButtonGroup buttonGroup = new ButtonGroup();
     private final JButton downloadButton;
+    private List<LanguageEnum> languageEnums;
 
 
     public LanguagePackFrame() {
@@ -94,7 +95,8 @@ public class LanguagePackFrame extends BaseFrame {
         flagLabel1.setText("-");
 
         languagePanel.setLayout(new BoxLayout(languagePanel, BoxLayout.X_AXIS));
-        if (localLanguages() != null && localLanguages().contains(languageEnum)) {
+        languageEnums = localLanguages();
+        if (languageEnums != null && languageEnums.contains(languageEnum)) {
             languagePanel.add(checkLabel);
         } else {
             languagePanel.add(noCheckLabel);
@@ -115,6 +117,7 @@ public class LanguagePackFrame extends BaseFrame {
                 LanguageEnum currentLanguage = LanguageEnum.fromString(radioButton.getText().toLowerCase());
                 Application.application().setLanguageEnum(currentLanguage);
                 updateDownloadButton(currentLanguage);
+                application().post(LanguagePairSwitchEvent.INSTANCE);
             }
         });
 
@@ -122,7 +125,7 @@ public class LanguagePackFrame extends BaseFrame {
     }
 
     private void updateDownloadButton(LanguageEnum currentLanguage) {
-        if (localLanguages().contains(currentLanguage)) {
+        if (languageEnums.contains(currentLanguage)) {
             downloadButton.setText("Download Again...");
         } else {
             downloadButton.setText("Download...");
@@ -161,7 +164,7 @@ public class LanguagePackFrame extends BaseFrame {
     }
 
     @Subscribe
-    public void onLanguagePairSwitchEvent(LanguagePairSwitchEvent event) {
+    public void onLanguagePairMenuEvent(LanguagePairMenuEvent event) {
         setVisible(true);
     }
 
@@ -170,10 +173,11 @@ public class LanguagePackFrame extends BaseFrame {
 
         File file = new File(parentDir);
         File[] directories = file.listFiles(File::isDirectory);
-        if (ArrayUtils.isEmpty(directories) || ArrayUtils.isEmpty(directories[0].listFiles())) {
+        if (ArrayUtils.isEmpty(directories)) {
             return new ArrayList<>();
         }
         return Arrays.stream(directories)
+                .filter(directory -> ArrayUtils.isNotEmpty(directory.listFiles()))
                 .map(File::getName)
                 .map(LanguageEnum::fromString)
                 .filter(Objects::nonNull)
