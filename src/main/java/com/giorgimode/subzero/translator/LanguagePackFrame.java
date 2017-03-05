@@ -36,28 +36,26 @@ import static com.giorgimode.subzero.Application.application;
 @SuppressWarnings("serial")
 public class LanguagePackFrame extends BaseFrame {
     private ButtonGroup buttonGroup = new ButtonGroup();
-    private final JButton download;
+    private final JButton downloadButton;
 
 
     public LanguagePackFrame() {
         super(Application.resources().getString("dialog.effects"));
 
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-
         JPanel contentPane = new JPanel(null);
+        downloadButton = new JButton();
 
+        JPanel languageRootPanel = new JPanel(new GridBagLayout());
+        createLanguagePanels(languageRootPanel);
 
-        JPanel allPanels = new JPanel(new GridBagLayout());
-        createPanels(allPanels);
-
-        JScrollPane jScrollPane = new JScrollPane(allPanels);
+        JScrollPane jScrollPane = new JScrollPane(languageRootPanel);
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setBounds(10, 10, 200, 300);
 
-        download = new JButton("Download Againx...");
-        download.setLocation(110, 410);
-        download.setSize(170, 50);
-        contentPane.add(download);
+        downloadButton.setLocation(110, 410);
+        downloadButton.setSize(170, 50);
+        contentPane.add(downloadButton);
         contentPane.add(jScrollPane);
 
         add(contentPane);
@@ -65,7 +63,7 @@ public class LanguagePackFrame extends BaseFrame {
         applyPreferences();
     }
 
-    private void createPanels(JPanel contentPane) {
+    private void createLanguagePanels(JPanel contentPane) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.weightx = 1;
@@ -80,59 +78,63 @@ public class LanguagePackFrame extends BaseFrame {
     private JPanel createPanel(LanguageEnum languageEnum) {
         String languagePair = languageEnum.getValue();
         JRadioButton radioButton = new JRadioButton(languagePair.toUpperCase());
-        URL iconResource1 = getClass().getResource("/icons/flags/" + languagePair.split("-")[0] + ".png");
-        URL iconResource2 = getClass().getResource("/icons/flags/" + languagePair.split("-")[1] + ".png");
-        URL iconResource3 = getClass().getResource("/icons/check.png");
-        URL iconResource4 = getClass().getResource("/icons/no-check.png");
+        radioButton.setSelected(false);
 
-        if (iconResource1 == null || iconResource2 == null) {
-            System.out.println("NOT FOUND: " + ((iconResource1 == null) ? languagePair.split("-")[0] :
+        JPanel languagePanel = new JPanel();
+        JLabel checkLabel = createLabel("check");
+        JLabel noCheckLabel = createLabel("no-check");
+        JLabel flagLabel1 = createLabel("flags/" + languagePair.split("-")[0]);
+        JLabel flagLabel2 = createLabel("flags/" + languagePair.split("-")[1]);
+        if (flagLabel1 == null || flagLabel2 == null) {
+            System.out.println("NOT FOUND: " + ((flagLabel1 == null) ? languagePair.split("-")[0] :
                     languagePair.split("-")[1]));
             return null;
         }
-        Icon icon1 = new ImageIcon(iconResource1);
-        Icon icon2 = new ImageIcon(iconResource2);
-        Icon icon3 = new ImageIcon(iconResource3);
-        Icon icon4 = new ImageIcon(iconResource4);
+        flagLabel1.setText("-");
 
-        radioButton.setSelected(false);
-
-        JPanel panel = new JPanel();
-        JLabel label0 = new JLabel(icon3);
-        JLabel label00 = new JLabel(icon4);
-
-        JLabel label = new JLabel(icon1);
-        label.setText("-");
-        JLabel label2 = new JLabel(icon2);
-
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        languagePanel.setLayout(new BoxLayout(languagePanel, BoxLayout.X_AXIS));
         if (localLanguages() != null && localLanguages().contains(languageEnum)) {
-            panel.add(label0);
+            languagePanel.add(checkLabel);
         } else {
-            panel.add(label00);
+            languagePanel.add(noCheckLabel);
         }
 
         if (languageEnum == application().languageEnum()) {
             radioButton.setSelected(true);
+            updateDownloadButton(radioButton);
         }
 
-        panel.add(radioButton);
-        panel.add(label);
-        panel.add(label2);
+        languagePanel.add(radioButton);
+        languagePanel.add(flagLabel1);
+        languagePanel.add(flagLabel2);
         buttonGroup.add(radioButton);
         radioButton.addActionListener(new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (localLanguages().contains(LanguageEnum.fromString(radioButton.getText().toLowerCase()))) {
-                download.setText("Download Again...");
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateDownloadButton(radioButton);
             }
-            else {
-                download.setText("Download...");
-            }
-        }
-    });
+        });
 
-        return panel;
+        return languagePanel;
+    }
+
+    private void updateDownloadButton(JRadioButton radioButton) {
+        LanguageEnum currentLanguage = LanguageEnum.fromString(radioButton.getText().toLowerCase());
+        if (localLanguages().contains(currentLanguage)) {
+            downloadButton.setText("Download Again...");
+        } else {
+            downloadButton.setText("Download...");
+        }
+    }
+
+    private JLabel createLabel(String lang) {
+        URL languageUrl = getClass().getResource("/icons/" + lang + ".png");
+        if (languageUrl == null) {
+            return null;
+        }
+        Icon languageIcon = new ImageIcon(languageUrl);
+
+        return new JLabel(languageIcon);
     }
 
     private void applyPreferences() {
