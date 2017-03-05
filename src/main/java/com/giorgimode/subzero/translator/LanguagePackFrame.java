@@ -2,7 +2,7 @@ package com.giorgimode.subzero.translator;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.Application;
-import com.giorgimode.subzero.event.SubtitleAddedEvent;
+import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang3.ArrayUtils;
@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
@@ -51,10 +52,10 @@ public class LanguagePackFrame extends BaseFrame {
 
         JScrollPane jScrollPane = new JScrollPane(languageRootPanel);
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setBounds(10, 10, 200, 300);
+        jScrollPane.setBounds(50, 10, 200, 300);
 
-        downloadButton.setLocation(110, 410);
-        downloadButton.setSize(170, 50);
+        downloadButton.setLocation(70, 320);
+        downloadButton.setSize(130, 50);
         contentPane.add(downloadButton);
         contentPane.add(jScrollPane);
 
@@ -101,7 +102,7 @@ public class LanguagePackFrame extends BaseFrame {
 
         if (languageEnum == application().languageEnum()) {
             radioButton.setSelected(true);
-            updateDownloadButton(radioButton);
+            updateDownloadButton(languageEnum);
         }
 
         languagePanel.add(radioButton);
@@ -111,15 +112,16 @@ public class LanguagePackFrame extends BaseFrame {
         radioButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                updateDownloadButton(radioButton);
+                LanguageEnum currentLanguage = LanguageEnum.fromString(radioButton.getText().toLowerCase());
+                Application.application().setLanguageEnum(currentLanguage);
+                updateDownloadButton(currentLanguage);
             }
         });
 
         return languagePanel;
     }
 
-    private void updateDownloadButton(JRadioButton radioButton) {
-        LanguageEnum currentLanguage = LanguageEnum.fromString(radioButton.getText().toLowerCase());
+    private void updateDownloadButton(LanguageEnum currentLanguage) {
         if (localLanguages().contains(currentLanguage)) {
             downloadButton.setText("Download Again...");
         } else {
@@ -142,8 +144,8 @@ public class LanguagePackFrame extends BaseFrame {
         setBounds(
                 prefs.getInt("frameX", 300),
                 prefs.getInt("frameY", 300),
-                prefs.getInt("frameWidth", 500),
-                prefs.getInt("frameHeight", 500)
+                prefs.getInt("frameWidth", 320),
+                prefs.getInt("frameHeight", 430)
         );
     }
 
@@ -159,7 +161,7 @@ public class LanguagePackFrame extends BaseFrame {
     }
 
     @Subscribe
-    public void onSubtitleAddedEvent(SubtitleAddedEvent event) {
+    public void onLanguagePairSwitchEvent(LanguagePairSwitchEvent event) {
         setVisible(true);
     }
 

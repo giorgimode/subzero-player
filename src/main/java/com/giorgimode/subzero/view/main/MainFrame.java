@@ -99,8 +99,6 @@ public final class MainFrame extends BaseFrame {
 
     private final JMenu subtitleMenu;
     private final JMenu subtitleTrackMenu;
-    private final JMenu languagePackMenu;
-
     private final JMenu toolsMenu;
 
     private final JMenu viewMenu;
@@ -265,9 +263,7 @@ public final class MainFrame extends BaseFrame {
         subtitleMenu.add(new JMenuItem(languagePackAction));
 
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
-        languagePackMenu = new LanguagePackMenu().menu();
         subtitleMenu.add(subtitleTrackMenu);
-        subtitleMenu.add(languagePackMenu);
         playerMenuBar.add(subtitleMenu);
 
         toolsMenu = new JMenu(resourceName("menu.tools"));

@@ -58,10 +58,14 @@ public class Overlay extends JWindow {
     }
 
     public void populateNewWords(Map<String, Map<String, List<String>>> translatedList) {
-        subtitlePanelList.forEach(this::remove);
+        clean();
         subtitlePanelList = new ArrayList<>();
         translatedList.entrySet().forEach(this::addSubtitlePanel);
         updateOverlay();
+    }
+
+    public void clean() {
+        subtitlePanelList.forEach(this::remove);
     }
 
     private void setDimensions(Window owner) {

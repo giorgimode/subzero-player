@@ -64,12 +64,7 @@ public class VlcjPlayer {
 
         setLookAndFeel();
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new VlcjPlayer().start();
-            }
-        });
+        SwingUtilities.invokeLater(() -> new VlcjPlayer().start());
     }
 
     private static void setLookAndFeel() {

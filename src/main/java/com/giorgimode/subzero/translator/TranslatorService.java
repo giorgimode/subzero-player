@@ -12,6 +12,7 @@ import edu.mit.jwi.data.ILoadPolicy;
 import org.apache.commons.lang3.ArrayUtils;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
+import javax.swing.SwingUtilities;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,10 +61,12 @@ public class TranslatorService {
             return;
         }
         String path = application().parentDir();
-        if (language == LanguageEnum.EN_EN) {
-            dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD, path);
-        } else {
-            dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
-        }
+        SwingUtilities.invokeLater(() -> {
+            if (language == LanguageEnum.EN_EN) {
+                dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD, path);
+            } else {
+                dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
+            }
+        });
     }
 }
