@@ -1,7 +1,6 @@
 package com.giorgimode.subzero.translator;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
-import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.view.BaseFrame;
@@ -20,8 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.net.URL;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.prefs.Preferences;
 import java.util.stream.Collectors;
 
 import static com.giorgimode.subzero.Application.application;
@@ -38,31 +38,68 @@ import static com.giorgimode.subzero.Application.application;
 public class LanguagePackFrame extends BaseFrame {
     private ButtonGroup buttonGroup = new ButtonGroup();
     private final JButton downloadButton;
+    private final JButton saveButton;
+    private final JButton cancelButton;
     private List<LanguageEnum> languageEnums;
-
+    private LanguageEnum selectedLanguage;
 
     public LanguagePackFrame() {
-        super(Application.resources().getString("dialog.effects"));
-
+        super("Choose Language Pair");
+        setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         JPanel contentPane = new JPanel(null);
         downloadButton = new JButton();
+        saveButton = new JButton();
+        cancelButton = new JButton();
+        selectedLanguage = application().languageEnum();
 
-        JPanel languageRootPanel = new JPanel(new GridBagLayout());
-        createLanguagePanels(languageRootPanel);
+        JPanel languageScrollPanel = new JPanel(new GridBagLayout());
+        createLanguagePanels(languageScrollPanel);
 
-        JScrollPane jScrollPane = new JScrollPane(languageRootPanel);
+        JScrollPane jScrollPane = new JScrollPane(languageScrollPanel);
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setBounds(50, 10, 200, 300);
 
-        downloadButton.setLocation(70, 320);
-        downloadButton.setSize(130, 50);
+        createButtons();
+
         contentPane.add(downloadButton);
+        contentPane.add(saveButton);
+        contentPane.add(cancelButton);
         contentPane.add(jScrollPane);
 
         add(contentPane);
+        setBounds(300, 300, 300, 460);
+    }
 
-        applyPreferences();
+    private void createButtons() {
+        saveButton.setLocation(70, 390);
+        saveButton.setSize(90, 30);
+        saveButton.setText("Save");
+        saveButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                application().setLanguageEnum(selectedLanguage);
+                application().post(LanguagePairSwitchEvent.INSTANCE);
+                setVisible(false);
+            }
+        });
+
+        cancelButton.setLocation(175, 390);
+        cancelButton.setSize(90, 30);
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedLanguage = application().languageEnum();
+                setVisible(false);
+            }
+        });
+
+        downloadButton.setLocation(70, 320);
+        downloadButton.setSize(95, 30);
+        downloadButton.setMargin(new Insets(2, 2, 2, 2));
+        Font font = downloadButton.getFont();
+        downloadButton.setFont(new Font(font.getFamily(), font.getStyle(), font.getSize() * 95 / 100));
     }
 
     private void createLanguagePanels(JPanel contentPane) {
@@ -114,10 +151,9 @@ public class LanguagePackFrame extends BaseFrame {
         radioButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LanguageEnum currentLanguage = LanguageEnum.fromString(radioButton.getText().toLowerCase());
-                Application.application().setLanguageEnum(currentLanguage);
-                updateDownloadButton(currentLanguage);
-                application().post(LanguagePairSwitchEvent.INSTANCE);
+                LanguageEnum languageClicked = LanguageEnum.fromString(radioButton.getText().toLowerCase());
+                setSelectedLanguage(languageClicked);
+                updateDownloadButton(languageClicked);
             }
         });
 
@@ -127,8 +163,10 @@ public class LanguagePackFrame extends BaseFrame {
     private void updateDownloadButton(LanguageEnum currentLanguage) {
         if (languageEnums.contains(currentLanguage)) {
             downloadButton.setText("Download Again...");
+            saveButton.setEnabled(true);
         } else {
             downloadButton.setText("Download...");
+            saveButton.setEnabled(false);
         }
     }
 
@@ -142,27 +180,7 @@ public class LanguagePackFrame extends BaseFrame {
         return new JLabel(languageIcon);
     }
 
-    private void applyPreferences() {
-        Preferences prefs = Preferences.userNodeForPackage(LanguagePackFrame.class);
-        setBounds(
-                prefs.getInt("frameX", 300),
-                prefs.getInt("frameY", 300),
-                prefs.getInt("frameWidth", 320),
-                prefs.getInt("frameHeight", 430)
-        );
-    }
-
-    @Override
-    protected void onShutdown() {
-        if (wasShown()) {
-            Preferences prefs = Preferences.userNodeForPackage(LanguagePackFrame.class);
-            prefs.putInt("frameX", getX());
-            prefs.putInt("frameY", getY());
-            prefs.putInt("frameWidth", getWidth());
-            prefs.putInt("frameHeight", getHeight());
-        }
-    }
-
+    @SuppressWarnings("unused")
     @Subscribe
     public void onLanguagePairMenuEvent(LanguagePairMenuEvent event) {
         setVisible(true);
@@ -182,5 +200,9 @@ public class LanguagePackFrame extends BaseFrame {
                 .map(LanguageEnum::fromString)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private void setSelectedLanguage(LanguageEnum selectedLanguage) {
+        this.selectedLanguage = selectedLanguage;
     }
 }

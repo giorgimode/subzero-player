@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
+import static com.giorgimode.subzero.Application.application;
+
 @SuppressWarnings("serial")
 public final class MainFrame extends BaseFrame {
 
@@ -126,7 +128,7 @@ public final class MainFrame extends BaseFrame {
     public MainFrame() {
         super("SubZero player");
 
-        this.mediaPlayerComponent = Application.application().mediaPlayerComponent();
+        this.mediaPlayerComponent = application().mediaPlayerComponent();
         mediaPlayer = mediaPlayerComponent.getMediaPlayer();
         actionFactory = new ActionFactory(this);
         new MainEventHandler(this);
@@ -157,7 +159,7 @@ public final class MainFrame extends BaseFrame {
             }
         });
 
-        MediaPlayerActions mediaPlayerActions = Application.application().mediaPlayerActions();
+        MediaPlayerActions mediaPlayerActions = application().mediaPlayerActions();
         createStandardActions();
 
         playerMenuBar = new PlayerMenuBar();
@@ -392,12 +394,12 @@ public final class MainFrame extends BaseFrame {
             List<String> mrls = Arrays.asList(prefs.get("recentMedia", "").split("\\|"));
             Collections.reverse(mrls);
             for (String mrl : mrls) {
-                Application.application().addRecentMedia(mrl);
+                application().addRecentMedia(mrl);
             }
         }
         String languagePack = prefs.get("languagePack", "");
         if (languagePack != null && !languagePack.isEmpty()) {
-            Application.application().setLanguageEnum(LanguageEnum.fromString(languagePack));
+            application().setLanguageEnum(LanguageEnum.fromString(languagePack));
         }
 
     }
@@ -413,13 +415,13 @@ public final class MainFrame extends BaseFrame {
             prefs.putBoolean("alwaysOnTop", isAlwaysOnTop());
             prefs.putBoolean("statusBar", statusBar.isVisible());
             prefs.put("chooserDirectory", fileChooser.getCurrentDirectory().toString());
-            LanguageEnum languageEnum = Application.application().languageEnum();
+            LanguageEnum languageEnum = application().languageEnum();
             if (languageEnum != null) {
                 prefs.put("languagePack", languageEnum.getValue());
             }
 
             String recentMedia;
-            List<String> mrls = Application.application().recentMedia();
+            List<String> mrls = application().recentMedia();
             if (!mrls.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 for (String mrl : mrls) {
