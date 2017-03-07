@@ -42,10 +42,12 @@ public class LanguagePackFrame extends BaseFrame {
     private final JButton cancelButton;
     private List<LanguageEnum> languageEnums;
     private LanguageEnum selectedLanguage;
+    private int firstPanelPosY = 5;
+    private JLabel[] currentLanguageFlags;
 
     public LanguagePackFrame() {
         super("Choose Language Pair");
-        setResizable(false);
+        setResizable(true);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         JPanel contentPane = new JPanel(null);
         downloadButton = new JButton();
@@ -58,21 +60,38 @@ public class LanguagePackFrame extends BaseFrame {
 
         JScrollPane jScrollPane = new JScrollPane(languageScrollPanel);
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setBounds(50, 10, 200, 300);
+        jScrollPane.setBounds(50, firstPanelPosY + 45, 200, 300);
 
         createButtons();
+        JPanel currentLanguagePanel = currentLanguagePanel();
 
+        contentPane.add(currentLanguagePanel);
         contentPane.add(downloadButton);
         contentPane.add(saveButton);
         contentPane.add(cancelButton);
         contentPane.add(jScrollPane);
 
         add(contentPane);
-        setBounds(300, 300, 300, 460);
+        setBounds(450, 100, 300, 500);
+    }
+
+    private JPanel currentLanguagePanel() {
+        JPanel currentLanguagePanel = new JPanel();
+        currentLanguagePanel.setBounds(50, firstPanelPosY, 170, 30);
+        String languagePair = application().languageEnum().getValue();
+
+        JLabel textLabel = new JLabel("Current Language: ");
+        Font font = textLabel.getFont();
+        textLabel.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize() * 5 / 4));
+        currentLanguagePanel.add(textLabel);
+
+        currentLanguageFlags = addFlagPair(languagePair, currentLanguagePanel);
+
+        return currentLanguagePanel;
     }
 
     private void createButtons() {
-        saveButton.setLocation(70, 390);
+        saveButton.setLocation(55, firstPanelPosY + 415);
         saveButton.setSize(90, 30);
         saveButton.setText("Save");
         saveButton.addActionListener(new AbstractAction() {
@@ -81,10 +100,18 @@ public class LanguagePackFrame extends BaseFrame {
                 application().setLanguageEnum(selectedLanguage);
                 application().post(LanguagePairSwitchEvent.INSTANCE);
                 setVisible(false);
+                String languagePair = selectedLanguage.getValue();
+
+                URL languageUrl = getClass().getResource("/icons/flags/" + languagePair.split("-")[0] + ".png");
+                URL languageUrl2 = getClass().getResource("/icons/flags/" + languagePair.split("-")[1] + ".png");
+                if (languageUrl != null && languageUrl2 != null) {
+                    currentLanguageFlags[0].setIcon(new ImageIcon(languageUrl));
+                    currentLanguageFlags[1].setIcon(new ImageIcon(languageUrl2));
+                }
             }
         });
 
-        cancelButton.setLocation(175, 390);
+        cancelButton.setLocation(160, firstPanelPosY + 415);
         cancelButton.setSize(90, 30);
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new AbstractAction() {
@@ -95,7 +122,7 @@ public class LanguagePackFrame extends BaseFrame {
             }
         });
 
-        downloadButton.setLocation(70, 320);
+        downloadButton.setLocation(70, firstPanelPosY + 355);
         downloadButton.setSize(95, 30);
         downloadButton.setMargin(new Insets(2, 2, 2, 2));
         Font font = downloadButton.getFont();
@@ -122,16 +149,7 @@ public class LanguagePackFrame extends BaseFrame {
         JPanel languagePanel = new JPanel();
         JLabel checkLabel = createLabel("check");
         JLabel noCheckLabel = createLabel("no-check");
-        JLabel flagLabel1 = createLabel("flags/" + languagePair.split("-")[0]);
-        JLabel flagLabel2 = createLabel("flags/" + languagePair.split("-")[1]);
-        if (flagLabel1 == null || flagLabel2 == null) {
-            System.out.println("NOT FOUND: " + ((flagLabel1 == null) ? languagePair.split("-")[0] :
-                    languagePair.split("-")[1]));
-            return null;
-        }
-        flagLabel1.setText("-");
 
-        languagePanel.setLayout(new BoxLayout(languagePanel, BoxLayout.X_AXIS));
         languageEnums = localLanguages();
         if (languageEnums != null && languageEnums.contains(languageEnum)) {
             languagePanel.add(checkLabel);
@@ -144,9 +162,9 @@ public class LanguagePackFrame extends BaseFrame {
             updateDownloadButton(languageEnum);
         }
 
+
         languagePanel.add(radioButton);
-        languagePanel.add(flagLabel1);
-        languagePanel.add(flagLabel2);
+        addFlagPair(languagePair, languagePanel);
         buttonGroup.add(radioButton);
         radioButton.addActionListener(new AbstractAction() {
             @Override
@@ -158,6 +176,19 @@ public class LanguagePackFrame extends BaseFrame {
         });
 
         return languagePanel;
+    }
+
+    private JLabel[] addFlagPair(String languagePair, JPanel panel) {
+        JLabel flagLabel1 = createLabel("flags/" + languagePair.split("-")[0]);
+        JLabel flagLabel2 = createLabel("flags/" + languagePair.split("-")[1]);
+        if (flagLabel1 != null && flagLabel2 != null) {
+            flagLabel1.setText("-");
+
+            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+            panel.add(flagLabel1);
+            panel.add(flagLabel2);
+        }
+        return new JLabel[]{flagLabel1, flagLabel2};
     }
 
     private void updateDownloadButton(LanguageEnum currentLanguage) {
@@ -205,4 +236,6 @@ public class LanguagePackFrame extends BaseFrame {
     private void setSelectedLanguage(LanguageEnum selectedLanguage) {
         this.selectedLanguage = selectedLanguage;
     }
+
+
 }
