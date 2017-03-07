@@ -4,6 +4,7 @@ import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.view.BaseFrame;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -18,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -44,6 +46,7 @@ public class LanguagePackFrame extends BaseFrame {
     private LanguageEnum selectedLanguage;
     private int firstPanelPosY = 5;
     private JLabel[] currentLanguageFlags;
+    private JLabel currentLanguageTextLabel;
 
     public LanguagePackFrame() {
         super("Choose Language Pair");
@@ -72,18 +75,18 @@ public class LanguagePackFrame extends BaseFrame {
         contentPane.add(jScrollPane);
 
         add(contentPane);
-        setBounds(450, 100, 300, 500);
+        setBounds(450, 100, 350, 500);
     }
 
     private JPanel currentLanguagePanel() {
         JPanel currentLanguagePanel = new JPanel();
-        currentLanguagePanel.setBounds(50, firstPanelPosY, 170, 30);
+        currentLanguagePanel.setBounds(25, firstPanelPosY, 300, 30);
         String languagePair = application().languageEnum().getValue();
-
-        JLabel textLabel = new JLabel("Current Language: ");
-        Font font = textLabel.getFont();
-        textLabel.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize() * 5 / 4));
-        currentLanguagePanel.add(textLabel);
+        String fullLanguageNames = mapLanguageNames(languagePair.split("-"));
+        currentLanguageTextLabel = new JLabel("Current Language: " + fullLanguageNames + " ");
+        Font font = currentLanguageTextLabel.getFont();
+        currentLanguageTextLabel.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize() * 5 / 4));
+        currentLanguagePanel.add(currentLanguageTextLabel);
 
         currentLanguageFlags = addFlagPair(languagePair, currentLanguagePanel);
 
@@ -108,6 +111,8 @@ public class LanguagePackFrame extends BaseFrame {
                     currentLanguageFlags[0].setIcon(new ImageIcon(languageUrl));
                     currentLanguageFlags[1].setIcon(new ImageIcon(languageUrl2));
                 }
+                String fullLanguageNames = mapLanguageNames(languagePair.split("-"));
+                currentLanguageTextLabel.setText("Current Language: " + fullLanguageNames + " ");
             }
         });
 
@@ -119,6 +124,7 @@ public class LanguagePackFrame extends BaseFrame {
             public void actionPerformed(ActionEvent e) {
                 selectedLanguage = application().languageEnum();
                 setVisible(false);
+                buttonGroup.clearSelection();
             }
         });
 
@@ -131,19 +137,22 @@ public class LanguagePackFrame extends BaseFrame {
 
     private void createLanguagePanels(JPanel contentPane) {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
-        gbc.weightx = 1;
-        gbc.weighty = 1;
+        gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        gbc.gridheight = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill =  GridBagConstraints.BOTH;
 
         Arrays.stream(LanguageEnum.values())
                 .map(this::createPanel)
                 .filter(Objects::nonNull)
-                .forEach((comp) -> contentPane.add(comp, gbc));
+                .forEach((panel) -> contentPane.add(panel, gbc));
     }
 
     private JPanel createPanel(LanguageEnum languageEnum) {
         String languagePair = languageEnum.getValue();
-        JRadioButton radioButton = new JRadioButton(languagePair.toUpperCase());
+        JRadioButton radioButton = new JRadioButton(mapLanguageNames(languagePair.split("-")));
+        radioButton.setName(languagePair.toLowerCase());
         radioButton.setSelected(false);
 
         JPanel languagePanel = new JPanel();
@@ -169,7 +178,7 @@ public class LanguagePackFrame extends BaseFrame {
         radioButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LanguageEnum languageClicked = LanguageEnum.fromString(radioButton.getText().toLowerCase());
+                LanguageEnum languageClicked = LanguageEnum.fromString(radioButton.getName().toLowerCase());
                 setSelectedLanguage(languageClicked);
                 updateDownloadButton(languageClicked);
             }
@@ -178,14 +187,20 @@ public class LanguagePackFrame extends BaseFrame {
         return languagePanel;
     }
 
+    private String mapLanguageNames(String[] split) {
+        String lang0 = split[0];
+        String lang1 = split[1];
+        return LANGUAGE_MAPPING.get(lang0) + "-" + LANGUAGE_MAPPING.get(lang1);
+    }
+
     private JLabel[] addFlagPair(String languagePair, JPanel panel) {
         JLabel flagLabel1 = createLabel("flags/" + languagePair.split("-")[0]);
         JLabel flagLabel2 = createLabel("flags/" + languagePair.split("-")[1]);
         if (flagLabel1 != null && flagLabel2 != null) {
-            flagLabel1.setText("-");
 
             panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
             panel.add(flagLabel1);
+            panel.add(new JLabel("-"));
             panel.add(flagLabel2);
         }
         return new JLabel[]{flagLabel1, flagLabel2};
@@ -237,5 +252,33 @@ public class LanguagePackFrame extends BaseFrame {
         this.selectedLanguage = selectedLanguage;
     }
 
-
+    private static final ImmutableMap<String, String> LANGUAGE_MAPPING = new ImmutableMap.Builder<String, String>()
+            .put("bg", "Bulgarian")
+            .put("bs", "Bosnian")
+            .put("cs", "Czech")
+            .put("da", "Danish")
+            .put("de", "German")
+            .put("el", "Greek")
+            .put("en", "English")
+            .put("eo", "Esperanto")
+            .put("es", "Spanish")
+            .put("fi", "Finnish")
+            .put("fr", "French")
+            .put("hr", "Croatian")
+            .put("hu", "Hungarian")
+            .put("is", "Icelandic")
+            .put("it", "Italian")
+            .put("la", "Latin")
+            .put("nl", "Dutch")
+            .put("no", "Norwegian")
+            .put("pl", "Polish")
+            .put("pt", "Portuguese")
+            .put("ro", "Romanian")
+            .put("ru", "Russian")
+            .put("sk", "Slovak")
+            .put("sq", "Albanian")
+            .put("sr", "Serbian")
+            .put("sv", "Swedish")
+            .put("tr", "Turkish")
+            .build();
 }
