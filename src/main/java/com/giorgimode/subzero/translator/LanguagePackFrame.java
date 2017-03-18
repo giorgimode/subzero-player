@@ -19,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -50,7 +49,7 @@ public class LanguagePackFrame extends BaseFrame {
 
     public LanguagePackFrame() {
         super("Choose Language Pair");
-        setResizable(true);
+        setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         JPanel contentPane = new JPanel(null);
         downloadButton = new JButton();

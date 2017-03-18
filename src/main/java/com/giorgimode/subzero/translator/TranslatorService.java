@@ -73,6 +73,10 @@ public class TranslatorService {
             return;
         }
         String path = application().parentDir();
+        File languageDataDir = new File(path + language.getValue());
+        if (ArrayUtils.isEmpty(languageDataDir.listFiles())) {
+            return;
+        }
         SwingUtilities.invokeLater(() -> {
             if (language == LanguageEnum.EN_EN) {
                 dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD, path);
