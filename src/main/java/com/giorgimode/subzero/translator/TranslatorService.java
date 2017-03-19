@@ -7,6 +7,7 @@ import com.giorgimode.dictionary.impl.WordnetDictionaryService;
 import com.giorgimode.subtitle.api.SubtitleService;
 import com.giorgimode.subtitle.api.SubtitleUnit;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
+import com.giorgimode.subzero.event.OverlaySwitchEvent;
 import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
@@ -19,7 +20,6 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.SwingUtilities;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -33,30 +33,27 @@ public class TranslatorService {
     private SubtitleService subtitleService2;
     private DictionaryService dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
-    private OverlayType currentOverlayType;
-    private Dimension secondSubPosition;
 
     public TranslatorService() {
         application().subscribe(this);
         mediaPlayer = application().mediaPlayerComponent().getMediaPlayer();
     }
 
-    public enum OverlayType {
-        TRANSLATION, SECOND_SUBTITLE
-    }
-
     @Subscribe
     public void onPaused(PausedEvent event) {
-        populateTranslationOverlay();
-        showSecondSubtitleOverlay();
+        if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
+            mediaPlayer.enableOverlay(true);
+            showTranslationOverlay();
+        } else if (application().selectedOverlayType() == OverlayType.SECOND_SUBTITLE) {
+            showSecondSubtitleOverlay();
+        }
     }
 
-    private void populateTranslationOverlay() {
+    private void showTranslationOverlay() {
         if (subtitleService != null && dictionaryService != null) {
             String[] allWords = getSubtitleWordsAtPauseTime(subtitleService);
 
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
-            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(false);
             ((TranslationOverlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
         }
     }
@@ -116,16 +113,28 @@ public class TranslatorService {
 
     public void addSubtitleFile2(File subtitleFile) {
         subtitleService2 = new SubtitleService(subtitleFile);
+        application().selectedOverlayType(OverlayType.SECOND_SUBTITLE);
+        mediaPlayer.enableOverlay(false);
     }
 
     @Subscribe
     public void onSubtitleAdded(SubtitleAddedEvent subtitleAddedEvent) {
+        if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
+            loadDictionary();
+        }
+    }
+
+    @Subscribe
+    public void onLanguagePairSwitch(LanguagePairSwitchEvent languagePairSwitchEvent) {
+        application().selectedOverlayType(OverlayType.TRANSLATION);
         loadDictionary();
     }
 
     @Subscribe
-    public void onLanguagePairSwitchEvent(LanguagePairSwitchEvent languagePairSwitchEvent) {
-        loadDictionary();
+    public void onOverlaySwitch(OverlaySwitchEvent overlaySwitchEvent) {
+        if (dictionaryService == null) {
+            loadDictionary();
+        }
     }
 
 
@@ -146,13 +155,5 @@ public class TranslatorService {
                 dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
             }
         });
-    }
-
-    public OverlayType getCurrentOverlayType() {
-        return currentOverlayType;
-    }
-
-    public void setCurrentOverlayType(OverlayType currentOverlayType) {
-        this.currentOverlayType = currentOverlayType;
     }
 }

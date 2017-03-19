@@ -100,6 +100,7 @@ public final class MainFrame extends BaseFrame {
 
     private final JMenu subtitleMenu;
     private final JMenu subtitleTrackMenu;
+    private final JMenu overlayMenu;
     private final JMenu toolsMenu;
 
     private final JMenu viewMenu;
@@ -264,7 +265,9 @@ public final class MainFrame extends BaseFrame {
         subtitleMenu.add(new JMenuItem(languagePackAction));
 
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
+        overlayMenu = new OverlayMenu().menu();
         subtitleMenu.add(subtitleTrackMenu);
+        subtitleMenu.add(overlayMenu);
         playerMenuBar.add(subtitleMenu);
 
         toolsMenu = new JMenu(resourceName("menu.tools"));
@@ -340,7 +343,6 @@ public final class MainFrame extends BaseFrame {
 
         translationOverlay = new TranslationOverlay(this, new HashMap<>());
         mediaPlayer.setOverlay(translationOverlay);
-        mediaPlayer.enableOverlay(false);
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();
         translatorService = new TranslatorService();

@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.SwingUtilities;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.subzero.translator.OverlayType;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import com.giorgimode.subzero.event.TickEvent;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
@@ -43,6 +44,8 @@ public final class Application {
 
     private LanguageEnum languageEnum;
 
+    private OverlayType selectedOverlayType;
+
     private static final class ApplicationHolder {
         private static final Application INSTANCE = new Application();
     }
@@ -64,12 +67,7 @@ public final class Application {
             }
         };
         mediaPlayerActions = new MediaPlayerActions(mediaPlayerComponent.getMediaPlayer());
-        tickService.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                eventBus.post(TickEvent.INSTANCE);
-            }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        tickService.scheduleWithFixedDelay(() -> eventBus.post(TickEvent.INSTANCE), 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     public void subscribe(Object subscriber) {
@@ -125,5 +123,14 @@ public final class Application {
         } catch (IOException e) {
             return "";
         }
+    }
+
+
+    public OverlayType selectedOverlayType() {
+        return selectedOverlayType;
+    }
+
+    public void selectedOverlayType(OverlayType selectedOverlayType) {
+        this.selectedOverlayType = selectedOverlayType;
     }
 }
