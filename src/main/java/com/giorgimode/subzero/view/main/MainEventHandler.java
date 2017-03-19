@@ -65,6 +65,7 @@ public class MainEventHandler {
         }
         TranslationOverlay overlay = (TranslationOverlay) mediaPlayer.getOverlay();
         overlay.clean();
+        mediaPlayer.enableMarquee(false);
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
     }
 

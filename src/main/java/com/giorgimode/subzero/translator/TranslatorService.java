@@ -5,6 +5,7 @@ import com.giorgimode.dictionary.impl.CcDictionaryService;
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.dictionary.impl.WordnetDictionaryService;
 import com.giorgimode.subtitle.api.SubtitleService;
+import com.giorgimode.subtitle.api.SubtitleUnit;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
@@ -12,13 +13,18 @@ import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
 import com.google.common.eventbus.Subscribe;
 import edu.mit.jwi.data.ILoadPolicy;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import uk.co.caprica.vlcj.player.Marquee;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.giorgimode.subzero.Application.application;
 
@@ -28,6 +34,7 @@ public class TranslatorService {
     private DictionaryService dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
     private OverlayType currentOverlayType;
+    private Dimension secondSubPosition;
 
     public TranslatorService() {
         application().subscribe(this);
@@ -41,6 +48,7 @@ public class TranslatorService {
     @Subscribe
     public void onPaused(PausedEvent event) {
         populateTranslationOverlay();
+        showSecondSubtitleOverlay();
     }
 
     private void populateTranslationOverlay() {
@@ -48,18 +56,50 @@ public class TranslatorService {
             String[] allWords = getSubtitleWordsAtPauseTime(subtitleService);
 
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
-            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(true);
+            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(false);
             ((TranslationOverlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
         }
     }
 
-    private void populateSecondSubtitleOverlay() {
-        if (subtitleService2 != null ) {
-            String[] allWords = getSubtitleWordsAtPauseTime(subtitleService2);
+    private void showSecondSubtitleOverlay() {
+        if (subtitleService2 != null) {
+            SubtitleUnit subtitleUnit = subtitleService2.get(mediaPlayer.getTime());
+            List<String> subtitleRowList = subtitleUnit.text;
+            int maxSize = subtitleRowList.stream()
+                    .sorted((e1, e2) -> e1.length() > e2.length() ? -1 : 1)
+                    .findFirst().orElseGet(() -> "").length();
 
-            if (!mediaPlayer.overlayEnabled()) mediaPlayer.enableOverlay(true);
-//            ((Overlay) mediaPlayer.getOverlay()).populateNewWords(allWords);
+            String subtitleText = getSubtitleText(subtitleRowList, maxSize);
+
+            int width = (int) mediaPlayer.getVideoDimension().getWidth();
+            int height = (int) mediaPlayer.getVideoDimension().getHeight();
+            int centerX = width / 2;
+            int centerY = height / 2;
+            int x = centerX - maxSize / 2 * 11;
+            int y = centerY + centerY / (subtitleRowList.size() + 1);
+            Marquee marquee = Marquee.marquee()
+                    .text(subtitleText)
+                    .location(x, y)
+                    .opacity(255)
+                    .colour(new Color(255, 221, 148))
+                    .enable();
+            marquee.apply(mediaPlayer);
         }
+    }
+
+    /**
+     * Returns a string without HTML tags, justified in the center and
+     * added on new lines as in original file
+     *
+     * @param subtitleRowList List of lines in the subtitle at current time
+     * @param maxSize         length of biggest String in the list
+     * @return parsed String
+     */
+    private String getSubtitleText(List<String> subtitleRowList, int maxSize) {
+        return subtitleRowList.stream()
+                .map(x -> x.replaceAll("<.*?>", ""))
+                .map(text -> StringUtils.center(text, maxSize))
+                .collect(Collectors.joining("\n"));
     }
 
     private String[] getSubtitleWordsAtPauseTime(SubtitleService subtitleService) {
