@@ -1,7 +1,6 @@
 package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
-import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.translator.TranslatorService;
 import com.giorgimode.subzero.view.BaseFrame;
@@ -10,7 +9,7 @@ import com.giorgimode.subzero.view.action.ActionFactory;
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.StandardAction;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
-import com.giorgimode.subzero.view.effects.overlay.Overlay;
+import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
 import lombok.Getter;
 import lombok.Setter;
 import net.miginfocom.swing.MigLayout;
@@ -62,9 +61,9 @@ public final class MainFrame extends BaseFrame {
     @Getter
     private TranslatorService translatorService;
     @Setter
-    private Action subtitleAddSubtitleFileAction;
+    private Action addSubtitleFileAction;
     @Setter
-    private Action subtitleAddSubtitleFileAction2;
+    private Action addSubtitleFileAction2;
     @Setter
     private Action languagePackAction;
     @Setter
@@ -121,7 +120,7 @@ public final class MainFrame extends BaseFrame {
 
     private final MouseMovementDetector mouseMovementDetector;
     @Getter
-    private final Overlay overlay;
+    private final TranslationOverlay translationOverlay;
 
     private final EmbeddedMediaPlayer mediaPlayer;
 
@@ -260,8 +259,8 @@ public final class MainFrame extends BaseFrame {
 
         subtitleMenu = new JMenu(resourceName("menu.subtitle"));
         subtitleMenu.setMnemonic(resourceMnemonic("menu.subtitle"));
-        subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction));
-        subtitleMenu.add(new JMenuItem(subtitleAddSubtitleFileAction2));
+        subtitleMenu.add(new JMenuItem(addSubtitleFileAction));
+        subtitleMenu.add(new JMenuItem(addSubtitleFileAction2));
         subtitleMenu.add(new JMenuItem(languagePackAction));
 
         subtitleTrackMenu = new SubtitleTrackMenu().menu();
@@ -335,12 +334,12 @@ public final class MainFrame extends BaseFrame {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                overlay.updateOverlay();
+                translationOverlay.updateOverlay();
             }
         });
 
-        overlay = new Overlay(this, new HashMap<>());
-        mediaPlayer.setOverlay(overlay);
+        translationOverlay = new TranslationOverlay(this, new HashMap<>());
+        mediaPlayer.setOverlay(translationOverlay);
         mediaPlayer.enableOverlay(false);
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();

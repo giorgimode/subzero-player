@@ -58,8 +58,8 @@ public class ActionFactory {
 
     public void mediaQuitAction() {
         Action mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) -> {
-            if (mainFrame.getOverlay() != null) {
-                mainFrame.getOverlay().dispose();
+            if (mainFrame.getTranslationOverlay() != null) {
+                mainFrame.getTranslationOverlay().dispose();
             }
             mainFrame.dispose();
             System.exit(0);
@@ -89,26 +89,25 @@ public class ActionFactory {
     }
 
     public void subtitleAddSubtitleFileAction() {
-        StandardAction subtitleAddSubtitleFileAction = createStandardAction("menu.subtitle.item.addSubtitleFile", (actionEvent) -> {
+        StandardAction subtitleAddAction = createStandardAction("menu.subtitle.item.addSubtitleFile", (actionEvent) -> {
             if (JFileChooser.APPROVE_OPTION == mainFrame.getFileChooser().showOpenDialog(mainFrame)) {
                 File file = mainFrame.getFileChooser().getSelectedFile();
                 mediaPlayer.setSubTitleFile(file);
-                mainFrame.getTranslatorService().add(file);
+                mainFrame.getTranslatorService().addSubtitleFile(file);
                 Application.application().post(SubtitleAddedEvent.INSTANCE);
             }
         });
-        mainFrame.setSubtitleAddSubtitleFileAction(subtitleAddSubtitleFileAction);
+        mainFrame.setAddSubtitleFileAction(subtitleAddAction);
     }
 
     public void subtitleAddSubtitleFileAction2() {
-        StandardAction subtitleAddSubtitleFileAction2 = createStandardAction("menu.subtitle.item.addSubtitleFile2", (actionEvent) -> {
+        StandardAction subtitleAddAction2 = createStandardAction("menu.subtitle.item.addSubtitleFile2", (actionEvent) -> {
             if (JFileChooser.APPROVE_OPTION == mainFrame.getFileChooser().showOpenDialog(mainFrame)) {
                 File file = mainFrame.getFileChooser().getSelectedFile();
-//                mediaPlayer.setSubTitleFile(file);
-//                Application.application().post(SubtitleAddedEvent.INSTANCE);
+                mainFrame.getTranslatorService().addSubtitleFile2(file);
             }
         });
-        mainFrame.setSubtitleAddSubtitleFileAction2(subtitleAddSubtitleFileAction2);
+        mainFrame.setAddSubtitleFileAction2(subtitleAddAction2);
     }
 
     public void toolsEffectsAction() {

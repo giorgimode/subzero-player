@@ -5,7 +5,6 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -13,18 +12,18 @@ import java.util.stream.Collectors;
 /**
  * Created by modeg on 1/22/2017.
  */
-public class SubtitlePanelStyle implements PanelStyle {
+public class TranslationPanelStyle implements PanelStyle {
 
     private static final String DEFINITION_STYLE_NAME = "definitionStyle";
     private static final String SYNSET_STYLE_NAME = "synsetStyle";
     private static final String ROOT_STYLE_NAME = "rootStyle";
 
-    public void createOnClickStyle(SubtitlePanel subtitlePanel) {
-        Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = subtitlePanel.getWordDefinitionEntryMap();
+    public void createOnClickStyle(TranslationPanel translationPanel) {
+        Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = translationPanel.getWordDefinitionEntryMap();
         StyledDocument styledDocument = new DefaultStyledDocument();
 
-        int mainHeight = subtitlePanel.getHeight();
-        int mainWidth = subtitlePanel.getWidth();
+        int mainHeight = translationPanel.getHeight();
+        int mainWidth = translationPanel.getWidth();
         int rootFontSize = mainWidth / 100 + mainHeight / 4;
         int definitionFontSize = mainWidth / 100 + mainHeight / 10;
         int synsetFontSize = definitionFontSize * 2 / 3;
@@ -61,17 +60,17 @@ public class SubtitlePanelStyle implements PanelStyle {
         }
 
         styledDocument.setParagraphAttributes(0, 1, rootStyle, false);
-        subtitlePanel.setOriginalStyledDocument(styledDocument);
+        translationPanel.setOriginalStyledDocument(styledDocument);
     }
 
-    public void createPreviewStyle(SubtitlePanel subtitlePanel) {
+    public void createPreviewStyle(TranslationPanel translationPanel) {
         StyledDocument styledDocument = new DefaultStyledDocument();
-        int mainHeight = subtitlePanel.getHeight();
-        int mainWidth = subtitlePanel.getWidth();
+        int mainHeight = translationPanel.getHeight();
+        int mainWidth = translationPanel.getWidth();
         int rootFontSize = (int) (mainWidth / 100.0 + mainHeight / 10.0);
         int previewFontSize = mainWidth / 100 + mainHeight / 20;
 
-        Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = subtitlePanel.getWordDefinitionEntryMap();
+        Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = translationPanel.getWordDefinitionEntryMap();
 
         Style previewRootStyle = styledDocument.addStyle("previewRootStyle", null);
         setStyle(previewRootStyle, rootFontSize, false, false, true);
@@ -81,8 +80,8 @@ public class SubtitlePanelStyle implements PanelStyle {
         createPreviewBody(styledDocument, previewTranslations, previewFontSize);
 
         styledDocument.setParagraphAttributes(0, 1, previewRootStyle, false);
-        subtitlePanel.setPreviewStyledDocument(styledDocument);
-        subtitlePanel.getjTextPane().setStyledDocument(styledDocument);
+        translationPanel.setPreviewStyledDocument(styledDocument);
+        translationPanel.getjTextPane().setStyledDocument(styledDocument);
     }
 
     private void setStyle(Style synsetStyle, int synsetFontSize, boolean isItalic, boolean isUnderLined, boolean isBold) {

@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static com.giorgimode.subzero.Application.application;
 
-public class SubtitlePanel extends JScrollPane {
+public class TranslationPanel extends JScrollPane {
     private boolean focused = false;
     private final JTextPane jTextPane;
     private final Dimension panelDimension;
@@ -30,7 +30,7 @@ public class SubtitlePanel extends JScrollPane {
     private StyledDocument originalStyledDocument;
     private StyledDocument previewStyledDocument;
 
-    SubtitlePanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
+    TranslationPanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         jTextPane = new JTextPane();
         panelDimension = new Dimension();
         getViewport().setView(jTextPane);
@@ -42,16 +42,16 @@ public class SubtitlePanel extends JScrollPane {
             public void mouseClicked(MouseEvent e) {
                 setFocused(true);
                 setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-                jTextPane.setStyledDocument(SubtitlePanel.this.getOriginalStyledDocument());
+                jTextPane.setStyledDocument(TranslationPanel.this.getOriginalStyledDocument());
 
-                int newHeight = (int) SubtitlePanel.this.getPreferredSize().getHeight();
+                int newHeight = (int) TranslationPanel.this.getPreferredSize().getHeight();
                 updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), Color.BLACK);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (!isFocused()) {
-                    int maxSize = (int) Math.max(SubtitlePanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
+                    int maxSize = (int) Math.max(TranslationPanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
                     updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), Color.BLUE);
                 }
             }
@@ -59,7 +59,7 @@ public class SubtitlePanel extends JScrollPane {
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!isFocused()) {
-                    SubtitlePanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
+                    TranslationPanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
                 }
             }
         });

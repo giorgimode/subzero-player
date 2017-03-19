@@ -5,7 +5,7 @@ import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
 import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.SnapshotImageEvent;
-import com.giorgimode.subzero.view.effects.overlay.Overlay;
+import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
 import com.giorgimode.subzero.view.snapshot.SnapshotView;
 import com.google.common.eventbus.Subscribe;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
@@ -63,7 +63,7 @@ public class MainEventHandler {
         if (mediaPlayer.isFullScreen()) {
             mainFrame.getBottomPane().setVisible(false);
         }
-        Overlay overlay = (Overlay) mediaPlayer.getOverlay();
+        TranslationOverlay overlay = (TranslationOverlay) mediaPlayer.getOverlay();
         overlay.clean();
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
     }
