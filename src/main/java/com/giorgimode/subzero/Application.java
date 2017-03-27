@@ -1,5 +1,13 @@
 package com.giorgimode.subzero;
 
+import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.subzero.event.TickEvent;
+import com.giorgimode.subzero.translator.OverlayType;
+import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
+import com.google.common.eventbus.EventBus;
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+
+import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -10,16 +18,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import javax.swing.SwingUtilities;
-
-import com.giorgimode.dictionary.impl.LanguageEnum;
-import com.giorgimode.subzero.translator.OverlayType;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import com.giorgimode.subzero.event.TickEvent;
-import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
-
-import com.google.common.eventbus.EventBus;
 
 /**
  * Global application state.
@@ -118,8 +116,12 @@ public final class Application {
     }
 
     public String parentDir() {
+        return parentDir("lang" + "\\");
+    }
+
+    public String parentDir(String dir) {
         try {
-            return new File(".").getCanonicalFile().getParent() + "\\lang\\";
+            return new File(".").getCanonicalFile().getParent() + "\\" + dir;
         } catch (IOException e) {
             return "";
         }
