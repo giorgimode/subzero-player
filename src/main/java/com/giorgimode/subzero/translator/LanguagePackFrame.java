@@ -3,6 +3,7 @@ package com.giorgimode.subzero.translator;
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
+import com.giorgimode.subzero.util.Utils;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
@@ -232,7 +233,7 @@ public class LanguagePackFrame extends BaseFrame {
     }
 
     private List<LanguageEnum> localLanguages() {
-        String parentDir = application().parentDir();
+        String parentDir = Utils.parentDir();
 
         File file = new File(parentDir);
         File[] directories = file.listFiles(File::isDirectory);

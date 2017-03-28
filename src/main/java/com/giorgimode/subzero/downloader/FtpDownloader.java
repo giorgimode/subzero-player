@@ -10,10 +10,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import static com.giorgimode.subzero.util.Utils.normalizePath;
+
 /**
  * Created by modeg on 3/23/2017.
  */
 public class FtpDownloader {
+
+    public static void downloadDirectory(FTPClient ftpClient, String remoteDir, String saveDir) throws IOException {
+        downloadDirectory(ftpClient, remoteDir, "", saveDir);
+    }
 
     /**
      * Download a whole directory from a FTP server.
@@ -38,24 +44,13 @@ public class FtpDownloader {
         if (subFiles != null && subFiles.length > 0) {
             for (FTPFile aFile : subFiles) {
                 String currentFileName = aFile.getName();
-                if (currentFileName.equals(".") || currentFileName.equals("..")) {
-                    // skip parent directory and the directory itself
+                if (!currentFileName.endsWith(".properties")) {
+                    // download only property files
                     continue;
                 }
-                String filePath;
-                if (currentDir.equals("")) {
-                    filePath = remoteDir + "/" + currentFileName;
-                } else {
-                    filePath = remoteDir + "/" + currentDir + "/"
-                            + currentFileName;
-                }
+                String filePath = remoteDir + normalizePath("/" + currentDir + "/") + currentFileName;
+                String newDirPath = saveDir + normalizePath("/" + currentDir + "/") + currentFileName;
 
-                String newDirPath;
-                if (currentDir.equals("")) {
-                    newDirPath = saveDir + "/" + currentFileName;
-                } else {
-                    newDirPath = saveDir + "/" + currentDir + "/" + currentFileName;
-                }
 
                 if (aFile.isDirectory()) {
                     // create the directory in saveDir
@@ -103,17 +98,23 @@ public class FtpDownloader {
         File downloadFile = new File(savePath);
 
         File parentDir = downloadFile.getParentFile();
+        boolean parentDirExists = true;
         if (!parentDir.exists()) {
-            parentDir.mkdir();
+            parentDirExists = parentDir.mkdirs();
         }
 
-        try (OutputStream outputStream = new BufferedOutputStream(
-                new FileOutputStream(downloadFile))) {
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-            return ftpClient.retrieveFile(remoteFilePath, outputStream);
-        } catch (IOException ex) {
-            System.out.println("Error: " + ex);
-            throw ex;
+        if (parentDirExists) {
+            try (OutputStream outputStream = new BufferedOutputStream(
+                    new FileOutputStream(downloadFile))) {
+                ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+                return ftpClient.retrieveFile(remoteFilePath, outputStream);
+            } catch (IOException ex) {
+                System.out.println("Error: " + ex);
+                throw ex;
+            }
+        } else {
+            System.out.println("Language directory could not be created");
+            return false;
         }
     }
 }

@@ -10,6 +10,7 @@ import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.event.OverlaySwitchEvent;
 import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
+import com.giorgimode.subzero.util.Utils;
 import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
 import com.google.common.eventbus.Subscribe;
 import edu.mit.jwi.data.ILoadPolicy;
@@ -143,7 +144,7 @@ public class TranslatorService {
         if (language == null) {
             return;
         }
-        String path = application().parentDir();
+        String path = Utils.parentDir();
         File languageDataDir = new File(path + language.getValue());
         if (ArrayUtils.isEmpty(languageDataDir.listFiles())) {
             return;

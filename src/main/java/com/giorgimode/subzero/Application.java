@@ -115,19 +115,6 @@ public final class Application {
         this.languageEnum = languageEnum;
     }
 
-    public String parentDir() {
-        return parentDir("lang" + "\\");
-    }
-
-    public String parentDir(String dir) {
-        try {
-            return new File(".").getCanonicalFile().getParent() + "\\" + dir;
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
-
     public OverlayType selectedOverlayType() {
         return selectedOverlayType;
     }
