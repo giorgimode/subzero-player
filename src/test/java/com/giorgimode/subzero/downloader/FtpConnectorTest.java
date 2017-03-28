@@ -2,7 +2,16 @@ package com.giorgimode.subzero.downloader;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockftpserver.fake.FakeFtpServer;
+import org.mockftpserver.fake.UserAccount;
+import org.mockftpserver.fake.filesystem.DirectoryEntry;
+import org.mockftpserver.fake.filesystem.FileEntry;
+import org.mockftpserver.fake.filesystem.FileSystem;
+import org.mockftpserver.fake.filesystem.WindowsFakeFileSystem;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by modeg on 3/28/2017.
@@ -11,13 +20,35 @@ public class FtpConnectorTest {
     private FtpConnector ftpConnector;
 
     @Before
-    public void init(){
+    public void init() {
         ftpConnector = new FtpConnector();
     }
+
+    @BeforeClass
+    public static void initClass() {
+        startMock();
+    }
+
     @Test
     public void downloadLanguagePack() throws Exception {
         ftpConnector.setSaveDirPath("D:/coding/workspace/projects/maste-project/tempftp/output/");
-        ftpConnector.downloadLanguagePack(LanguageEnum.BG_DE);
+        boolean isDownloadSuccessful = ftpConnector.downloadLanguagePack(LanguageEnum.BG_DE);
+        assertTrue(isDownloadSuccessful);
+    }
+
+    private static void startMock() {
+        FakeFtpServer fakeFtpServer = new FakeFtpServer();
+        String homeDir = "D:/langer/bg-de";
+        fakeFtpServer.addUserAccount(new UserAccount("username", "password", homeDir));
+        fakeFtpServer.setServerControlPort(21);
+        FileSystem fileSystem = new WindowsFakeFileSystem();
+        fileSystem.add(new DirectoryEntry(homeDir));
+        fileSystem.add(new FileEntry(homeDir + "/file1.txt", "abcdef 1234567890"));
+        fileSystem.add(new FileEntry(homeDir + "/run.exe"));
+        fileSystem.add(new FileEntry(homeDir + "/test.properties"));
+        fakeFtpServer.setFileSystem(fileSystem);
+        System.out.println();
+        fakeFtpServer.start();
     }
 
 }

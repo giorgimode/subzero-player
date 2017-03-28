@@ -17,8 +17,8 @@ import static com.giorgimode.subzero.util.Utils.normalizePath;
  */
 public class FtpDownloader {
 
-    public static void downloadDirectory(FTPClient ftpClient, String remoteDir, String saveDir) throws IOException {
-        downloadDirectory(ftpClient, remoteDir, "", saveDir);
+    static boolean downloadDirectory(FTPClient ftpClient, String remoteDir, String saveDir) throws IOException {
+        return downloadDirectory(ftpClient, remoteDir, "", saveDir);
     }
 
     /**
@@ -32,8 +32,8 @@ public class FtpDownloader {
      *                   downloaded and saved.
      * @throws IOException if any network or IO error occurred.
      */
-    public static void downloadDirectory(FTPClient ftpClient, String remoteDir,
-                                         String currentDir, String saveDir) throws IOException {
+    public static boolean downloadDirectory(FTPClient ftpClient, String remoteDir,
+                                            String currentDir, String saveDir) throws IOException {
         String dirToList = remoteDir;
         if (!currentDir.equals("")) {
             dirToList += "/" + currentDir;
@@ -63,7 +63,7 @@ public class FtpDownloader {
                     }
 
                     // download the sub directory
-                    downloadDirectory(ftpClient, dirToList, currentFileName,
+                    return downloadDirectory(ftpClient, dirToList, currentFileName,
                             saveDir);
                 } else {
                     // download the file
@@ -71,6 +71,7 @@ public class FtpDownloader {
                             newDirPath);
                     if (isSuccessful) {
                         System.out.println("DOWNLOADED the file: " + filePath);
+                        return true;
                     } else {
                         System.out.println("COULD NOT download the file: " + filePath);
                         File file = new File(newDirPath);
@@ -78,10 +79,12 @@ public class FtpDownloader {
                             boolean isDeleted = file.delete();
                             System.out.println("Corrupt File Deletion " + (isDeleted ? "was successful" : "failed"));
                         }
+                        return false;
                     }
                 }
             }
         }
+        return false;
     }
 
     /**

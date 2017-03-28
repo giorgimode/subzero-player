@@ -60,10 +60,10 @@ public class FtpConnector {
         return false;
     }
 
-    public void downloadLanguagePack(LanguageEnum languageEnum) {
+    public boolean downloadLanguagePack(LanguageEnum languageEnum) {
         if (!isLoaded) {
             System.out.println("Files are not downloaded. FTP properties were not properly configured");
-            return;
+            return false;
         }
         try {
             // connect and login to the server
@@ -78,15 +78,17 @@ public class FtpConnector {
             String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue();
             saveDirPath += languageEnum.getValue();
 
-            FtpDownloader.downloadDirectory(ftpClient, remoteDirPath, saveDirPath);
+            boolean outcome = FtpDownloader.downloadDirectory(ftpClient, remoteDirPath, saveDirPath);
 
             // log out and disconnect from the server
             ftpClient.logout();
             ftpClient.disconnect();
 
             System.out.println("Disconnected");
+            return outcome;
         } catch (IOException ex) {
             ex.printStackTrace();
+            return false;
         }
     }
 }
