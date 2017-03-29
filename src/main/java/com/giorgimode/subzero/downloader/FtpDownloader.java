@@ -3,6 +3,8 @@ package com.giorgimode.subzero.downloader;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -16,6 +18,7 @@ import static com.giorgimode.subzero.util.Utils.normalizePath;
  * Created by modeg on 3/23/2017.
  */
 public class FtpDownloader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FtpDownloader.class);
 
     static boolean downloadDirectory(FTPClient ftpClient, String remoteDir, String saveDir) throws IOException {
         return downloadDirectory(ftpClient, remoteDir, "", saveDir);
@@ -57,9 +60,9 @@ public class FtpDownloader {
                     File newDir = new File(newDirPath);
                     boolean created = newDir.mkdirs();
                     if (created) {
-                        System.out.println("CREATED the directory: " + newDirPath);
+                        LOGGER.info("CREATED the directory: {}", newDirPath);
                     } else {
-                        System.out.println("COULD NOT create the directory: " + newDirPath);
+                        LOGGER.info("COULD NOT create the directory: {}", newDirPath);
                     }
 
                     // download the sub directory
@@ -70,14 +73,14 @@ public class FtpDownloader {
                     boolean isSuccessful = downloadSingleFile(ftpClient, filePath,
                             newDirPath);
                     if (isSuccessful) {
-                        System.out.println("DOWNLOADED the file: " + filePath);
+                        LOGGER.info("DOWNLOADED the file: {}", filePath);
                         return true;
                     } else {
-                        System.out.println("COULD NOT download the file: " + filePath);
+                        LOGGER.info("COULD NOT download the file: {}", filePath);
                         File file = new File(newDirPath);
                         if (file.exists() && file.isFile()) {
                             boolean isDeleted = file.delete();
-                            System.out.println("Corrupt File Deletion " + (isDeleted ? "was successful" : "failed"));
+                            LOGGER.info("Corrupt File Deletion {}", isDeleted ? "was successful" : "failed");
                         }
                         return false;
                     }
@@ -112,11 +115,11 @@ public class FtpDownloader {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
                 return ftpClient.retrieveFile(remoteFilePath, outputStream);
             } catch (IOException ex) {
-                System.out.println("Error: " + ex);
+                LOGGER.info("Error: {}", ex);
                 throw ex;
             }
         } else {
-            System.out.println("Language directory could not be created");
+            LOGGER.info("Language directory could not be created");
             return false;
         }
     }

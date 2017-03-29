@@ -1,6 +1,7 @@
 package com.giorgimode.subzero.downloader;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class FtpConnectorTest {
     private FtpConnector ftpConnector;
+    private static FakeFtpServer fakeFtpServer;
 
     @Before
     public void init() {
@@ -25,10 +27,14 @@ public class FtpConnectorTest {
     }
 
     @BeforeClass
-    public static void initClass() {
-        startMock();
+    public static void beforeClass() {
+        fakeFtpServer = new FakeFtpServer();
+        startMock(fakeFtpServer);
     }
-
+    @AfterClass
+    public static void afterClass() {
+        fakeFtpServer.stop();
+    }
     @Test
     public void downloadLanguagePack() throws Exception {
         ftpConnector.setSaveDirPath("D:/coding/workspace/projects/maste-project/tempftp/output/");
@@ -36,8 +42,7 @@ public class FtpConnectorTest {
         assertTrue(isDownloadSuccessful);
     }
 
-    private static void startMock() {
-        FakeFtpServer fakeFtpServer = new FakeFtpServer();
+    private static void startMock(FakeFtpServer fakeFtpServer) {
         String homeDir = "D:/langer/bg-de";
         fakeFtpServer.addUserAccount(new UserAccount("username", "password", homeDir));
         fakeFtpServer.setServerControlPort(21);
@@ -47,7 +52,6 @@ public class FtpConnectorTest {
         fileSystem.add(new FileEntry(homeDir + "/run.exe"));
         fileSystem.add(new FileEntry(homeDir + "/test.properties"));
         fakeFtpServer.setFileSystem(fileSystem);
-        System.out.println();
         fakeFtpServer.start();
     }
 

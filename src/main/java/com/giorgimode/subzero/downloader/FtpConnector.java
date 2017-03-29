@@ -6,6 +6,8 @@ import com.google.common.primitives.Ints;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.net.ftp.FTPClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,6 +20,7 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 @Getter
 @Setter
 public class FtpConnector {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FtpConnector.class);
     private FTPClient ftpClient;
     private String host;
     private int port;
@@ -55,14 +58,13 @@ public class FtpConnector {
             setSaveDirPath(Utils.parentDir());
             return true;
         }
-        //todo proper logger
-        System.out.println("FTP properties were not properly configured. One of the property is missing");
+        LOGGER.info("FTP properties were not properly configured. One of the property is missing");
         return false;
     }
 
     public boolean downloadLanguagePack(LanguageEnum languageEnum) {
         if (!isLoaded) {
-            System.out.println("Files are not downloaded. FTP properties were not properly configured");
+            LOGGER.info("Files are not downloaded. FTP properties were not properly configured");
             return false;
         }
         try {
@@ -73,7 +75,7 @@ public class FtpConnector {
             // use local passive mode to pass firewall
             ftpClient.enterLocalPassiveMode();
 
-            System.out.println("Connected");
+            LOGGER.info("Connected");
 
             String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue();
             saveDirPath += languageEnum.getValue();
@@ -84,7 +86,7 @@ public class FtpConnector {
             ftpClient.logout();
             ftpClient.disconnect();
 
-            System.out.println("Disconnected");
+            LOGGER.info("Disconnected");
             return outcome;
         } catch (IOException ex) {
             ex.printStackTrace();
