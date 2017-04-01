@@ -19,8 +19,8 @@ import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 @Getter
 @Setter
-public class FtpConnector {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FtpConnector.class);
+public class DownloadService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadService.class);
     private FTPClient ftpClient;
     private String host;
     private int port;
@@ -30,9 +30,34 @@ public class FtpConnector {
     private String saveDirPath;
     private boolean isLoaded = false;
 
-    public FtpConnector() {
+    public DownloadService() {
         ftpClient = new FTPClient();
         isLoaded = loadProperties();
+    }
+
+    public boolean downloadLanguagePack(LanguageEnum languageEnum) {
+        if (!isLoaded) {
+            LOGGER.error("Files are not downloaded. FTP properties were not properly configured");
+            return false;
+        }
+        try {
+            if (connectToFTP()) return false;
+
+            String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue() + ".zip";
+            saveDirPath += languageEnum.getValue() + ".zip";
+
+            boolean isDownloaded = FtpDownloader.downloadFile(ftpClient, remoteDirPath, saveDirPath);
+            // log out and disconnect from the server
+            ftpClient.logout();
+            ftpClient.disconnect();
+
+            LOGGER.info("Disconnected");
+            return isDownloaded;
+        } catch (IOException ex) {
+            LOGGER.error("Could not open FTP connection");
+            LOGGER.error("Exception thrown: {}", ex);
+            return false;
+        }
     }
 
     private boolean loadProperties() {
@@ -62,37 +87,18 @@ public class FtpConnector {
         return false;
     }
 
-    public boolean downloadLanguagePack(LanguageEnum languageEnum) {
-        if (!isLoaded) {
-            LOGGER.error("Files are not downloaded. FTP properties were not properly configured");
-            return false;
+    private boolean connectToFTP() throws IOException {
+        // connect and login to the server
+        ftpClient.connect(host, port);
+        if (!ftpClient.login(username, password)) {
+            LOGGER.error("User not authenticated");
+            return true;
         }
-        try {
-            // connect and login to the server
-            ftpClient.connect(host, port);
-            if (!ftpClient.login(username, password)) {
-                LOGGER.error("User not authenticated");
-                return false;
-            }
 
-            // use local passive mode to pass firewall
-            ftpClient.enterLocalPassiveMode();
+        // use local passive mode to pass firewall
+        ftpClient.enterLocalPassiveMode();
 
-            LOGGER.info("Connected");
-
-            String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue() + ".zip";
-            saveDirPath += languageEnum.getValue() + ".zip";
-
-            boolean isDownloaded = FtpDownloader.downloadFile(ftpClient, remoteDirPath, saveDirPath);
-            // log out and disconnect from the server
-            ftpClient.logout();
-            ftpClient.disconnect();
-
-            LOGGER.info("Disconnected");
-            return isDownloaded;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return false;
-        }
+        LOGGER.info("Connected");
+        return false;
     }
 }

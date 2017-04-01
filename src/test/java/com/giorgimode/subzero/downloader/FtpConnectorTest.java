@@ -18,12 +18,12 @@ import static org.junit.Assert.assertTrue;
  * Created by modeg on 3/28/2017.
  */
 public class FtpConnectorTest {
-    private FtpConnector ftpConnector;
+    private DownloadService downloadService;
     private static FakeFtpServer fakeFtpServer;
 
     @Before
     public void init() {
-        ftpConnector = new FtpConnector();
+        downloadService = new DownloadService();
     }
 
     @BeforeClass
@@ -37,8 +37,8 @@ public class FtpConnectorTest {
     }
     @Test
     public void downloadLanguagePack() throws Exception {
-        ftpConnector.setSaveDirPath("D:/coding/workspace/projects/maste-project/tempftp/output/");
-        boolean isDownloadSuccessful = ftpConnector.downloadLanguagePack(LanguageEnum.BG_DE);
+        downloadService.setSaveDirPath("D:/coding/workspace/projects/maste-project/tempftp/output/");
+        boolean isDownloadSuccessful = downloadService.downloadLanguagePack(LanguageEnum.BG_DE);
         assertTrue(isDownloadSuccessful);
     }
 
