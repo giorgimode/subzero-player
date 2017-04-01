@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import uk.co.caprica.vlcj.player.Marquee;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import java.awt.Color;
 import java.io.File;
 import java.util.Arrays;
@@ -41,13 +41,62 @@ public class TranslatorService {
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onPaused(PausedEvent event) {
+        loadInBackground(this::loadOverlay);
+    }
+
+    public void addSubtitleFile(File subtitleFile) {
+        loadInBackground(() -> subtitleService = new SubtitleService(subtitleFile));
+    }
+
+    public void addSubtitleFile2(File subtitleFile) {
+        loadInBackground(() -> subtitleService2 = new SubtitleService(subtitleFile));
+        application().selectedOverlayType(OverlayType.SECOND_SUBTITLE);
+        mediaPlayer.enableOverlay(false);
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onSubtitleAdded(SubtitleAddedEvent subtitleAddedEvent) {
+        if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
+            loadInBackground(this::loadDictionary);
+        }
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onLanguagePairSwitch(LanguagePairSwitchEvent languagePairSwitchEvent) {
+        application().selectedOverlayType(OverlayType.TRANSLATION);
+        loadInBackground(this::loadDictionary);
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onOverlaySwitch(OverlaySwitchEvent overlaySwitchEvent) {
+        if (dictionaryService == null) {
+            loadInBackground(this::loadDictionary);
+        }
+    }
+
+    private void loadOverlay() {
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
             mediaPlayer.enableOverlay(true);
             showTranslationOverlay();
         } else if (application().selectedOverlayType() == OverlayType.SECOND_SUBTITLE) {
             showSecondSubtitleOverlay();
         }
+    }
+
+    private void loadInBackground(VoidFunction function) {
+        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+            @Override
+            protected Void doInBackground() throws Exception {
+                function.run();
+                return null;
+            }
+        };
+        swingWorker.execute();
     }
 
     private void showTranslationOverlay() {
@@ -95,7 +144,7 @@ public class TranslatorService {
      */
     private String getSubtitleText(List<String> subtitleRowList, int maxSize) {
         return subtitleRowList.stream()
-                .map(x -> x.replaceAll("<.*?>", ""))
+                .map(text -> text.replaceAll("<.*?>", ""))
                 .map(text -> StringUtils.center(text, maxSize))
                 .collect(Collectors.joining("\n"));
     }
@@ -106,36 +155,6 @@ public class TranslatorService {
                 .filter(sArray -> sArray.length > 0)
                 .reduce(ArrayUtils::addAll)
                 .orElse(new String[0]);
-    }
-
-    public void addSubtitleFile(File subtitleFile) {
-        subtitleService = new SubtitleService(subtitleFile);
-    }
-
-    public void addSubtitleFile2(File subtitleFile) {
-        subtitleService2 = new SubtitleService(subtitleFile);
-        application().selectedOverlayType(OverlayType.SECOND_SUBTITLE);
-        mediaPlayer.enableOverlay(false);
-    }
-
-    @Subscribe
-    public void onSubtitleAdded(SubtitleAddedEvent subtitleAddedEvent) {
-        if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
-            loadDictionary();
-        }
-    }
-
-    @Subscribe
-    public void onLanguagePairSwitch(LanguagePairSwitchEvent languagePairSwitchEvent) {
-        application().selectedOverlayType(OverlayType.TRANSLATION);
-        loadDictionary();
-    }
-
-    @Subscribe
-    public void onOverlaySwitch(OverlaySwitchEvent overlaySwitchEvent) {
-        if (dictionaryService == null) {
-            loadDictionary();
-        }
     }
 
 
@@ -149,12 +168,10 @@ public class TranslatorService {
         if (ArrayUtils.isEmpty(languageDataDir.listFiles())) {
             return;
         }
-        SwingUtilities.invokeLater(() -> {
-            if (language == LanguageEnum.EN_EN) {
-                dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD, path);
-            } else {
-                dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
-            }
-        });
+        if (language == LanguageEnum.EN_EN) {
+            dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD, path);
+        } else {
+            dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
+        }
     }
 }

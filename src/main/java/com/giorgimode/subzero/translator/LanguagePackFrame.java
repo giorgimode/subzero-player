@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -178,9 +179,11 @@ public class LanguagePackFrame extends BaseFrame {
         radioButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LanguageEnum languageClicked = LanguageEnum.fromString(radioButton.getName().toLowerCase());
-                setSelectedLanguage(languageClicked);
-                updateDownloadButton(languageClicked);
+                SwingUtilities.invokeLater(() -> {
+                    LanguageEnum languageClicked = LanguageEnum.fromString(radioButton.getName().toLowerCase());
+                    setSelectedLanguage(languageClicked);
+                    updateDownloadButton(languageClicked);
+                });
             }
         });
 
