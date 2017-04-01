@@ -29,7 +29,7 @@ public class FtpConnectorTest {
     @BeforeClass
     public static void beforeClass() {
         fakeFtpServer = new FakeFtpServer();
-        startMock(fakeFtpServer);
+//        startMock(fakeFtpServer);
     }
     @AfterClass
     public static void afterClass() {
