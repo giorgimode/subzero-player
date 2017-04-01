@@ -8,8 +8,6 @@ import com.google.common.eventbus.EventBus;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 import javax.swing.SwingUtilities;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;

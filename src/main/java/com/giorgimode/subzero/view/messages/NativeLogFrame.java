@@ -155,13 +155,10 @@ public final class NativeLogFrame extends BaseFrame implements LogEventListener 
 
     @Override
     public void log(final libvlc_log_level_e level, final String module, final String file, final Integer line, final String name, final String header, final Integer id, final String message) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                eventList.add(new NativeLogMessage(module, name, level, message));
-                int lastRow = table.convertRowIndexToView(table.getModel().getRowCount()-1);
-                table.scrollRectToVisible(table.getCellRect(lastRow, 0, true));
-            }
+        SwingUtilities.invokeLater(() -> {
+            eventList.add(new NativeLogMessage(module, name, level, message));
+            int lastRow = table.convertRowIndexToView(table.getModel().getRowCount()-1);
+            table.scrollRectToVisible(table.getCellRect(lastRow, 0, true));
         });
     }
 

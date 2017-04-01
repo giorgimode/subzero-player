@@ -2,7 +2,6 @@ package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.subzero.event.AfterExitFullScreenEvent;
 import com.giorgimode.subzero.event.BeforeEnterFullScreenEvent;
-import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.PlayingEvent;
 import com.giorgimode.subzero.event.SnapshotImageEvent;
 import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
@@ -34,6 +33,7 @@ public class MainEventHandler {
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onBeforeEnterFullScreen(BeforeEnterFullScreenEvent event) {
         mainFrame.getPlayerMenuBar().setVisible(false);
         mainFrame.getBottomPane().setVisible(false);
@@ -42,6 +42,7 @@ public class MainEventHandler {
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onAfterExitFullScreen(AfterExitFullScreenEvent event) {
         deregisterEscapeBinding();
         mainFrame.getPlayerMenuBar().setVisible(true);
@@ -49,16 +50,13 @@ public class MainEventHandler {
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onSnapshotImage(SnapshotImageEvent event) {
         new SnapshotView(event.image());
     }
 
     @Subscribe
-    public void onPaused(PausedEvent event) {
-        mainFrame.getBottomPane().setVisible(true);
-    }
-
-    @Subscribe
+    @SuppressWarnings("unused")
     public void onPlaying(PlayingEvent event) {
         if (mediaPlayer.isFullScreen()) {
             mainFrame.getBottomPane().setVisible(false);

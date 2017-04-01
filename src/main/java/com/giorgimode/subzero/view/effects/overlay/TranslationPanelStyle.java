@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * Created by modeg on 1/22/2017.
  */
-public class TranslationPanelStyle implements PanelStyle {
+class TranslationPanelStyle implements PanelStyle {
 
     private static final String DEFINITION_STYLE_NAME = "definitionStyle";
     private static final String SYNSET_STYLE_NAME = "synsetStyle";

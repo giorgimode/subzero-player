@@ -3,6 +3,7 @@ package com.giorgimode.subzero.view.effects.overlay;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyledDocument;
 import java.awt.Color;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 import static com.giorgimode.subzero.Application.application;
 
-public class TranslationPanel extends JScrollPane {
+class TranslationPanel extends JScrollPane {
     private boolean focused = false;
     private final JTextPane jTextPane;
     private final Dimension panelDimension;
@@ -40,36 +41,44 @@ public class TranslationPanel extends JScrollPane {
         jTextPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                setFocused(true);
-                setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-                jTextPane.setStyledDocument(TranslationPanel.this.getOriginalStyledDocument());
+                SwingUtilities.invokeLater(() -> {
+                    setFocused(true);
+                    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                    jTextPane.setStyledDocument(TranslationPanel.this.getOriginalStyledDocument());
 
-                int newHeight = (int) TranslationPanel.this.getPreferredSize().getHeight();
-                updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), Color.BLACK);
+                    int newHeight = (int) TranslationPanel.this.getPreferredSize().getHeight();
+                    updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), Color.BLACK);
+                });
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (!isFocused()) {
-                    int maxSize = (int) Math.max(TranslationPanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
-                    updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), Color.BLUE);
-                }
+                SwingUtilities.invokeLater(() -> {
+                    if (!isFocused()) {
+                        int maxSize = (int) Math.max(TranslationPanel.this.getPreferredSize().getHeight(), panelDimension.getHeight());
+                        updateOnEvent((int) panelDimension.getWidth(), Math.min(2 * (int) panelDimension.getHeight(), maxSize), Color.BLUE);
+                    }
+                });
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (!isFocused()) {
-                    TranslationPanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
-                }
+                SwingUtilities.invokeLater(() -> {
+                    if (!isFocused()) {
+                        TranslationPanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
+                    }
+                });
             }
         });
         jTextPane.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                setFocused(false);
-                setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
-                applyPreview();
+                SwingUtilities.invokeLater(() -> {
+                    setFocused(false);
+                    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+                    updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
+                    applyPreview();
+                });
             }
         });
 

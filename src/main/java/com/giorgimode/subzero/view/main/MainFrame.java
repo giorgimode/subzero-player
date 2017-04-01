@@ -25,6 +25,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
@@ -337,7 +338,7 @@ public final class MainFrame extends BaseFrame {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
-                translationOverlay.updateOverlay();
+                SwingUtilities.invokeLater(translationOverlay::updateOverlay);
             }
         });
 

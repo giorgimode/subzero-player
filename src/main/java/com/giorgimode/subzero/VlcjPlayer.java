@@ -97,10 +97,6 @@ public class VlcjPlayer {
                 }
                 application().post(ShutdownEvent.INSTANCE);
             }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-            }
         });
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
