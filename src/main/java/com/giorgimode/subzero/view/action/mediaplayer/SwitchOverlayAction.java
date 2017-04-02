@@ -6,6 +6,7 @@ import com.giorgimode.subzero.view.action.Resource;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
+import javax.swing.SwingUtilities;
 import java.awt.event.ActionEvent;
 
 import static com.giorgimode.subzero.Application.application;
@@ -24,9 +25,11 @@ public class SwitchOverlayAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        toggleMediaPlayerOverlay();
-        application().selectedOverlayType(overlayType);
-        application().post(OverlaySwitchEvent.INSTANCE);
+        SwingUtilities.invokeLater(() -> {
+            toggleMediaPlayerOverlay();
+            application().selectedOverlayType(overlayType);
+            application().post(OverlaySwitchEvent.INSTANCE);
+        });
     }
 
     private void toggleMediaPlayerOverlay() {
