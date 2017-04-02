@@ -108,7 +108,7 @@ public class VlcjPlayer {
         messagesFrame = new NativeLogFrame(nativeLog);
         effectsFrame = new EffectsFrame();
         debugFrame = new DebugFrame();
-        languagePackFrame = new LanguagePackFrame();
+        languagePackFrame = new LanguagePackFrame(mainFrame);
     }
 
     private void start() {

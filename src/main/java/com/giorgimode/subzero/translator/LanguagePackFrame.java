@@ -286,6 +286,8 @@ public class LanguagePackFrame extends BaseFrame {
                                 result = "Language pair was download successfully";
                                 title = "Download Successful";
                                 informationMessage = JOptionPane.INFORMATION_MESSAGE;
+                                languageEnums.add(selectedLanguage);
+                                updateDownloadButton(selectedLanguage);
                             } else {
                                 result = "Language pair download failed. Please try again later";
                                 title = "Download Failed";
