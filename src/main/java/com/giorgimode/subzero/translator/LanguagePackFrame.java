@@ -1,6 +1,7 @@
 package com.giorgimode.subzero.translator;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.subzero.downloader.DownloadService;
 import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.util.Utils;
@@ -17,11 +18,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.giorgimode.subzero.Application.application;
@@ -48,9 +52,11 @@ public class LanguagePackFrame extends BaseFrame {
     private int firstPanelPosY = 5;
     private JLabel[] currentLanguageFlags;
     private JLabel currentLanguageTextLabel;
+    private JFrame mainFrame;
 
-    public LanguagePackFrame() {
+    public LanguagePackFrame(JFrame mainFrame) {
         super("Choose Language Pair");
+        this.mainFrame = mainFrame;
         setResizable(false);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         JPanel contentPane = new JPanel(null);
@@ -74,6 +80,7 @@ public class LanguagePackFrame extends BaseFrame {
         contentPane.add(saveButton);
         contentPane.add(cancelButton);
         contentPane.add(jScrollPane);
+        addButtonListener();
 
         add(contentPane);
         setBounds(450, 100, 350, 500);
@@ -142,7 +149,7 @@ public class LanguagePackFrame extends BaseFrame {
         gbc.gridwidth = 1;
         gbc.gridheight = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill =  GridBagConstraints.BOTH;
+        gbc.fill = GridBagConstraints.BOTH;
 
         Arrays.stream(LanguageEnum.values())
                 .map(this::createPanel)
@@ -249,6 +256,48 @@ public class LanguagePackFrame extends BaseFrame {
                 .map(LanguageEnum::fromString)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    private void addButtonListener() {
+        downloadButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("button clicked: " + selectedLanguage.getValue());
+                SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+                        DownloadService downloadService = new DownloadService();
+                        return downloadService.downloadLanguagePack(selectedLanguage);
+                    }
+
+                    @Override
+                    protected void done() {
+                        boolean isSuccessful = false;
+                        try {
+                            isSuccessful = get();
+                        } catch (InterruptedException | ExecutionException e1) {
+                            e1.printStackTrace();
+                        } finally {
+                            String result;
+                            String title;
+                            int informationMessage;
+
+                            if (isSuccessful) {
+                                result = "Language pair was download successfully";
+                                title = "Download Successful";
+                                informationMessage = JOptionPane.INFORMATION_MESSAGE;
+                            } else {
+                                result = "Language pair download failed. Please try again later";
+                                title = "Download Failed";
+                                informationMessage = JOptionPane.ERROR_MESSAGE;
+                            }
+                            JOptionPane.showMessageDialog(mainFrame, result, title, informationMessage);
+                        }
+                    }
+                };
+                swingWorker.execute();
+            }
+        });
     }
 
     private void setSelectedLanguage(LanguageEnum selectedLanguage) {
