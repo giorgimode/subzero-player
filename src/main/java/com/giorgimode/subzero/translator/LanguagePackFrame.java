@@ -34,7 +34,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -51,6 +53,7 @@ public class LanguagePackFrame extends BaseFrame {
     private LanguageEnum selectedLanguage;
     private int firstPanelPosY = 5;
     private JLabel[] currentLanguageFlags;
+    private Map<LanguageEnum, JLabel> currentLanguageCheckLabels;
     private JLabel currentLanguageTextLabel;
     private JFrame mainFrame;
 
@@ -64,7 +67,7 @@ public class LanguagePackFrame extends BaseFrame {
         saveButton = new JButton();
         cancelButton = new JButton();
         selectedLanguage = application().languageEnum();
-
+        currentLanguageCheckLabels = new HashMap<>();
         JPanel languageScrollPanel = new JPanel(new GridBagLayout());
         createLanguagePanels(languageScrollPanel);
 
@@ -164,16 +167,16 @@ public class LanguagePackFrame extends BaseFrame {
         radioButton.setSelected(false);
 
         JPanel languagePanel = new JPanel();
-        JLabel checkLabel = createLabel("check");
-        JLabel noCheckLabel = createLabel("no-check");
+        JLabel checkLabel;
 
         languageEnums = localLanguages();
         if (languageEnums != null && languageEnums.contains(languageEnum)) {
-            languagePanel.add(checkLabel);
+            checkLabel = new JLabel(createIcon("check"));
         } else {
-            languagePanel.add(noCheckLabel);
+            checkLabel = new JLabel(createIcon("no-check"));
         }
-
+        languagePanel.add(checkLabel);
+        currentLanguageCheckLabels.put(languageEnum, checkLabel);
         if (languageEnum == application().languageEnum()) {
             radioButton.setSelected(true);
             updateDownloadButton(languageEnum);
@@ -204,10 +207,11 @@ public class LanguagePackFrame extends BaseFrame {
     }
 
     private JLabel[] addFlagPair(String languagePair, JPanel panel) {
-        JLabel flagLabel1 = createLabel("flags/" + languagePair.split("-")[0]);
-        JLabel flagLabel2 = createLabel("flags/" + languagePair.split("-")[1]);
+        ImageIcon icon = createIcon("flags/" + languagePair.split("-")[0]);
+        ImageIcon icon2 = createIcon("flags/" + languagePair.split("-")[1]);
+        JLabel flagLabel1 = icon != null ? new JLabel(icon) : null;
+        JLabel flagLabel2 = icon2 != null ? new JLabel(icon2) : null;
         if (flagLabel1 != null && flagLabel2 != null) {
-
             panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
             panel.add(flagLabel1);
             panel.add(new JLabel("-"));
@@ -226,14 +230,12 @@ public class LanguagePackFrame extends BaseFrame {
         }
     }
 
-    private JLabel createLabel(String lang) {
+    private ImageIcon createIcon(String lang) {
         URL languageUrl = getClass().getResource("/icons/" + lang + ".png");
         if (languageUrl == null) {
             return null;
         }
-        Icon languageIcon = new ImageIcon(languageUrl);
-
-        return new JLabel(languageIcon);
+        return new ImageIcon(languageUrl);
     }
 
     @SuppressWarnings("unused")
@@ -288,6 +290,11 @@ public class LanguagePackFrame extends BaseFrame {
                                 informationMessage = JOptionPane.INFORMATION_MESSAGE;
                                 languageEnums.add(selectedLanguage);
                                 updateDownloadButton(selectedLanguage);
+
+                                Icon languageIcon = createIcon("check");
+                                if (languageIcon != null) {
+                                    currentLanguageCheckLabels.get(selectedLanguage).setIcon(languageIcon);
+                                }
                             } else {
                                 result = "Language pair download failed. Please try again later";
                                 title = "Download Failed";
