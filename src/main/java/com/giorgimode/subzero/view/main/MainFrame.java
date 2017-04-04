@@ -1,9 +1,7 @@
 package com.giorgimode.subzero.view.main;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
-import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
-import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.giorgimode.subzero.translator.TranslatorService;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.giorgimode.subzero.view.MouseMovementDetector;
@@ -303,9 +301,7 @@ public final class MainFrame extends BaseFrame {
             protected void onMediaDropped(String[] uris) {
                 String uri = uris[0];
                 if (uri.endsWith(".srt")) {
-                    mediaPlayer.setSubTitleFile(uri);
-                    translatorService.addSubtitleFile(new File(uri));
-                    Application.application().post(SubtitleAddedEvent.INSTANCE);
+                    actionFactory.addSubtitle(new File(uri));
                 } else {
                     mediaPlayer.playMedia(uri);
                 }

@@ -42,7 +42,6 @@ public class ActionFactory {
     }
 
     private static EmbeddedMediaPlayer mediaPlayer = application().mediaPlayerComponent().getMediaPlayer();
-    private static EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
 
     public void mediaOpenAction() {
         Action mediaOpenAction = createStandardAction("menu.media.item.openFile", (actionEvent) -> {
@@ -92,12 +91,16 @@ public class ActionFactory {
         StandardAction subtitleAddAction = createStandardAction("menu.subtitle.item.addSubtitleFile", (actionEvent) -> {
             if (JFileChooser.APPROVE_OPTION == mainFrame.getFileChooser().showOpenDialog(mainFrame)) {
                 File file = mainFrame.getFileChooser().getSelectedFile();
-                mediaPlayer.setSubTitleFile(file);
-                mainFrame.getTranslatorService().addSubtitleFile(file);
-                Application.application().post(SubtitleAddedEvent.INSTANCE);
+                addSubtitle(file);
             }
         });
         mainFrame.setAddSubtitleFileAction(subtitleAddAction);
+    }
+
+    public void addSubtitle(File file) {
+        mediaPlayer.setSubTitleFile(file);
+        mainFrame.getTranslatorService().addSubtitleFile(file);
+        Application.application().post(SubtitleAddedEvent.INSTANCE);
     }
 
     public void subtitleAddSubtitleFileAction2() {
