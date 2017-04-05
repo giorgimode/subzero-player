@@ -10,10 +10,12 @@ import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
 import com.giorgimode.subzero.event.OverlaySwitchEvent;
 import com.giorgimode.subzero.event.PausedEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
+import com.giorgimode.subzero.event.SubtitleSwitchEvent;
 import com.giorgimode.subzero.util.Utils;
 import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
 import com.google.common.eventbus.Subscribe;
 import edu.mit.jwi.data.ILoadPolicy;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import uk.co.caprica.vlcj.player.Marquee;
@@ -29,15 +31,18 @@ import java.util.stream.Collectors;
 
 import static com.giorgimode.subzero.Application.application;
 
+@Slf4j
 public class TranslatorService {
     private SubtitleService subtitleService;
     private SubtitleService subtitleService2;
     private DictionaryService dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
+//    private Map<Integer, File> subtitleTracks;
 
     public TranslatorService() {
         application().subscribe(this);
         mediaPlayer = application().mediaPlayerComponent().getMediaPlayer();
+//        subtitleTracks = new HashMap<>();
     }
 
     @Subscribe
@@ -46,7 +51,7 @@ public class TranslatorService {
         loadInBackground(this::loadOverlay);
     }
 
-    public void addSubtitleFile(File subtitleFile) {
+    private void addSubtitleFile(File subtitleFile) {
         loadInBackground(() -> subtitleService = new SubtitleService(subtitleFile));
     }
 
@@ -54,19 +59,45 @@ public class TranslatorService {
         loadInBackground(() -> subtitleService2 = new SubtitleService(subtitleFile));
         application().selectedOverlayType(OverlayType.SECOND_SUBTITLE);
         mediaPlayer.enableOverlay(false);
+        subtitleService = null;
+        dictionaryService = null;
     }
 
     @Subscribe
     @SuppressWarnings("unused")
     public void onSubtitleAdded(SubtitleAddedEvent subtitleAddedEvent) {
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
-            loadInBackground(this::loadDictionary);
+            subtitleService = null;
+            addSubtitleFile(subtitleAddedEvent.getFile());
+            if (dictionaryService == null) {
+                loadInBackground(this::loadDictionary);
+            }
+        } else {
+            subtitleService = null;
+            dictionaryService = null;
+        }
+    }
+
+    @Subscribe
+    @SuppressWarnings("unused")
+    public void onSubtitleSwitched(SubtitleSwitchEvent subtitleSwitchEvent) {
+        if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
+            subtitleService = null;
+            loadInBackground(() -> {
+                File subtitleFile = new File(application().currentSubtitleFilePath());
+                log.info("onSubtitleSwitched: spu - {}", mediaPlayer.getSpu());
+                if (subtitleFile.exists()) {
+                    subtitleService = new SubtitleService(subtitleFile);
+                    mediaPlayer.setSubTitleFile(subtitleFile);
+                }
+            });
         }
     }
 
     @Subscribe
     @SuppressWarnings("unused")
     public void onLanguagePairSwitch(LanguagePairSwitchEvent languagePairSwitchEvent) {
+        dictionaryService = null;
         application().selectedOverlayType(OverlayType.TRANSLATION);
         loadInBackground(this::loadDictionary);
     }
@@ -74,8 +105,14 @@ public class TranslatorService {
     @Subscribe
     @SuppressWarnings("unused")
     public void onOverlaySwitch(OverlaySwitchEvent overlaySwitchEvent) {
-        if (dictionaryService == null) {
+        dictionaryService = null;
+        subtitleService = null;
+        if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
             loadInBackground(this::loadDictionary);
+            File subtitleFile = new File(application().currentSubtitleFilePath());
+            if (subtitleFile.exists()) {
+                addSubtitleFile(subtitleFile);
+            }
         }
     }
 

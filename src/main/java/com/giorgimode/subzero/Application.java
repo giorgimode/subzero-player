@@ -5,6 +5,8 @@ import com.giorgimode.subzero.event.TickEvent;
 import com.giorgimode.subzero.translator.OverlayType;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.google.common.eventbus.EventBus;
+import lombok.Getter;
+import lombok.Setter;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 import javax.swing.SwingUtilities;
@@ -12,7 +14,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +46,11 @@ public final class Application {
 
     private OverlayType selectedOverlayType;
 
+    private Map<Integer, String> subtitleTracks;
+
+    @Getter @Setter
+    private int currentSubtitleId;
+
     private static final class ApplicationHolder {
         private static final Application INSTANCE = new Application();
     }
@@ -64,6 +73,8 @@ public final class Application {
         };
         mediaPlayerActions = new MediaPlayerActions(mediaPlayerComponent.getMediaPlayer());
         tickService.scheduleWithFixedDelay(() -> eventBus.post(TickEvent.INSTANCE), 0, 1000, TimeUnit.MILLISECONDS);
+        subtitleTracks = new TreeMap<>();
+        subtitleTracks.put(0, "DISABLED");
     }
 
     public void subscribe(Object subscriber) {
@@ -120,4 +131,15 @@ public final class Application {
     public void selectedOverlayType(OverlayType selectedOverlayType) {
         this.selectedOverlayType = selectedOverlayType;
     }
+
+    public void addSubtitleToCollection(String subtitle){
+        int subtitileId = subtitleTracks.size();
+        subtitleTracks.put(subtitileId, subtitle);
+        setCurrentSubtitleId(subtitileId);
+    }
+
+    public String currentSubtitleFilePath(){
+        return subtitleTracks.get(currentSubtitleId);
+    }
+
 }

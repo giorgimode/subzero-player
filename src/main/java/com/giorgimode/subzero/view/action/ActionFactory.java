@@ -8,7 +8,6 @@ import com.giorgimode.subzero.event.ShowMessagesEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.giorgimode.subzero.view.main.AboutDialog;
 import com.giorgimode.subzero.view.main.MainFrame;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.AbstractAction;
@@ -99,8 +98,8 @@ public class ActionFactory {
 
     public void addSubtitle(File file) {
         mediaPlayer.setSubTitleFile(file);
-        mainFrame.getTranslatorService().addSubtitleFile(file);
-        Application.application().post(SubtitleAddedEvent.INSTANCE);
+        application().addSubtitleToCollection(file.getPath());
+        application().post(new SubtitleAddedEvent(file));
     }
 
     public void subtitleAddSubtitleFileAction2() {
