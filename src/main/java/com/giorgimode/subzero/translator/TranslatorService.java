@@ -104,7 +104,8 @@ public class TranslatorService {
             String[] allWords = getSubtitleWordsAtPauseTime(subtitleService);
 
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
-            ((TranslationOverlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
+            if (definitions != null && definitions.entrySet().size() > 0)
+                ((TranslationOverlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
         }
     }
 

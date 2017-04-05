@@ -30,7 +30,9 @@ public class TranslationOverlay extends JWindow {
         translationPanelStyle = new TranslationPanelStyle();
         AWTUtilities.setWindowOpaque(this, false);
         setLayout(null);
-        translatedList.entrySet().forEach(this::addTranslationPanel);
+        translatedList.entrySet().stream()
+                .filter(this::isNotEmptyWordList)
+                .forEach(this::addTranslationPanel);
         setDimensions(owner);
         numberOfPanelsAllowed = (int) Math.ceil((double) (owner.getHeight() - area51Below) / (translationPanelHeight + spaceBetweenPanels));
         updateOverlay();
@@ -60,7 +62,9 @@ public class TranslationOverlay extends JWindow {
     public void populateNewWords(Map<String, Map<String, List<String>>> translatedList) {
         clean();
         translationPanelList = new ArrayList<>();
-        translatedList.entrySet().forEach(this::addTranslationPanel);
+        translatedList.entrySet().stream()
+                .filter(this::isNotEmptyWordList)
+                .forEach(this::addTranslationPanel);
         updateOverlay();
     }
 
@@ -97,5 +101,9 @@ public class TranslationOverlay extends JWindow {
                 + area51Below) / (double) (2 * numberOfPanels);
         translationPanelHeight = (int) (translationPanelHeight - newSize);
         spaceBetweenPanels = (int) (spaceBetweenPanels - newSize);
+    }
+
+    private boolean isNotEmptyWordList(Map.Entry<String, Map<String, List<String>>> entry) {
+        return entry.getValue() != null && entry.getValue().size() > 0 && entry.getValue().entrySet().size() > 0;
     }
 }
