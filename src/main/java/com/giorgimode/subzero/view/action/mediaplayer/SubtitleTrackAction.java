@@ -13,7 +13,7 @@ public final class SubtitleTrackAction extends MediaPlayerAction {
     private final int trackId;
 
     public SubtitleTrackAction(Map.Entry<Integer, String> entry, MediaPlayer mediaPlayer) {
-        super("Track " + entry.getKey(), mediaPlayer);
+        super(entry.getKey() != 0 ? "Track " + entry.getKey() : "Disabled", mediaPlayer);
         this.trackId = entry.getKey();
     }
 
