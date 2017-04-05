@@ -4,6 +4,8 @@ import static com.giorgimode.subzero.Application.application;
 import static com.giorgimode.subzero.view.action.Resource.resource;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -24,25 +26,28 @@ final class SubtitleTrackMenu extends OnDemandMenu {
     protected final void onPrepareMenu(JMenu menu) {
         ButtonGroup buttonGroup = new ButtonGroup();
         int selectedTrack = onGetSelectedTrack();
-        List<TrackDescription> onGetTrackDescriptions = onGetTrackDescriptions();
-        for (int i = 0; i < onGetTrackDescriptions.size(); i++) {
-            TrackDescription trackDescription = onGetTrackDescriptions.get(i);
-            JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(createAction(trackDescription, i));
+        Set<Map.Entry<Integer, String>> onGetTrackDescriptions = onGetTrackDescriptions();
+        for (Map.Entry<Integer, String> entry : onGetTrackDescriptions) {
+            String trackDescription = "Track " + entry.getKey();
+            if (entry.getKey() == 0) {
+                trackDescription = "Disabled";
+            }
+            JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(createAction(entry));
             menuItem.putClientProperty(KEY_TRACK_DESCRIPTION, trackDescription);
             buttonGroup.add(menuItem);
             menu.add(menuItem);
-            if (selectedTrack == i) {
+            if (selectedTrack == entry.getKey()) {
                 menuItem.setSelected(true);
             }
         }
     }
 
-    private Action createAction(TrackDescription trackDescription, int id) {
-        return new SubtitleTrackAction(trackDescription.description(), application().mediaPlayerComponent().getMediaPlayer(), id);
+    private Action createAction(Map.Entry<Integer, String> entry) {
+        return new SubtitleTrackAction(entry, application().mediaPlayerComponent().getMediaPlayer());
     }
 
-    private List<TrackDescription> onGetTrackDescriptions() {
-        return application().mediaPlayerComponent().getMediaPlayer().getSpuDescriptions();
+    private Set<Map.Entry<Integer, String>> onGetTrackDescriptions() {
+        return application().getSubtitleTracks().entrySet();
     }
 
     private int onGetSelectedTrack() {

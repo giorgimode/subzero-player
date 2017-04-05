@@ -37,12 +37,10 @@ public class TranslatorService {
     private SubtitleService subtitleService2;
     private DictionaryService dictionaryService;
     private final EmbeddedMediaPlayer mediaPlayer;
-//    private Map<Integer, File> subtitleTracks;
 
     public TranslatorService() {
         application().subscribe(this);
         mediaPlayer = application().mediaPlayerComponent().getMediaPlayer();
-//        subtitleTracks = new HashMap<>();
     }
 
     @Subscribe
@@ -85,7 +83,6 @@ public class TranslatorService {
             subtitleService = null;
             loadInBackground(() -> {
                 File subtitleFile = new File(application().currentSubtitleFilePath());
-                log.info("onSubtitleSwitched: spu - {}", mediaPlayer.getSpu());
                 if (subtitleFile.exists()) {
                     subtitleService = new SubtitleService(subtitleFile);
                     mediaPlayer.setSubTitleFile(subtitleFile);

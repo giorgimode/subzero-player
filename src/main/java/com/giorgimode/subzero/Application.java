@@ -46,6 +46,7 @@ public final class Application {
 
     private OverlayType selectedOverlayType;
 
+    @Getter
     private Map<Integer, String> subtitleTracks;
 
     @Getter @Setter
