@@ -1,10 +1,10 @@
 package com.giorgimode.subzero.view.action.mediaplayer;
 
 import com.giorgimode.subzero.event.SubtitleSwitchEvent;
+import com.giorgimode.subzero.view.action.SubtitleTrack;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
 import java.awt.event.ActionEvent;
-import java.util.Map;
 
 import static com.giorgimode.subzero.Application.application;
 
@@ -12,9 +12,9 @@ public final class SubtitleTrackAction extends MediaPlayerAction {
 
     private final int trackId;
 
-    public SubtitleTrackAction(Map.Entry<Integer, String> entry, MediaPlayer mediaPlayer) {
-        super(entry.getKey() != 0 ? "Track " + entry.getKey() : "Disabled", mediaPlayer);
-        this.trackId = entry.getKey();
+    public SubtitleTrackAction(SubtitleTrack subtitleTrack, MediaPlayer mediaPlayer) {
+        super(subtitleTrack.getDescription(), mediaPlayer);
+        this.trackId = subtitleTrack.getId();
     }
 
     @Override

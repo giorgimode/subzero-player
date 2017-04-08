@@ -3,6 +3,7 @@ package com.giorgimode.subzero;
 import com.giorgimode.dictionary.impl.LanguageEnum;
 import com.giorgimode.subzero.event.TickEvent;
 import com.giorgimode.subzero.translator.OverlayType;
+import com.giorgimode.subzero.view.action.SubtitleTrack;
 import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.google.common.eventbus.EventBus;
 import lombok.Getter;
@@ -14,9 +15,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -47,9 +46,10 @@ public final class Application {
     private OverlayType selectedOverlayType;
 
     @Getter
-    private Map<Integer, String> subtitleTracks;
+    private List<SubtitleTrack> subtitleTracks;
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private int currentSubtitleId;
 
     private static final class ApplicationHolder {
@@ -74,8 +74,8 @@ public final class Application {
         };
         mediaPlayerActions = new MediaPlayerActions(mediaPlayerComponent.getMediaPlayer());
         tickService.scheduleWithFixedDelay(() -> eventBus.post(TickEvent.INSTANCE), 0, 1000, TimeUnit.MILLISECONDS);
-        subtitleTracks = new TreeMap<>();
-        subtitleTracks.put(0, "DISABLED");
+        subtitleTracks = new ArrayList<>();
+        subtitleTracks.add(new SubtitleTrack(0, "Disabled"));
     }
 
     public void subscribe(Object subscriber) {
@@ -133,14 +133,15 @@ public final class Application {
         this.selectedOverlayType = selectedOverlayType;
     }
 
-    public void addSubtitleToCollection(String subtitle){
-        int subtitileId = subtitleTracks.size();
-        subtitleTracks.put(subtitileId, subtitle);
-        setCurrentSubtitleId(subtitileId);
+    public void addSubtitleToCollection(String subtitle) {
+        int subtitleId = subtitleTracks.size();
+        subtitleTracks.add(new SubtitleTrack(subtitleId, subtitle));
+        setCurrentSubtitleId(subtitleId);
+
     }
 
-    public String currentSubtitleFilePath(){
-        return subtitleTracks.get(currentSubtitleId);
+    public String currentSubtitleFilePath() {
+        return subtitleTracks.get(currentSubtitleId).getSubtitlePath();
     }
 
 }
