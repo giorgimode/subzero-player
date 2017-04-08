@@ -1,25 +1,22 @@
 package com.giorgimode.subzero.view.main;
 
-import static com.giorgimode.subzero.time.Time.formatTime;
-
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.giorgimode.subzero.Application;
+import com.giorgimode.subzero.event.TickEvent;
+import com.giorgimode.subzero.view.CustomSliderUI;
+import com.giorgimode.subzero.view.StandardLabel;
+import com.google.common.eventbus.Subscribe;
+import lombok.Setter;
+import net.miginfocom.swing.MigLayout;
+import uk.co.caprica.vlcj.player.MediaPlayer;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.plaf.SliderUI;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.giorgimode.subzero.Application;
-import com.giorgimode.subzero.view.CustomSliderUI;
-import net.miginfocom.swing.MigLayout;
-import uk.co.caprica.vlcj.player.MediaPlayer;
-import com.giorgimode.subzero.event.TickEvent;
-import com.giorgimode.subzero.view.StandardLabel;
-
-import com.google.common.eventbus.Subscribe;
+import static com.giorgimode.subzero.time.Time.formatTime;
 
 public final class PositionPane extends JPanel {
 
@@ -28,7 +25,7 @@ public final class PositionPane extends JPanel {
     private final JSlider positionSlider;
 
     private final JLabel durationLabel;
-
+    @Setter
     private long time;
 
     private final MediaPlayer mediaPlayer;
@@ -50,19 +47,15 @@ public final class PositionPane extends JPanel {
         SliderUI sliderUI = CustomSliderUI.getSliderUI();
         positionSlider.setUI(sliderUI);
 
-        positionSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if (!positionChanging.get()) {
-                    JSlider source = (JSlider) e.getSource();
-                    if (source.getValueIsAdjusting()) {
-                        sliderChanging.set(true);
-                    }
-                    else {
-                        sliderChanging.set(false);
-                    }
-                    mediaPlayer.setPosition(source.getValue() / 1000.0f);
+        positionSlider.addChangeListener(e -> {
+            if (!positionChanging.get()) {
+                JSlider source = (JSlider) e.getSource();
+                if (source.getValueIsAdjusting()) {
+                    sliderChanging.set(true);
+                } else {
+                    sliderChanging.set(false);
                 }
+                mediaPlayer.setPosition(source.getValue() / 1000.0f);
             }
         });
 
@@ -91,15 +84,12 @@ public final class PositionPane extends JPanel {
         }
     }
 
-    public void setTime(long time) {
-        this.time = time;
-    }
-
     public void setDuration(long duration) {
         durationLabel.setText(formatTime(duration));
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onTick(TickEvent tick) {
         refresh();
     }

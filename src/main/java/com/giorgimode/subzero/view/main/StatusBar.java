@@ -1,16 +1,16 @@
 package com.giorgimode.subzero.view.main;
 
-import static com.giorgimode.subzero.Application.application;
-import static com.giorgimode.subzero.time.Time.formatTime;
+import com.giorgimode.subzero.event.TickEvent;
+import com.giorgimode.subzero.view.BorderedStandardLabel;
+import com.google.common.eventbus.Subscribe;
+import lombok.Setter;
+import net.miginfocom.swing.MigLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.miginfocom.swing.MigLayout;
-import com.giorgimode.subzero.event.TickEvent;
-import com.giorgimode.subzero.view.BorderedStandardLabel;
-
-import com.google.common.eventbus.Subscribe;
+import static com.giorgimode.subzero.Application.application;
+import static com.giorgimode.subzero.time.Time.formatTime;
 
 public final class StatusBar extends JPanel {
 
@@ -19,7 +19,7 @@ public final class StatusBar extends JPanel {
     private final JLabel rateLabel;
 
     private final JLabel timeLabel;
-
+    @Setter
     private long time;
 
     private long duration;
@@ -45,10 +45,6 @@ public final class StatusBar extends JPanel {
         rateLabel.setText(rate);
     }
 
-    public void setTime(long time) {
-        this.time = time;
-    }
-
     public void setDuration(long duration) {
         this.duration = duration;
         refresh();
@@ -60,11 +56,12 @@ public final class StatusBar extends JPanel {
         timeLabel.setText(null);
     }
 
-    public void refresh() {
+    private void refresh() {
         timeLabel.setText(String.format("%s/%s", formatTime(time), formatTime(duration)));
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onTick(TickEvent tick) {
         refresh();
     }

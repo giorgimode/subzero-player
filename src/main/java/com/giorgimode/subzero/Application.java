@@ -40,7 +40,7 @@ public final class Application {
     private final ScheduledExecutorService tickService = Executors.newSingleThreadScheduledExecutor();
 
     private final Deque<String> recentMedia = new ArrayDeque<>(MAX_RECENT_MEDIA_SIZE);
-
+    @Setter
     private LanguageEnum languageEnum;
 
     private OverlayType selectedOverlayType;
@@ -119,10 +119,6 @@ public final class Application {
 
     public LanguageEnum languageEnum() {
         return languageEnum;
-    }
-
-    public void setLanguageEnum(LanguageEnum languageEnum) {
-        this.languageEnum = languageEnum;
     }
 
     public OverlayType selectedOverlayType() {

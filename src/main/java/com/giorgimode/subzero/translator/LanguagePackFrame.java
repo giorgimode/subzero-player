@@ -191,7 +191,7 @@ public class LanguagePackFrame extends BaseFrame {
             public void actionPerformed(ActionEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     LanguageEnum languageClicked = LanguageEnum.fromString(radioButton.getName().toLowerCase());
-                    setSelectedLanguage(languageClicked);
+                    selectedLanguage = languageClicked;
                     updateDownloadButton(languageClicked);
                 });
             }
@@ -307,10 +307,6 @@ public class LanguagePackFrame extends BaseFrame {
                 swingWorker.execute();
             }
         });
-    }
-
-    private void setSelectedLanguage(LanguageEnum selectedLanguage) {
-        this.selectedLanguage = selectedLanguage;
     }
 
     private static final ImmutableMap<String, String> LANGUAGE_MAPPING = new ImmutableMap.Builder<String, String>()
