@@ -81,7 +81,7 @@ class TranslationPanelStyle implements PanelStyle {
 
         styledDocument.setParagraphAttributes(0, 1, previewRootStyle, false);
         translationPanel.setPreviewStyledDocument(styledDocument);
-        translationPanel.getjTextPane().setStyledDocument(styledDocument);
+        translationPanel.getJTextPane().setStyledDocument(styledDocument);
     }
 
     private void setStyle(Style synsetStyle, int synsetFontSize, boolean isItalic, boolean isUnderLined, boolean isBold) {

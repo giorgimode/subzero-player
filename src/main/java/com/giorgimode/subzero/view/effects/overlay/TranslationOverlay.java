@@ -88,11 +88,11 @@ public class TranslationOverlay extends JWindow {
 
     private void updatePanelProperties(TranslationPanel translationPanel, int locationY, int maxHeight) {
         translationPanel.setLocation(area51Left, locationY);
-        int preferredHeight = (int) translationPanel.getjTextPane().getPreferredSize().getHeight();
+        int preferredHeight = (int) translationPanel.getJTextPane().getPreferredSize().getHeight();
         translationPanel.setSize(new Dimension(owner.getWidth() - 3 * area51Left, Math.min(2 * preferredHeight, translationPanelHeight)));
         translationPanel.setMaximumAllowedHeight(maxHeight);
         translationPanelStyle.createOnClickStyle(translationPanel);
-        translationPanel.getjTextPane().setFont(new Font("Sansserif", Font.BOLD, 12));
+        translationPanel.getJTextPane().setFont(new Font("Sansserif", Font.BOLD, 12));
         translationPanelStyle.createPreviewStyle(translationPanel);
     }
 

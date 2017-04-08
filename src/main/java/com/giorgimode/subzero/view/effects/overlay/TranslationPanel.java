@@ -1,5 +1,8 @@
 package com.giorgimode.subzero.view.effects.overlay;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
@@ -11,8 +14,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -23,13 +24,21 @@ import java.util.Map;
 import static com.giorgimode.subzero.Application.application;
 
 class TranslationPanel extends JScrollPane {
-    private boolean focused = false;
+    @Setter @Getter
+    private boolean focused;
+    @Getter
     private final JTextPane jTextPane;
     private final Dimension panelDimension;
     private int maximumAllowedHeight;
+    @Getter
     private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
+    @Setter @Getter
     private StyledDocument originalStyledDocument;
+    @Setter
     private StyledDocument previewStyledDocument;
+    @Getter
+    @Setter
+    private boolean expanded;
 
     TranslationPanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         jTextPane = new JTextPane();
@@ -38,16 +47,26 @@ class TranslationPanel extends JScrollPane {
         maximumAllowedHeight = getHeight();
         this.wordDefinitionEntryMap = wordDefinitionEntryMap;
         panelDimension.setSize(getWidth(), getHeight());
+        expanded = false;
+        focused = false;
         jTextPane.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 SwingUtilities.invokeLater(() -> {
-                    setFocused(true);
-                    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-                    jTextPane.setStyledDocument(TranslationPanel.this.getOriginalStyledDocument());
-
-                    int newHeight = (int) TranslationPanel.this.getPreferredSize().getHeight();
-                    updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), Color.BLACK);
+                    if (isExpanded()) {
+                        setFocused(false);
+                        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+                        updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
+                        applyPreview();
+                        setExpanded(false);
+                    } else {
+                        setFocused(true);
+                        setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+                        jTextPane.setStyledDocument(TranslationPanel.this.getOriginalStyledDocument());
+                        int newHeight = (int) TranslationPanel.this.getPreferredSize().getHeight();
+                        updateOnEvent((int) panelDimension.getWidth(), Math.min(newHeight, maximumAllowedHeight), Color.BLACK);
+                        setExpanded(true);
+                    }
                 });
             }
 
@@ -67,17 +86,6 @@ class TranslationPanel extends JScrollPane {
                     if (!isFocused()) {
                         TranslationPanel.this.updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
                     }
-                });
-            }
-        });
-        jTextPane.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                SwingUtilities.invokeLater(() -> {
-                    setFocused(false);
-                    setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-                    updateOnEvent((int) panelDimension.getWidth(), (int) panelDimension.getHeight(), Color.BLACK);
-                    applyPreview();
                 });
             }
         });
@@ -121,19 +129,6 @@ class TranslationPanel extends JScrollPane {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
     }
 
-
-    private boolean isFocused() {
-        return focused;
-    }
-
-    private void setFocused(boolean focused) {
-        this.focused = focused;
-    }
-
-    JTextPane getjTextPane() {
-        return jTextPane;
-    }
-
     @Override
     public void setSize(Dimension d) {
         super.setSize(d);
@@ -142,21 +137,5 @@ class TranslationPanel extends JScrollPane {
 
     void setMaximumAllowedHeight(int windowHeight) {
         maximumAllowedHeight = windowHeight - getY() - windowHeight / 5;
-    }
-
-    Map.Entry<String, Map<String, List<String>>> getWordDefinitionEntryMap() {
-        return wordDefinitionEntryMap;
-    }
-
-    private StyledDocument getOriginalStyledDocument() {
-        return originalStyledDocument;
-    }
-
-    void setOriginalStyledDocument(StyledDocument originalStyledDocument) {
-        this.originalStyledDocument = originalStyledDocument;
-    }
-
-    void setPreviewStyledDocument(StyledDocument previewStyledDocument) {
-        this.previewStyledDocument = previewStyledDocument;
     }
 }
