@@ -252,11 +252,11 @@ public final class MainFrame extends BaseFrame {
         videoMenu.add(videoZoomMenu);
         videoAspectRatioMenu = new JMenu(resourceName("menu.video.item.aspectRatio"));
         videoAspectRatioMenu.setMnemonic(resourceMnemonic("menu.video.item.aspectRatio"));
-        actionFactory.addActions(mediaPlayerActions.videoAspectRatioActions(), videoAspectRatioMenu, true);
+        actionFactory.addActionFirst(mediaPlayerActions.videoAspectRatioActions(), videoAspectRatioMenu);
         videoMenu.add(videoAspectRatioMenu);
         videoCropMenu = new JMenu(resourceName("menu.video.item.crop"));
         videoCropMenu.setMnemonic(resourceMnemonic("menu.video.item.crop"));
-        actionFactory.addActions(mediaPlayerActions.videoCropActions(), videoCropMenu, true);
+        actionFactory.addActionFirst(mediaPlayerActions.videoCropActions(), videoCropMenu);
         videoMenu.add(videoCropMenu);
         videoMenu.add(new JSeparator());
         videoMenu.add(new JMenuItem(mediaPlayerActions.videoSnapshotAction()));

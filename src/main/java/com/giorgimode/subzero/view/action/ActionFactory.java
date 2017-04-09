@@ -8,6 +8,7 @@ import com.giorgimode.subzero.event.ShowMessagesEvent;
 import com.giorgimode.subzero.event.SubtitleAddedEvent;
 import com.giorgimode.subzero.view.main.AboutDialog;
 import com.giorgimode.subzero.view.main.MainFrame;
+import lombok.extern.slf4j.Slf4j;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.AbstractAction;
@@ -18,12 +19,16 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Consumer;
@@ -35,6 +40,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 /**
  * Created by modeg on 2/22/2017.
  */
+@Slf4j
 public class ActionFactory {
     private MainFrame mainFrame;
 
@@ -61,8 +67,13 @@ public class ActionFactory {
         Action mediaOpenMrlAction = new StandardAction(resource) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String mrl = (String) JOptionPane.showInputDialog(mainFrame, "Enter the media URL", "Media URL",
-                        JOptionPane.INFORMATION_MESSAGE, resource.menuIcon(), null, null);
+                String mrl = createInputDialog(resource, "Enter the media URL", "Media URL");
+                while (mrl != null && isNotValidURL(mrl)) {
+                    JLabel label = new JLabel("Enter the URL in the following format: http://example.com/media");
+                    label.setForeground(Color.RED);
+                    mrl = createInputDialog(resource, label, "Incorrect URL");
+                }
+
                 if (isNotBlank(mrl)) {
                     mediaPlayer.playMedia(mrl);
                 }
@@ -195,14 +206,12 @@ public class ActionFactory {
         });
     }
 
-    public ButtonGroup addActions(List<Action> actions, JMenu menu, boolean selectFirst) {
+    public ButtonGroup addActionFirst(List<Action> actions, JMenu menu) {
         ButtonGroup buttonGroup = addActions(actions, menu);
-        if (selectFirst) {
-            Enumeration<AbstractButton> en = buttonGroup.getElements();
-            if (en.hasMoreElements()) {
-                StandardAction action = (StandardAction) en.nextElement().getAction();
-                action.select(true);
-            }
+        Enumeration<AbstractButton> en = buttonGroup.getElements();
+        if (en.hasMoreElements()) {
+            StandardAction action = (StandardAction) en.nextElement().getAction();
+            action.select(true);
         }
         return buttonGroup;
     }
@@ -229,5 +238,20 @@ public class ActionFactory {
     private ActionMap getActionMap() {
         JComponent c = (JComponent) mainFrame.getContentPane();
         return c.getActionMap();
+    }
+
+    private boolean isNotValidURL(String mrl) {
+        try {
+            new URL(mrl);
+            return false;
+        } catch (MalformedURLException e) {
+            log.error("Incorrect url format: {}", mrl);
+            return true;
+        }
+    }
+
+    private String createInputDialog(Resource resource, Object message, String title) {
+        return (String) JOptionPane.showInputDialog(mainFrame, message, title,
+                JOptionPane.INFORMATION_MESSAGE, resource.menuIcon(), null, null);
     }
 }
