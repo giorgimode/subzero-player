@@ -55,6 +55,8 @@ public final class MainFrame extends BaseFrame {
     @Setter
     private Action mediaQuitAction;
     @Setter
+    private Action mediaOpenMrlAction;
+    @Setter
     @Getter
     private StandardAction videoFullscreenAction;
     @Setter
@@ -170,6 +172,7 @@ public final class MainFrame extends BaseFrame {
         mediaMenu.add(new JMenuItem(mediaOpenAction));
         mediaRecentMenu = new RecentMediaMenu(Resource.resource("menu.media.item.recent")).menu();
         mediaMenu.add(mediaRecentMenu);
+        mediaMenu.add(new JMenuItem(mediaOpenMrlAction));
         mediaMenu.add(new JSeparator());
         mediaMenu.add(new JMenuItem(mediaQuitAction));
         playerMenuBar.add(mediaMenu);
@@ -352,7 +355,7 @@ public final class MainFrame extends BaseFrame {
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();
         translatorService = new TranslatorService();
-
+        mediaPlayer.setPlaySubItems(true);
 
         setMinimumSize(new Dimension(370, 240));
     }
@@ -368,6 +371,7 @@ public final class MainFrame extends BaseFrame {
     private void createStandardActions() {
         actionFactory.mediaOpenAction();
         actionFactory.mediaQuitAction();
+        actionFactory.mediaOpenMrlAction();
         actionFactory.videoFullscreenAction();
         actionFactory.videoAlwaysOnTopAction();
         actionFactory.subtitleAddSubtitleFileAction();

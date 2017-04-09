@@ -19,6 +19,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,7 @@ import java.util.function.Consumer;
 
 import static com.giorgimode.subzero.Application.application;
 import static com.giorgimode.subzero.view.main.MainFrame.ACTION_EXIT_FULLSCREEN;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Created by modeg on 2/22/2017.
@@ -52,6 +54,21 @@ public class ActionFactory {
             }
         });
         mainFrame.setMediaOpenAction(mediaOpenAction);
+    }
+
+    public void mediaOpenMrlAction() {
+        Resource resource = Resource.resource("menu.media.item.openMrlFile");
+        Action mediaOpenMrlAction = new StandardAction(resource) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String mrl = (String) JOptionPane.showInputDialog(mainFrame, "Enter the media URL", "Media URL",
+                        JOptionPane.INFORMATION_MESSAGE, resource.menuIcon(), null, null);
+                if (isNotBlank(mrl)) {
+                    mediaPlayer.playMedia(mrl);
+                }
+            }
+        };
+        mainFrame.setMediaOpenMrlAction(mediaOpenMrlAction);
     }
 
     public void mediaQuitAction() {
