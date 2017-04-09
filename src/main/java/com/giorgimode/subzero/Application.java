@@ -51,6 +51,9 @@ public final class Application {
     @Getter
     @Setter
     private int currentSubtitleId;
+    @Getter
+    @Setter
+    private boolean mediaMrlAdded;
 
     private static final class ApplicationHolder {
         private static final Application INSTANCE = new Application();

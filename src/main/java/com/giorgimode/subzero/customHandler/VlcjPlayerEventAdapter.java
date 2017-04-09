@@ -17,6 +17,9 @@ import javax.swing.SwingUtilities;
 import java.awt.Component;
 import java.text.MessageFormat;
 
+import static com.giorgimode.subzero.Application.application;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+
 public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
     private PositionPane positionPane;
 
@@ -64,6 +67,10 @@ public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
             mouseMovementDetector.stop();
             Application.application().post(StoppedEvent.INSTANCE);
         }
+        if (Application.application().isMediaMrlAdded() && mediaPlayer.subItemCount() == 0) {
+            JOptionPane.showMessageDialog(parentComponent, "No media found on this URL", "Media URL", ERROR_MESSAGE);
+            application().setMediaMrlAdded(false);
+        }
     }
 
     @Override
@@ -73,7 +80,7 @@ public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
             mouseMovementDetector.stop();
             Application.application().post(StoppedEvent.INSTANCE);
             String message = MessageFormat.format(Application.resources().getString("error.errorEncountered"), fileChooser.getSelectedFile().toString());
-            JOptionPane.showMessageDialog(parentComponent, message, Application.resources().getString("dialog.errorEncountered"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentComponent, message, Application.resources().getString("dialog.errorEncountered"), ERROR_MESSAGE);
         }
     }
 

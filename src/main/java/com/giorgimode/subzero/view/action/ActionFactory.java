@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 
 import static com.giorgimode.subzero.Application.application;
 import static com.giorgimode.subzero.view.main.MainFrame.ACTION_EXIT_FULLSCREEN;
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -76,6 +77,7 @@ public class ActionFactory {
 
                 if (isNotBlank(mrl)) {
                     mediaPlayer.playMedia(mrl);
+                    application().setMediaMrlAdded(true);
                 }
             }
         };
@@ -251,7 +253,7 @@ public class ActionFactory {
     }
 
     private String createInputDialog(Resource resource, Object message, String title) {
-        return (String) JOptionPane.showInputDialog(mainFrame, message, title,
-                JOptionPane.INFORMATION_MESSAGE, resource.menuIcon(), null, null);
+        return (String) JOptionPane.showInputDialog(mainFrame, message, title, INFORMATION_MESSAGE, resource.menuIcon(),
+                null, null);
     }
 }
