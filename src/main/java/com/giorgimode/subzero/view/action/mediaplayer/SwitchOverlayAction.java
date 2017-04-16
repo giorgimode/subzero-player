@@ -34,7 +34,9 @@ public class SwitchOverlayAction extends MediaPlayerAction {
 
     private void toggleMediaPlayerOverlay() {
         application().selectedOverlayType(overlayType);
-        ((EmbeddedMediaPlayer) mediaPlayer).enableOverlay(overlayType == OverlayType.TRANSLATION);
+        if (mediaPlayer.isPlayable()) {
+            ((EmbeddedMediaPlayer) mediaPlayer).enableOverlay(overlayType == OverlayType.TRANSLATION);
+        }
     }
 }
 
