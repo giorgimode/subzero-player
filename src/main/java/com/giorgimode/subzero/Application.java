@@ -12,7 +12,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -148,11 +147,10 @@ public final class Application {
         return subtitleTracks.get(currentSubtitleId).getSubtitlePath();
     }
 
-    public void dispose(JFrame mainFrame){
+    public void dispose(){
         application().post(ShutdownEvent.INSTANCE);
         mediaPlayerComponent.getMediaPlayer().stop();
         mediaPlayerComponent.release();
-        mainFrame.dispose();
         System.exit(0);
     }
 }

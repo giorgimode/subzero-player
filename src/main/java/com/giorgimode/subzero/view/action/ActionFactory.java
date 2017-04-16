@@ -86,7 +86,7 @@ public class ActionFactory {
 
     public void mediaQuitAction() {
         Action mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) ->
-                application().dispose(mainFrame));
+                application().dispose());
         mainFrame.setMediaQuitAction(mediaQuitAction);
     }
 

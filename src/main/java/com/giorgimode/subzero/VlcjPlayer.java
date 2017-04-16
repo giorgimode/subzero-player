@@ -91,7 +91,7 @@ public class VlcjPlayer {
             @Override
             public void windowClosing(WindowEvent e) {
                 log.debug("window closing");
-                application().dispose(mainFrame);
+                application().dispose();
                 if (nativeStreams != null) {
                     nativeStreams.release();
                 }
