@@ -12,6 +12,7 @@ import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.giorgimode.subzero.view.effects.overlay.TranslationOverlay;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerEventAdapter;
@@ -44,6 +45,7 @@ import java.util.prefs.Preferences;
 import static com.giorgimode.subzero.Application.application;
 
 @SuppressWarnings("serial")
+@Slf4j
 public final class MainFrame extends BaseFrame {
 
     public static final String ACTION_EXIT_FULLSCREEN = "exit-fullscreen";
@@ -418,34 +420,44 @@ public final class MainFrame extends BaseFrame {
     @Override
     protected void onShutdown() {
         if (wasShown()) {
-            Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
-            prefs.putInt("frameX", getX());
-            prefs.putInt("frameY", getY());
-            prefs.putInt("frameWidth", getWidth());
-            prefs.putInt("frameHeight", getHeight());
-            prefs.putBoolean("alwaysOnTop", isAlwaysOnTop());
-            prefs.putBoolean("statusBar", statusBar.isVisible());
-            prefs.put("chooserDirectory", fileChooser.getCurrentDirectory().toString());
-            LanguageEnum languageEnum = application().languageEnum();
-            if (languageEnum != null) {
-                prefs.put("languagePack", languageEnum.getValue());
+            savePreferences();
+            if (translationOverlay != null) {
+                translationOverlay.dispose();
+                log.debug("overlay disposed");
             }
-
-            String recentMedia;
-            List<String> mrls = application().recentMedia();
-            if (!mrls.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                for (String mrl : mrls) {
-                    if (sb.length() > 0) {
-                        sb.append('|');
-                    }
-                    sb.append(mrl);
-                }
-                recentMedia = sb.toString();
-            } else {
-                recentMedia = "";
-            }
-            prefs.put("recentMedia", recentMedia);
         }
+        log.debug("mainframe shutdown finished");
+    }
+
+    private void savePreferences() {
+        log.debug("saving preferences");
+        Preferences prefs = Preferences.userNodeForPackage(MainFrame.class);
+        prefs.putInt("frameX", getX());
+        prefs.putInt("frameY", getY());
+        prefs.putInt("frameWidth", getWidth());
+        prefs.putInt("frameHeight", getHeight());
+        prefs.putBoolean("alwaysOnTop", isAlwaysOnTop());
+        prefs.putBoolean("statusBar", statusBar.isVisible());
+        prefs.put("chooserDirectory", fileChooser.getCurrentDirectory().toString());
+        LanguageEnum languageEnum = application().languageEnum();
+        if (languageEnum != null) {
+            prefs.put("languagePack", languageEnum.getValue());
+        }
+
+        String recentMedia;
+        List<String> mrls = application().recentMedia();
+        if (!mrls.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String mrl : mrls) {
+                if (sb.length() > 0) {
+                    sb.append('|');
+                }
+                sb.append(mrl);
+            }
+            recentMedia = sb.toString();
+        } else {
+            recentMedia = "";
+        }
+        prefs.put("recentMedia", recentMedia);
     }
 }

@@ -2,16 +2,16 @@ package com.giorgimode.subzero;
 
 import com.giorgimode.subzero.translator.LanguagePackFrame;
 import com.giorgimode.subzero.view.debug.DebugFrame;
+import com.giorgimode.subzero.view.effects.EffectsFrame;
+import com.giorgimode.subzero.view.main.MainFrame;
 import com.giorgimode.subzero.view.messages.NativeLogFrame;
 import com.sun.jna.NativeLibrary;
+import lombok.extern.slf4j.Slf4j;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.log.NativeLog;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import uk.co.caprica.vlcj.runtime.streams.NativeStreams;
-import com.giorgimode.subzero.event.ShutdownEvent;
-import com.giorgimode.subzero.view.effects.EffectsFrame;
-import com.giorgimode.subzero.view.main.MainFrame;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -24,6 +24,7 @@ import static com.giorgimode.subzero.Application.application;
 /**
  * Application entry-point.
  */
+@Slf4j
 public class VlcjPlayer {
 
     private static final NativeStreams nativeStreams;
@@ -35,7 +36,7 @@ public class VlcjPlayer {
 //            nativeStreams = new NativeStreams("stdout.log", "stderr.log");
 //        }
 //        else {
-            nativeStreams = null;
+        nativeStreams = null;
 //        }
     }
 
@@ -55,12 +56,13 @@ public class VlcjPlayer {
 
     private final NativeLog nativeLog;
     private static final String NATIVE_LIBRARY_SEARCH_PATH = "./lib";
+
     public static void main(String[] args) throws InterruptedException {
         // This will locate LibVLC for the vast majority of cases
-      //  new NativeDiscovery().discover();
-       NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), NATIVE_LIBRARY_SEARCH_PATH);
-     //   NativeLibrary.addSearchPath("libvlc", NATIVE_LIBRARY_SEARCH_PATH);
-    //    System.setProperty("VLC_PLUGIN_PATH", NATIVE_LIBRARY_SEARCH_PATH);
+        //  new NativeDiscovery().discover();
+        NativeLibrary.addSearchPath(RuntimeUtil.getLibVlcLibraryName(), NATIVE_LIBRARY_SEARCH_PATH);
+        //   NativeLibrary.addSearchPath("libvlc", NATIVE_LIBRARY_SEARCH_PATH);
+        //    System.setProperty("VLC_PLUGIN_PATH", NATIVE_LIBRARY_SEARCH_PATH);
 
         setLookAndFeel();
 
@@ -71,14 +73,12 @@ public class VlcjPlayer {
         String lookAndFeelClassName;
         if (RuntimeUtil.isNix()) {
             lookAndFeelClassName = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel";
-        }
-        else {
+        } else {
             lookAndFeelClassName = UIManager.getSystemLookAndFeelClassName();
         }
         try {
             UIManager.setLookAndFeel(lookAndFeelClassName);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             // Silently fail, it doesn't matter
         }
     }
@@ -90,15 +90,14 @@ public class VlcjPlayer {
         mainFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                mediaPlayerComponent.getMediaPlayer().stop();
-                mediaPlayerComponent.release();
+                log.debug("window closing");
+                application().dispose(mainFrame);
                 if (nativeStreams != null) {
                     nativeStreams.release();
                 }
-                application().post(ShutdownEvent.INSTANCE);
             }
         });
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         EmbeddedMediaPlayer embeddedMediaPlayer = mediaPlayerComponent.getMediaPlayer();
         embeddedMediaPlayer.setFullScreenStrategy(new VlcjPlayerFullScreenStrategy(mainFrame));

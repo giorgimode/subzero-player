@@ -5,6 +5,7 @@ import com.giorgimode.subzero.translator.OverlayType;
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.mediaplayer.SwitchOverlayAction;
 import com.google.common.eventbus.Subscribe;
+import lombok.extern.slf4j.Slf4j;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
 import javax.swing.ButtonGroup;
@@ -17,6 +18,7 @@ import static com.giorgimode.subzero.Application.application;
 /**
  * Created by modeg on 3/19/2017.
  */
+@Slf4j
 public class OverlayMenu {
     private final JMenu menu;
 
@@ -62,6 +64,7 @@ public class OverlayMenu {
     @Subscribe
     @SuppressWarnings("unused")
     public final void onShutdown(ShutdownEvent event) {
+        log.debug("saving preferences");
         OverlayType selectedOverlayType = application().selectedOverlayType();
         Preferences prefs = Preferences.userNodeForPackage(OverlayMenu.class);
         if (selectedOverlayType != null) {

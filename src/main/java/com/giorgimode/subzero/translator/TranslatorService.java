@@ -64,6 +64,7 @@ public class TranslatorService {
     @Subscribe
     @SuppressWarnings("unused")
     public void onSubtitleAdded(SubtitleAddedEvent subtitleAddedEvent) {
+        log.debug("subtitle added");
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
             subtitleService = null;
             addSubtitleFile(subtitleAddedEvent.getFile());
@@ -79,6 +80,7 @@ public class TranslatorService {
     @Subscribe
     @SuppressWarnings("unused")
     public void onSubtitleSwitched(SubtitleSwitchEvent subtitleSwitchEvent) {
+        log.debug("subtitle track switched");
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
             subtitleService = null;
             loadInBackground(() -> {
@@ -94,6 +96,7 @@ public class TranslatorService {
     @Subscribe
     @SuppressWarnings("unused")
     public void onLanguagePairSwitch(LanguagePairSwitchEvent languagePairSwitchEvent) {
+        log.debug("language pair switched");
         dictionaryService = null;
         application().selectedOverlayType(OverlayType.TRANSLATION);
         loadInBackground(this::loadDictionary);
@@ -102,6 +105,7 @@ public class TranslatorService {
     @Subscribe
     @SuppressWarnings("unused")
     public void onOverlaySwitch(OverlaySwitchEvent overlaySwitchEvent) {
+        log.debug("overlay type switched");
         dictionaryService = null;
         subtitleService = null;
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
@@ -194,6 +198,7 @@ public class TranslatorService {
 
 
     private void loadDictionary() {
+        log.debug("loading Dictionary");
         LanguageEnum language = application().languageEnum();
         if (language == null) {
             return;
@@ -203,10 +208,12 @@ public class TranslatorService {
         if (ArrayUtils.isEmpty(languageDataDir.listFiles())) {
             return;
         }
+
         if (language == LanguageEnum.EN_EN) {
             dictionaryService = WordnetDictionaryService.getInMemoryInstance(ILoadPolicy.BACKGROUND_LOAD, path);
         } else {
             dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
         }
+        log.debug("finished loading Dictionary");
     }
 }

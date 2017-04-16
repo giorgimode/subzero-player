@@ -1,6 +1,7 @@
 package com.giorgimode.subzero;
 
 import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.subzero.event.ShutdownEvent;
 import com.giorgimode.subzero.event.TickEvent;
 import com.giorgimode.subzero.translator.OverlayType;
 import com.giorgimode.subzero.view.action.SubtitleTrack;
@@ -8,8 +9,10 @@ import com.giorgimode.subzero.view.action.mediaplayer.MediaPlayerActions;
 import com.google.common.eventbus.EventBus;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Global application state.
  */
+@Slf4j
 public final class Application {
 
     private static final String RESOURCE_BUNDLE_BASE_NAME = "strings/vlcj-player";
@@ -36,8 +40,6 @@ public final class Application {
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
 
     private final MediaPlayerActions mediaPlayerActions;
-
-    private final ScheduledExecutorService tickService = Executors.newSingleThreadScheduledExecutor();
 
     private final Deque<String> recentMedia = new ArrayDeque<>(MAX_RECENT_MEDIA_SIZE);
     @Setter
@@ -76,6 +78,7 @@ public final class Application {
             }
         };
         mediaPlayerActions = new MediaPlayerActions(mediaPlayerComponent.getMediaPlayer());
+        ScheduledExecutorService tickService = Executors.newSingleThreadScheduledExecutor();
         tickService.scheduleWithFixedDelay(() -> eventBus.post(TickEvent.INSTANCE), 0, 1000, TimeUnit.MILLISECONDS);
         subtitleTracks = new ArrayList<>();
         subtitleTracks.add(new SubtitleTrack(0, "Disabled"));
@@ -86,12 +89,14 @@ public final class Application {
     }
 
     public void post(Object event) {
+        log.debug("start post {}", event.getClass().getName());
         // Events are always posted and processed on the Swing Event Dispatch thread
         if (SwingUtilities.isEventDispatchThread()) {
             eventBus.post(event);
         } else {
             SwingUtilities.invokeLater(() -> eventBus.post(event));
         }
+        log.debug("end post {}", event.getClass().getName());
     }
 
     public EmbeddedMediaPlayerComponent mediaPlayerComponent() {
@@ -143,4 +148,11 @@ public final class Application {
         return subtitleTracks.get(currentSubtitleId).getSubtitlePath();
     }
 
+    public void dispose(JFrame mainFrame){
+        application().post(ShutdownEvent.INSTANCE);
+        mediaPlayerComponent.getMediaPlayer().stop();
+        mediaPlayerComponent.release();
+        mainFrame.dispose();
+        System.exit(0);
+    }
 }

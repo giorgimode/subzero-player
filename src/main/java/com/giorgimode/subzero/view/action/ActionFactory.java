@@ -85,13 +85,8 @@ public class ActionFactory {
     }
 
     public void mediaQuitAction() {
-        Action mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) -> {
-            if (mainFrame.getTranslationOverlay() != null) {
-                mainFrame.getTranslationOverlay().dispose();
-            }
-            mainFrame.dispose();
-            System.exit(0);
-        });
+        Action mediaQuitAction = createStandardAction("menu.media.item.quit", (actionEvent) ->
+                application().dispose(mainFrame));
         mainFrame.setMediaQuitAction(mediaQuitAction);
     }
 
