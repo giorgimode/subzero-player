@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class UnzipUtil {
+public final class UnzipUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(UnzipUtil.class);
     private static final int BUFFER_SIZE = 1024;
 
@@ -61,7 +61,9 @@ public class UnzipUtil {
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
             boolean mkdirs = destDir.mkdirs();
-            if (!mkdirs) LOGGER.error("Failed to create directory {}", destDirectory);
+            if (!mkdirs) {
+                LOGGER.error("Failed to create directory {}", destDirectory);
+            }
         }
     }
 
@@ -74,5 +76,8 @@ public class UnzipUtil {
             bos.write(bytesIn, 0, read);
         }
         bos.close();
+    }
+
+    private UnzipUtil() {
     }
 }

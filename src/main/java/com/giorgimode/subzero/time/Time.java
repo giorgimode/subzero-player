@@ -1,5 +1,9 @@
 package com.giorgimode.subzero.time;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Time {
 
     public static String formatTime(long value) {

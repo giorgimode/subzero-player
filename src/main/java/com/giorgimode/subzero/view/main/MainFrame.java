@@ -149,7 +149,7 @@ public final class MainFrame extends BaseFrame {
         mediaPlayerComponent.getVideoSurface().addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (mediaPlayer.isFullScreen() && mediaPlayer.isPlaying()) {
+                if (mediaPlayer.isFullScreen()) {
                     playerMenuBar.setVisible(e.getYOnScreen() < mediaPlayerComponent.getVideoSurface().getHeight() * 0.1);
                     bottomPane.setVisible(e.getYOnScreen() > mediaPlayerComponent.getVideoSurface().getHeight() * 0.85);
                 }

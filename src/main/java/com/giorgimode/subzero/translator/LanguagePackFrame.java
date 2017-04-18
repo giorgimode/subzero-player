@@ -8,6 +8,7 @@ import com.giorgimode.subzero.util.Utils;
 import com.giorgimode.subzero.view.BaseFrame;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.Subscribe;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 
 import javax.swing.AbstractAction;
@@ -43,7 +44,7 @@ import java.util.stream.Collectors;
 
 import static com.giorgimode.subzero.Application.application;
 
-@SuppressWarnings("serial")
+@Slf4j
 public class LanguagePackFrame extends BaseFrame {
     private ButtonGroup buttonGroup = new ButtonGroup();
     private final JButton downloadButton;
@@ -56,6 +57,7 @@ public class LanguagePackFrame extends BaseFrame {
     private Map<LanguageEnum, JLabel> currentLanguageCheckLabels;
     private JLabel currentLanguageTextLabel;
     private JFrame mainFrame;
+    private final DownloadService downloadService;
 
     public LanguagePackFrame(JFrame mainFrame) {
         super("Choose Language Pair");
@@ -70,6 +72,7 @@ public class LanguagePackFrame extends BaseFrame {
         currentLanguageCheckLabels = new HashMap<>();
         JPanel languageScrollPanel = new JPanel(new GridBagLayout());
         createLanguagePanels(languageScrollPanel);
+        downloadService = new DownloadService();
 
         JScrollPane jScrollPane = new JScrollPane(languageScrollPanel);
         jScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -268,7 +271,7 @@ public class LanguagePackFrame extends BaseFrame {
                 SwingWorker<Boolean, Void> swingWorker = new SwingWorker<Boolean, Void>() {
                     @Override
                     protected Boolean doInBackground() throws Exception {
-                        DownloadService downloadService = new DownloadService();
+                        log.info("downloading language pair {}", selectedLanguage.toString());
                         return downloadService.downloadLanguagePack(selectedLanguage);
                     }
 
@@ -277,8 +280,8 @@ public class LanguagePackFrame extends BaseFrame {
                         boolean isSuccessful = false;
                         try {
                             isSuccessful = get();
-                        } catch (InterruptedException | ExecutionException e1) {
-                            e1.printStackTrace();
+                        } catch (InterruptedException | ExecutionException ex) {
+                            log.error("downloading language pair {} failed. {}", selectedLanguage.toString(), ex);
                         } finally {
                             String result;
                             String title;
@@ -295,10 +298,12 @@ public class LanguagePackFrame extends BaseFrame {
                                 if (languageIcon != null) {
                                     currentLanguageCheckLabels.get(selectedLanguage).setIcon(languageIcon);
                                 }
+                                log.info("downloading language pair {} successful.", selectedLanguage.toString());
                             } else {
                                 result = "Language pair download failed. Please try again later";
                                 title = "Download Failed";
                                 informationMessage = JOptionPane.ERROR_MESSAGE;
+                                log.error("downloading language pair {} failed.", selectedLanguage.toString());
                             }
                             JOptionPane.showMessageDialog(mainFrame, result, title, informationMessage);
                         }

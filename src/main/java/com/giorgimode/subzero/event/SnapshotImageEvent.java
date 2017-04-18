@@ -1,16 +1,13 @@
 package com.giorgimode.subzero.event;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import java.awt.image.BufferedImage;
 
+@RequiredArgsConstructor
+@Getter
 public final class SnapshotImageEvent {
 
     private final BufferedImage image;
-
-    public SnapshotImageEvent(BufferedImage image) {
-        this.image = image;
-    }
-
-    public BufferedImage image() {
-        return image;
-    }
 }

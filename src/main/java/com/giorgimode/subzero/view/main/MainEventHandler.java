@@ -52,7 +52,7 @@ public class MainEventHandler {
     @Subscribe
     @SuppressWarnings("unused")
     public void onSnapshotImage(SnapshotImageEvent event) {
-        new SnapshotView(event.image());
+        new SnapshotView(event.getImage());
     }
 
     @Subscribe

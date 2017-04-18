@@ -41,7 +41,9 @@ public class DownloadService {
             return false;
         }
         try {
-            if (connectToFTP()) return false;
+            if (ftpConnectionFailed()) {
+                return false;
+            }
 
             String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue() + ".zip";
             saveDirPath += languageEnum.getValue() + ".zip";
@@ -54,12 +56,12 @@ public class DownloadService {
             LOGGER.info("Disconnected");
             return isDownloaded;
         } catch (IOException ex) {
-            LOGGER.error("Could not open FTP connection");
-            LOGGER.error("Exception thrown: {}", ex);
+            LOGGER.error("Could not open FTP connection: {}", ex);
             return false;
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private boolean loadProperties() {
         String parentDir = Utils.parentDir("config");
         File file = new File(normalizePath(parentDir) + "config.properties");
@@ -87,7 +89,7 @@ public class DownloadService {
         return false;
     }
 
-    private boolean connectToFTP() throws IOException {
+    private boolean ftpConnectionFailed() throws IOException {
         // connect and login to the server
         ftpClient.connect(host, port);
         if (!ftpClient.login(username, password)) {

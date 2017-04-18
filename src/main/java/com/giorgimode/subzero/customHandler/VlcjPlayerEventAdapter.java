@@ -22,15 +22,10 @@ import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
     private PositionPane positionPane;
-
     private StatusBar statusBar;
-
     private VideoContentPane videoContentPane;
-
     private MouseMovementDetector mouseMovementDetector;
-
     private Component parentComponent;
-
     private JFileChooser fileChooser;
 
 
@@ -79,7 +74,8 @@ public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
             videoContentPane.showDefault();
             mouseMovementDetector.stop();
             Application.application().post(StoppedEvent.INSTANCE);
-            String message = MessageFormat.format(Application.resources().getString("error.errorEncountered"), fileChooser.getSelectedFile().toString());
+            String message = MessageFormat.format(Application.resources().getString("error.errorEncountered"),
+                    fileChooser.getSelectedFile().toString());
             JOptionPane.showMessageDialog(parentComponent, message, Application.resources().getString("dialog.errorEncountered"), ERROR_MESSAGE);
         }
     }

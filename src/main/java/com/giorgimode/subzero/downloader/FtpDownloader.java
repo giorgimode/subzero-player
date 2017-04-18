@@ -15,7 +15,7 @@ import java.io.OutputStream;
 /**
  * Created by modeg on 3/23/2017.
  */
-public class FtpDownloader {
+final class FtpDownloader {
     private static final Logger LOGGER = LoggerFactory.getLogger(FtpDownloader.class);
 
     /**
@@ -64,5 +64,8 @@ public class FtpDownloader {
             LOGGER.error("Downloaded archive failed to be removed");
         }
         return isSuccessfulyUnzipped;
+    }
+
+    private FtpDownloader() {
     }
 }

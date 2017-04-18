@@ -3,10 +3,7 @@ package com.giorgimode.subzero.util;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by modeg on 3/28/2017.
- */
-public class Utils {
+public final class Utils {
     public static String parentDir() {
         return parentDir("lang" + "\\");
     }
@@ -23,4 +20,8 @@ public class Utils {
         path = path != null ? path.replaceAll("//", "/") : "";
         return  (path.endsWith("/") || path.endsWith("\\")) ? path : path + "/";
     }
+
+    private Utils() {
+    }
 }
+

@@ -50,15 +50,16 @@ public class TranslatorService {
     }
 
     private void addSubtitleFile(File subtitleFile) {
+        log.debug("loading subtitle service");
         loadInBackground(() -> subtitleService = new SubtitleService(subtitleFile));
     }
 
     public void addSubtitleFile2(File subtitleFile) {
+        log.debug("added second subtitle");
         loadInBackground(() -> subtitleService2 = new SubtitleService(subtitleFile));
         application().selectedOverlayType(OverlayType.SECOND_SUBTITLE);
         mediaPlayer.enableOverlay(false);
-        subtitleService = null;
-        dictionaryService = null;
+        discardDictionaryData();
     }
 
     @Subscribe
@@ -72,8 +73,7 @@ public class TranslatorService {
                 loadInBackground(this::loadDictionary);
             }
         } else {
-            subtitleService = null;
-            dictionaryService = null;
+            discardDictionaryData();
         }
     }
 
@@ -106,8 +106,7 @@ public class TranslatorService {
     @SuppressWarnings("unused")
     public void onOverlaySwitch(OverlaySwitchEvent overlaySwitchEvent) {
         log.debug("overlay type switched");
-        dictionaryService = null;
-        subtitleService = null;
+        discardDictionaryData();
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
             loadInBackground(this::loadDictionary);
             File subtitleFile = new File(application().currentSubtitleFilePath());
@@ -119,22 +118,23 @@ public class TranslatorService {
 
     private void loadOverlay() {
         if (application().selectedOverlayType() == OverlayType.TRANSLATION) {
+            log.debug("loading translation overlay");
             mediaPlayer.enableOverlay(true);
             showTranslationOverlay();
         } else if (application().selectedOverlayType() == OverlayType.SECOND_SUBTITLE) {
+            log.debug("loading second subtitle overlay");
             showSecondSubtitleOverlay();
         }
     }
 
     private void loadInBackground(VoidFunction function) {
-        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+        new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws Exception {
                 function.run();
                 return null;
             }
-        };
-        swingWorker.execute();
+        }.execute();
     }
 
     private void showTranslationOverlay() {
@@ -142,8 +142,10 @@ public class TranslatorService {
             String[] allWords = getSubtitleWordsAtPauseTime(subtitleService);
 
             Map<String, Map<String, List<String>>> definitions = dictionaryService.retrieveDefinitions(allWords);
-            if (definitions != null && definitions.entrySet().size() > 0)
+            if (definitions != null && definitions.entrySet().size() > 0) {
                 ((TranslationOverlay) mediaPlayer.getOverlay()).populateNewWords(definitions);
+                log.debug("translation overlay loaded");
+            }
         }
     }
 
@@ -155,6 +157,7 @@ public class TranslatorService {
                     .sorted((e1, e2) -> e1.length() > e2.length() ? -1 : 1)
                     .findFirst().orElseGet(() -> "").length();
 
+            // doing calculations to mimic center-justified behavior
             String subtitleText = getSubtitleText(subtitleRowList, maxSize);
 
             int width = (int) mediaPlayer.getVideoDimension().getWidth();
@@ -170,6 +173,7 @@ public class TranslatorService {
                     .colour(new Color(255, 221, 148))
                     .enable();
             marquee.apply(mediaPlayer);
+            log.debug("second subtitle overlay loaded");
         }
     }
 
@@ -196,7 +200,6 @@ public class TranslatorService {
                 .orElse(new String[0]);
     }
 
-
     private void loadDictionary() {
         log.debug("loading Dictionary");
         LanguageEnum language = application().languageEnum();
@@ -215,5 +218,10 @@ public class TranslatorService {
             dictionaryService = CcDictionaryService.getInMemoryInstance(language, path);
         }
         log.debug("finished loading Dictionary");
+    }
+
+    private void discardDictionaryData() {
+        subtitleService = null;
+        dictionaryService = null;
     }
 }
