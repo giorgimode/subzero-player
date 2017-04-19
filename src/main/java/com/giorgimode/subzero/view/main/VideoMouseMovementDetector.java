@@ -1,9 +1,9 @@
 package com.giorgimode.subzero.view.main;
 
-import java.awt.Component;
-
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import com.giorgimode.subzero.view.MouseMovementDetector;
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+
+import java.awt.Component;
 
 final class VideoMouseMovementDetector extends MouseMovementDetector {
 

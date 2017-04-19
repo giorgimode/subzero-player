@@ -14,13 +14,13 @@ final class CropAction extends MediaPlayerAction {
         this.cropGeometry = cropGeometry;
     }
 
-    public CropAction(String name, MediaPlayer mediaPlayer, String cropGeometry) {
+    CropAction(String name, MediaPlayer mediaPlayer, String cropGeometry) {
         super(name, mediaPlayer);
         this.cropGeometry = cropGeometry;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setCropGeometry(cropGeometry);
+        getMediaPlayer().setCropGeometry(cropGeometry);
     }
 }

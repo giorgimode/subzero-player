@@ -21,17 +21,12 @@ import static com.giorgimode.subzero.time.Time.formatTime;
 public final class PositionPane extends JPanel {
 
     private final JLabel timeLabel;
-
     private final JSlider positionSlider;
-
     private final JLabel durationLabel;
     @Setter
-    private long time;
-
+    private       long   time;
     private final MediaPlayer mediaPlayer;
-
     private final AtomicBoolean sliderChanging = new AtomicBoolean();
-
     private final AtomicBoolean positionChanging = new AtomicBoolean();
 
     PositionPane(MediaPlayer mediaPlayer) {

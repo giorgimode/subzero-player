@@ -16,7 +16,7 @@ final class SnapshotAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        BufferedImage image = mediaPlayer.getSnapshot();
+        BufferedImage image = getMediaPlayer().getSnapshot();
         if (image != null) {
             Application.application().post(new SnapshotImageEvent(image));
         }

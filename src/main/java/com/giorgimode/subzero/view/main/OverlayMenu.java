@@ -15,13 +15,11 @@ import java.util.prefs.Preferences;
 
 import static com.giorgimode.subzero.Application.application;
 
-/**
- * Created by modeg on 3/19/2017.
- */
 @Slf4j
 public class OverlayMenu {
     private final JMenu menu;
 
+    @SuppressWarnings("ConstantConditions")
     OverlayMenu() {
         application().subscribe(this);
         Resource resource = Resource.resource("menu.subtitle.item.switchOverlay");

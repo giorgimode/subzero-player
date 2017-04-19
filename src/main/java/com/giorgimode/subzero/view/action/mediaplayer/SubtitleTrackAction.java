@@ -20,7 +20,7 @@ public final class SubtitleTrackAction extends MediaPlayerAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (trackId == 0) {
-            mediaPlayer.setSpu(-1);
+            getMediaPlayer().setSpu(-1);
         }
         application().setCurrentSubtitleId(trackId);
         application().post(new SubtitleSwitchEvent(trackId));

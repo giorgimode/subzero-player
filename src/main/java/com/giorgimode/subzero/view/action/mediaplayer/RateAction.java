@@ -16,6 +16,6 @@ final class RateAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setRate(rate);
+        getMediaPlayer().setRate(rate);
     }
 }

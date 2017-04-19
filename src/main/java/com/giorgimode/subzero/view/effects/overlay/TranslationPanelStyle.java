@@ -9,14 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * Created by modeg on 1/22/2017.
- */
 class TranslationPanelStyle implements PanelStyle {
 
     private static final String DEFINITION_STYLE_NAME = "definitionStyle";
-    private static final String SYNSET_STYLE_NAME = "synsetStyle";
-    private static final String ROOT_STYLE_NAME = "rootStyle";
+    private static final String SYNSET_STYLE_NAME     = "synsetStyle";
+    private static final String ROOT_STYLE_NAME       = "rootStyle";
 
     public void createOnClickStyle(TranslationPanel translationPanel) {
         Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap = translationPanel.getWordDefinitionEntryMap();
@@ -130,17 +127,17 @@ class TranslationPanelStyle implements PanelStyle {
 
     private String sanitize(String result) {
         result = result.replaceAll("\\{.*?} ?", "")
-                .replaceAll("\\[.*?] ?", "")
-                .replaceAll("<.*?> ?", "")
-                .replaceAll("\\(.*?\\) ?", "")
-                .replace(" ,", ",");
+                       .replaceAll("\\[.*?] ?", "")
+                       .replaceAll("<.*?> ?", "")
+                       .replaceAll("\\(.*?\\) ?", "")
+                       .replace(" ,", ",");
         return result;
     }
 
     private List<String> createPreviewTranslations(Map<String, List<String>> wordDefinitionEntryMap) {
         return wordDefinitionEntryMap.values()
-                .stream()
-                .map(strings -> strings.stream().collect(Collectors.joining(", ")))
-                .collect(Collectors.toList());
+                                     .stream()
+                                     .map(strings -> strings.stream().collect(Collectors.joining(", ")))
+                                     .collect(Collectors.toList());
     }
 }

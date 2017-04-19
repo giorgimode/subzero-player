@@ -1,5 +1,7 @@
 package com.giorgimode.subzero.view.image;
 
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
@@ -11,9 +13,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-
-import javax.imageio.ImageIO;
-import javax.swing.JComponent;
 
 /**
  * A panel that paints a background image.
@@ -28,7 +27,7 @@ public final class ImagePane extends JComponent {
         FIT
     }
 
-    private final Mode mode;
+    private final Mode  mode;
     private final float opacity;
 
     private BufferedImage sourceImage;
@@ -91,8 +90,7 @@ public final class ImagePane extends JComponent {
         if (imageUrl != null) {
             try {
                 sourceImage = ImageIO.read(imageUrl);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -111,13 +109,15 @@ public final class ImagePane extends JComponent {
                     case FIT:
                         image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
                         Graphics2D g2 = image.createGraphics();
-                        AffineTransform at = AffineTransform.getScaleInstance((double)image.getWidth() / sourceImage.getWidth(), (double)image.getHeight() / sourceImage.getHeight());
+                        AffineTransform at = AffineTransform.getScaleInstance(
+                                (double) image.getWidth() / sourceImage.getWidth(), (double) image.getHeight() / sourceImage.getHeight());
                         g2.drawRenderedImage(sourceImage, at);
                         g2.dispose();
                         break;
+                    default:
+                        break;
                 }
-            }
-            else {
+            } else {
                 image = null;
             }
         }

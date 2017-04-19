@@ -8,14 +8,10 @@ import net.miginfocom.swing.MigLayout;
 
 public class AudioEffectsPanel extends BasePanel {
 
-    private final JTabbedPane tabbedPane;
-
-    private final EqualizerPanel equalizerPanel;
-
     public AudioEffectsPanel() {
-        tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPane = new JTabbedPane();
+        EqualizerPanel equalizerPanel = new EqualizerPanel();
 
-        equalizerPanel = new EqualizerPanel();
         tabbedPane.add(equalizerPanel, Application.resources().getString("dialog.effects.tabs.audio.equalizer"));
 
         setLayout(new MigLayout("fill", "grow", "grow"));

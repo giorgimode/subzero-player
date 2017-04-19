@@ -1,22 +1,5 @@
 package com.giorgimode.subzero.view.effects.audio;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.List;
-
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.view.BasePanel;
 import com.giorgimode.subzero.view.SliderControl;
@@ -26,24 +9,40 @@ import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.Equalizer;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
+
 public class EqualizerPanel extends BasePanel implements ChangeListener, ItemListener, ActionListener {
 
     private static final String BAND_INDEX_PROPERTY = "equalizerBandIndex";
 
-    private final String dbFormat = "%.1f dB";
+    private static final String DB_FORMAT = "%.1f dB";
 
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
-    private final Equalizer equalizer;
+    private final Equalizer                    equalizer;
 
-    private final SliderControl preampControl;
+    private final SliderControl   preampControl;
     private final SliderControl[] bandControls;
 
-    private final JCheckBox enableCheckBox;
+    private final JCheckBox         enableCheckBox;
     private final JComboBox<String> presetComboBox;
 
     private boolean applyingPreset;
 
-    public EqualizerPanel() {
+    EqualizerPanel() {
         this.mediaPlayerComponent = Application.application().mediaPlayerComponent();
 
         this.equalizer = mediaPlayerComponent.getMediaPlayerFactory().newEqualizer();
@@ -54,13 +53,14 @@ public class EqualizerPanel extends BasePanel implements ChangeListener, ItemLis
         JPanel bandsPane = new JPanel();
         bandsPane.setLayout(new GridLayout(1, 1 + list.size(), 2, 0));
 
-        preampControl = new SliderControl("Preamp", (int)LibVlcConst.MIN_GAIN, (int)LibVlcConst.MAX_GAIN, 0, dbFormat);
+        preampControl = new SliderControl("Preamp", (int) LibVlcConst.MIN_GAIN, (int) LibVlcConst.MAX_GAIN, 0, DB_FORMAT);
         preampControl.getSlider().addChangeListener(this);
         bandsPane.add(preampControl);
 
         bandControls = new SliderControl[list.size()];
-        for(int i = 0; i < list.size(); i++) {
-            bandControls[i] = new SliderControl(formatFrequency(list.get(i)), (int)LibVlcConst.MIN_GAIN, (int)LibVlcConst.MAX_GAIN, 0, dbFormat);
+        for (int i = 0; i < list.size(); i++) {
+            bandControls[i] =
+                    new SliderControl(formatFrequency(list.get(i)), (int) LibVlcConst.MIN_GAIN, (int) LibVlcConst.MAX_GAIN, 0, DB_FORMAT);
             bandControls[i].getSlider().putClientProperty(BAND_INDEX_PROPERTY, i);
             bandControls[i].getSlider().addChangeListener(this);
             bandsPane.add(bandControls[i]);
@@ -83,11 +83,11 @@ public class EqualizerPanel extends BasePanel implements ChangeListener, ItemLis
         presetLabel.setDisplayedMnemonic('p');
         controlsPane.add(presetLabel);
 
-        presetComboBox = new JComboBox<String>();
+        presetComboBox = new JComboBox<>();
         presetLabel.setLabelFor(presetComboBox);
         DefaultComboBoxModel<String> presetModel = (DefaultComboBoxModel<String>) presetComboBox.getModel();
         presetModel.addElement(null);
-        for(String presetName : presets) {
+        for (String presetName : presets) {
             presetModel.addElement(presetName);
         }
         controlsPane.add(presetComboBox, "width pref");
@@ -109,10 +109,9 @@ public class EqualizerPanel extends BasePanel implements ChangeListener, ItemLis
     }
 
     private String formatFrequency(float hz) {
-        if(hz < 1000.0f) {
+        if (hz < 1000.0f) {
             return String.format("%.0f Hz", hz);
-        }
-        else {
+        } else {
             return String.format("%.0f kHz", hz / 1000f);
         }
     }
@@ -126,19 +125,18 @@ public class EqualizerPanel extends BasePanel implements ChangeListener, ItemLis
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        if(e.getSource() instanceof JSlider) {
-            JSlider slider = (JSlider)e.getSource();
-            Integer index = (Integer)slider.getClientProperty(BAND_INDEX_PROPERTY);
+        if (e.getSource() instanceof JSlider) {
+            JSlider slider = (JSlider) e.getSource();
+            Integer index = (Integer) slider.getClientProperty(BAND_INDEX_PROPERTY);
             int value = slider.getValue();
             // Band...
-            if(index != null) {
+            if (index != null) {
                 equalizer.setAmp(index, value / 100f);
-            }
-            // Preamp...
-            else {
+            } else {
+                // Preamp...
                 equalizer.setPreamp(value / 100f);
             }
-            if(!applyingPreset) {
+            if (!applyingPreset) {
                 presetComboBox.setSelectedItem(null);
             }
         }

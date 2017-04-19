@@ -4,10 +4,10 @@ import uk.co.caprica.vlcj.binding.internal.libvlc_log_level_e;
 
 final class NativeLogMessage {
 
-    private final String module;
-    private final String name;
+    private final String             module;
+    private final String             name;
     private final libvlc_log_level_e level;
-    private final String message;
+    private final String             message;
 
     NativeLogMessage(String module, String name, libvlc_log_level_e level, String message) {
         this.module = module;

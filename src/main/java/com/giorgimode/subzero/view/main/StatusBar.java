@@ -15,14 +15,11 @@ import static com.giorgimode.subzero.time.Time.formatTime;
 public final class StatusBar extends JPanel {
 
     private final JLabel titleLabel;
-
     private final JLabel rateLabel;
-
     private final JLabel timeLabel;
     @Setter
-    private long time;
-
-    private long duration;
+    private       long   time;
+    private       long   duration;
 
     StatusBar() {
         titleLabel = new BorderedStandardLabel();

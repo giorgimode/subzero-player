@@ -1,5 +1,6 @@
 package com.giorgimode.subzero.view;
 
+import javax.swing.Timer;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,20 +8,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.Timer;
-
 public abstract class MouseMovementDetector {
 
     private final Component component;
-
-    private final int timeout;
-
+    private final int       timeout;
     private final MouseMotionListener mouseMotionListener = new ActivityListener();
-
-    private Timer timer;
-
+    private Timer   timer;
     private boolean started;
-
     private boolean moving;
 
     public MouseMovementDetector(Component component, int timeout) {
@@ -30,19 +24,13 @@ public abstract class MouseMovementDetector {
 
     public void start() {
         if (!started) {
-            timer = new Timer(timeout, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    timeout();
-                }
-            });
+            timer = new Timer(timeout, e -> timeout());
             component.addMouseMotionListener(mouseMotionListener);
             timer.start();
             timer.setRepeats(false);
             started = true;
             onStarted();
-        }
-        else {
+        } else {
             throw new IllegalStateException("Already started");
         }
     }
@@ -70,7 +58,7 @@ public abstract class MouseMovementDetector {
         onMouseAtRest();
     }
 
-    protected void onStarted() {
+    private void onStarted() {
     }
 
     protected void onMouseAtRest() {

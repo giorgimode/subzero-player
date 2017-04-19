@@ -1,10 +1,10 @@
 package com.giorgimode.subzero.view.action;
 
-import static com.giorgimode.subzero.Application.resources;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
+
+import static com.giorgimode.subzero.Application.resources;
 
 public final class Resource {
 
@@ -21,8 +21,7 @@ public final class Resource {
     public String name() {
         if (resources().containsKey(id)) {
             return resources().getString(id);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -31,8 +30,7 @@ public final class Resource {
         String key = id + ".mnemonic";
         if (resources().containsKey(key)) {
             return (int) resources().getString(key).charAt(0);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -41,8 +39,7 @@ public final class Resource {
         String key = id + ".shortcut";
         if (resources().containsKey(key)) {
             return KeyStroke.getKeyStroke(resources().getString(key));
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -51,8 +48,7 @@ public final class Resource {
         String key = id + ".tooltip";
         if (resources().containsKey(key)) {
             return resources().getString(key);
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -61,8 +57,7 @@ public final class Resource {
         String key = id + ".menuIcon";
         if (resources().containsKey(key)) {
             return new ImageIcon(getClass().getResource("/icons/actions/" + resources().getString(key) + ".png"));
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -71,8 +66,7 @@ public final class Resource {
         String key = id + ".buttonIcon";
         if (resources().containsKey(key)) {
             return new ImageIcon(getClass().getResource("/icons/buttons/" + resources().getString(key) + ".png"));
-        }
-        else {
+        } else {
             return null;
         }
     }

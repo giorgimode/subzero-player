@@ -1,9 +1,9 @@
 package com.giorgimode.subzero.view.action.mediaplayer;
 
-import java.awt.event.ActionEvent;
-
 import com.giorgimode.subzero.view.action.Resource;
 import uk.co.caprica.vlcj.player.MediaPlayer;
+
+import java.awt.event.ActionEvent;
 
 final class AspectRatioAction extends MediaPlayerAction {
 
@@ -21,6 +21,6 @@ final class AspectRatioAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setAspectRatio(aspectRatio);
+        getMediaPlayer().setAspectRatio(aspectRatio);
     }
 }

@@ -25,35 +25,36 @@ import static com.giorgimode.subzero.Application.application;
  * Application entry-point.
  */
 @Slf4j
-public class VlcjPlayer {
+public final class VlcjPlayer {
 
-    private static final NativeStreams nativeStreams;
+    private static final NativeStreams NATIVE_STREAMS;
 
-    // Redirect the native output streams to files, useful since VLC can generate a lot of noisy native logs we don't care about
+    // TODO Redirect the native output streams to files, useful since VLC can generate a lot of noisy native logs we don't care about
     // (on the other hand, if we don't look at the logs we might won't see errors)
     static {
 //        if (RuntimeUtil.isNix()) {
-//            nativeStreams = new NativeStreams("stdout.log", "stderr.log");
+//            NATIVE_STREAMS = new NativeStreams("stdout.log", "stderr.log");
 //        }
 //        else {
-        nativeStreams = null;
+        NATIVE_STREAMS = null;
 //        }
     }
 
     private final JFrame mainFrame;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final JFrame messagesFrame;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final JFrame effectsFrame;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final JFrame debugFrame;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final JFrame languagePackFrame;
 
+    @SuppressWarnings("FieldCanBeLocal")
     private final NativeLog nativeLog;
     private static final String NATIVE_LIBRARY_SEARCH_PATH = "./lib";
 
@@ -83,7 +84,7 @@ public class VlcjPlayer {
         }
     }
 
-    public VlcjPlayer() {
+    private VlcjPlayer() {
         EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
 
         mainFrame = new MainFrame();
@@ -92,8 +93,8 @@ public class VlcjPlayer {
             public void windowClosing(WindowEvent e) {
                 log.debug("window closing");
                 application().dispose();
-                if (nativeStreams != null) {
-                    nativeStreams.release();
+                if (NATIVE_STREAMS != null) {
+                    NATIVE_STREAMS.release();
                 }
             }
         });

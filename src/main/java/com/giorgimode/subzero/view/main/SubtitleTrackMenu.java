@@ -19,7 +19,7 @@ final class SubtitleTrackMenu extends OnDemandMenu {
     }
 
     @Override
-    protected final void onPrepareMenu(JMenu menu) {
+    protected void onPrepareMenu(JMenu menu) {
         ButtonGroup buttonGroup = new ButtonGroup();
         int selectedTrack = onGetSelectedTrack();
         List<SubtitleTrack> onGetTrackDescriptions = onGetTrackDescriptions();

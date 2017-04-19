@@ -15,6 +15,6 @@ public final class AudioTrackAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setAudioTrack(trackId);
+        getMediaPlayer().setAudioTrack(trackId);
     }
 }

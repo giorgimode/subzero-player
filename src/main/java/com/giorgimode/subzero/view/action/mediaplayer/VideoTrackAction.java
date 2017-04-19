@@ -15,6 +15,6 @@ public final class VideoTrackAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setVideoTrack(trackId);
+        getMediaPlayer().setVideoTrack(trackId);
     }
 }

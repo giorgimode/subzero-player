@@ -5,9 +5,7 @@ import ca.odell.glazedlists.gui.TableFormat;
 final class DebugMessageTableFormat implements TableFormat<DebugMessage> {
 
     // FIXME resource bundle
-    private static final String[] COLUMN_NAMES = {
-        "Message"
-    };
+    private static final String[] COLUMN_NAMES = {"Message"};
 
     private static final int COLUMN_MESSAGE = 0;
 
@@ -27,7 +25,7 @@ final class DebugMessageTableFormat implements TableFormat<DebugMessage> {
     @Override
     public Object getColumnValue(DebugMessage message, int column) {
         Object result;
-        switch(column) {
+        switch (column) {
             case COLUMN_MESSAGE:
                 result = message.getMessage();
                 break;

@@ -1,15 +1,14 @@
 package com.giorgimode.subzero.view.main;
 
-import java.util.List;
+import com.giorgimode.subzero.view.OnDemandMenu;
+import com.giorgimode.subzero.view.action.Resource;
+import uk.co.caprica.vlcj.player.TrackDescription;
 
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JRadioButtonMenuItem;
-
-import uk.co.caprica.vlcj.player.TrackDescription;
-import com.giorgimode.subzero.view.OnDemandMenu;
-import com.giorgimode.subzero.view.action.Resource;
+import java.util.List;
 
 abstract class TrackMenu extends OnDemandMenu {
 

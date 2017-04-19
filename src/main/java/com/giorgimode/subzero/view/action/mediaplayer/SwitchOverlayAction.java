@@ -11,9 +11,6 @@ import java.awt.event.ActionEvent;
 
 import static com.giorgimode.subzero.Application.application;
 
-/**
- * Created by modeg on 3/19/2017.
- */
 public class SwitchOverlayAction extends MediaPlayerAction {
 
     private final OverlayType overlayType;
@@ -34,8 +31,8 @@ public class SwitchOverlayAction extends MediaPlayerAction {
 
     private void toggleMediaPlayerOverlay() {
         application().selectedOverlayType(overlayType);
-        if (mediaPlayer.isPlayable()) {
-            ((EmbeddedMediaPlayer) mediaPlayer).enableOverlay(overlayType == OverlayType.TRANSLATION);
+        if (getMediaPlayer().isPlayable()) {
+            ((EmbeddedMediaPlayer) getMediaPlayer()).enableOverlay(overlayType == OverlayType.TRANSLATION);
         }
     }
 }

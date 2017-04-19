@@ -51,80 +51,47 @@ public final class MainFrame extends BaseFrame {
     public static final String ACTION_EXIT_FULLSCREEN = "exit-fullscreen";
 
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
-    private final ActionFactory actionFactory;
+    private final ActionFactory                actionFactory;
     @Setter
-    private Action mediaOpenAction;
+    private       Action                       mediaOpenAction;
     @Setter
-    private Action mediaQuitAction;
+    private       Action                       mediaQuitAction;
     @Setter
-    private Action mediaOpenMrlAction;
+    private       Action                       mediaOpenMrlAction;
     @Setter
     @Getter
-    private StandardAction videoFullscreenAction;
+    private       StandardAction               videoFullscreenAction;
     @Setter
-    private StandardAction videoAlwaysOnTopAction;
+    private       StandardAction               videoAlwaysOnTopAction;
     @Getter
-    private TranslatorService translatorService;
+    private       TranslatorService            translatorService;
     @Setter
-    private Action addSubtitleFileAction;
+    private       Action                       addSubtitleFileAction;
     @Setter
-    private Action addSubtitleFileAction2;
+    private       Action                       addSubtitleFileAction2;
     @Setter
-    private Action languagePackAction;
+    private       Action                       languagePackAction;
     @Setter
-    private Action toolsEffectsAction;
+    private       Action                       toolsEffectsAction;
     @Setter
-    private Action toolsMessagesAction;
+    private       Action                       toolsMessagesAction;
     @Setter
-    private Action toolsDebugAction;
+    private       Action                       toolsDebugAction;
     @Setter
-    private StandardAction viewStatusBarAction;
+    private       StandardAction               viewStatusBarAction;
     @Setter
-    private Action helpAboutAction;
+    private       Action                       helpAboutAction;
     @Getter
-    private final PlayerMenuBar playerMenuBar;
-
-    private final JMenu mediaMenu;
-    private final JMenu mediaRecentMenu;
-
-    private final JMenu playbackMenu;
-    private final JMenu playbackTitleMenu;
-    private final JMenu playbackChapterMenu;
-    private final JMenu playbackSpeedMenu;
-
-    private final JMenu audioMenu;
-    private final JMenu audioTrackMenu;
-    private final JMenu audioDeviceMenu;
-    private final JMenu audioStereoMenu;
-
-    private final JMenu videoMenu;
-    private final JMenu videoTrackMenu;
-    private final JMenu videoZoomMenu;
-    private final JMenu videoAspectRatioMenu;
-    private final JMenu videoCropMenu;
-
-    private final JMenu subtitleMenu;
-    private final JMenu subtitleTrackMenu;
-    private final JMenu overlayMenu;
-    private final JMenu toolsMenu;
-
-    private final JMenu viewMenu;
-
-    private final JMenu helpMenu;
+    private final PlayerMenuBar                playerMenuBar;
     @Getter
-    private JFileChooser fileChooser;
+    private       JFileChooser                 fileChooser;
 
-    private final PositionPane positionPane;
-
-    private final ControlsPane controlsPane;
     @Getter
     private StatusBar statusBar;
 
-    private final VideoContentPane videoContentPane;
     @Getter
     private JPanel bottomPane;
 
-    private final MouseMovementDetector mouseMovementDetector;
     @Getter
     private final TranslationOverlay translationOverlay;
 
@@ -169,30 +136,26 @@ public final class MainFrame extends BaseFrame {
 
         playerMenuBar = new PlayerMenuBar();
 
-        mediaMenu = new JMenu(resourceName("menu.media"));
+        JMenu mediaMenu = new JMenu(resourceName("menu.media"));
         mediaMenu.setMnemonic(resourceMnemonic("menu.media"));
         mediaMenu.add(new JMenuItem(mediaOpenAction));
-        mediaRecentMenu = new RecentMediaMenu(Resource.resource("menu.media.item.recent")).menu();
+        JMenu mediaRecentMenu = new RecentMediaMenu(Resource.resource("menu.media.item.recent")).menu();
         mediaMenu.add(mediaRecentMenu);
         mediaMenu.add(new JMenuItem(mediaOpenMrlAction));
         mediaMenu.add(new JSeparator());
         mediaMenu.add(new JMenuItem(mediaQuitAction));
         playerMenuBar.add(mediaMenu);
 
-        playbackMenu = new JMenu(resourceName("menu.playback"));
+        JMenu playbackMenu = new JMenu(resourceName("menu.playback"));
+        JMenu playbackTitleMenu = new TitleTrackMenu().menu();
         playbackMenu.setMnemonic(resourceMnemonic("menu.playback"));
-
-        playbackTitleMenu = new TitleTrackMenu().menu();
-
-        // Chapter could be an "on-demand" menu too, and it could be with radio buttons...
-
+        // TODO Chapter could be an "on-demand" menu too, and it could be with radio buttons...
         playbackMenu.add(playbackTitleMenu);
 
-        playbackChapterMenu = new ChapterMenu().menu();
-
+        JMenu playbackChapterMenu = new ChapterMenu().menu();
         playbackMenu.add(playbackChapterMenu);
         playbackMenu.add(new JSeparator());
-        playbackSpeedMenu = new JMenu(resourceName("menu.playback.item.speed"));
+        JMenu playbackSpeedMenu = new JMenu(resourceName("menu.playback.item.speed"));
         playbackSpeedMenu.setMnemonic(resourceMnemonic("menu.playback.item.speed"));
         for (Action action : mediaPlayerActions.playbackSpeedActions()) {
             playbackSpeedMenu.add(new JMenuItem(action));
@@ -217,15 +180,15 @@ public final class MainFrame extends BaseFrame {
         }
         playerMenuBar.add(playbackMenu);
 
-        audioMenu = new JMenu(resourceName("menu.audio"));
+        JMenu audioMenu = new JMenu(resourceName("menu.audio"));
         audioMenu.setMnemonic(resourceMnemonic("menu.audio"));
 
-        audioTrackMenu = new AudioTrackMenu().menu();
+        JMenu audioTrackMenu = new AudioTrackMenu().menu();
 
         audioMenu.add(audioTrackMenu);
-        audioDeviceMenu = new AudioDeviceMenu().menu();
+        JMenu audioDeviceMenu = new AudioDeviceMenu().menu();
         audioMenu.add(audioDeviceMenu);
-        audioStereoMenu = new JMenu(resourceName("menu.audio.item.stereoMode"));
+        JMenu audioStereoMenu = new JMenu(resourceName("menu.audio.item.stereoMode"));
         audioStereoMenu.setMnemonic(resourceMnemonic("menu.audio.item.stereoMode"));
         for (Action action : mediaPlayerActions.audioStereoModeActions()) {
             audioStereoMenu.add(new JRadioButtonMenuItem(action));
@@ -237,26 +200,25 @@ public final class MainFrame extends BaseFrame {
         }
         playerMenuBar.add(audioMenu);
 
-        videoMenu = new JMenu(resourceName("menu.video"));
+        JMenu videoMenu = new JMenu(resourceName("menu.video"));
         videoMenu.setMnemonic(resourceMnemonic("menu.video"));
-
-        videoTrackMenu = new VideoTrackMenu().menu();
+        JMenu videoTrackMenu = new VideoTrackMenu().menu();
 
         videoMenu.add(videoTrackMenu);
         videoMenu.add(new JSeparator());
         videoMenu.add(new JCheckBoxMenuItem(videoFullscreenAction));
         videoMenu.add(new JCheckBoxMenuItem(videoAlwaysOnTopAction));
         videoMenu.add(new JSeparator());
-        videoZoomMenu = new JMenu(resourceName("menu.video.item.zoom"));
+        JMenu videoZoomMenu = new JMenu(resourceName("menu.video.item.zoom"));
         videoZoomMenu.setMnemonic(resourceMnemonic("menu.video.item.zoom"));
-        actionFactory.addActions(mediaPlayerActions
-                .videoZoomActions(), videoZoomMenu/*, true*/); // FIXME how to handle zoom 1:1 and fit to window - also, probably should not use addActions to select
+        // FIXME how to handle zoom 1:1 and fit to window - also, probably should not use addActions to select
+        actionFactory.addActions(mediaPlayerActions.videoZoomActions(), videoZoomMenu/*, true*/);
         videoMenu.add(videoZoomMenu);
-        videoAspectRatioMenu = new JMenu(resourceName("menu.video.item.aspectRatio"));
+        JMenu videoAspectRatioMenu = new JMenu(resourceName("menu.video.item.aspectRatio"));
         videoAspectRatioMenu.setMnemonic(resourceMnemonic("menu.video.item.aspectRatio"));
         actionFactory.addActionFirst(mediaPlayerActions.videoAspectRatioActions(), videoAspectRatioMenu);
         videoMenu.add(videoAspectRatioMenu);
-        videoCropMenu = new JMenu(resourceName("menu.video.item.crop"));
+        JMenu videoCropMenu = new JMenu(resourceName("menu.video.item.crop"));
         videoCropMenu.setMnemonic(resourceMnemonic("menu.video.item.crop"));
         actionFactory.addActionFirst(mediaPlayerActions.videoCropActions(), videoCropMenu);
         videoMenu.add(videoCropMenu);
@@ -264,19 +226,19 @@ public final class MainFrame extends BaseFrame {
         videoMenu.add(new JMenuItem(mediaPlayerActions.videoSnapshotAction()));
         playerMenuBar.add(videoMenu);
 
-        subtitleMenu = new JMenu(resourceName("menu.subtitle"));
+        JMenu subtitleMenu = new JMenu(resourceName("menu.subtitle"));
         subtitleMenu.setMnemonic(resourceMnemonic("menu.subtitle"));
         subtitleMenu.add(new JMenuItem(addSubtitleFileAction));
         subtitleMenu.add(new JMenuItem(addSubtitleFileAction2));
         subtitleMenu.add(new JMenuItem(languagePackAction));
 
-        subtitleTrackMenu = new SubtitleTrackMenu().menu();
-        overlayMenu = new OverlayMenu().menu();
+        JMenu subtitleTrackMenu = new SubtitleTrackMenu().menu();
+        JMenu overlayMenu = new OverlayMenu().menu();
         subtitleMenu.add(subtitleTrackMenu);
         subtitleMenu.add(overlayMenu);
         playerMenuBar.add(subtitleMenu);
 
-        toolsMenu = new JMenu(resourceName("menu.tools"));
+        JMenu toolsMenu = new JMenu(resourceName("menu.tools"));
         toolsMenu.setMnemonic(resourceMnemonic("menu.tools"));
         toolsMenu.add(new JMenuItem(toolsEffectsAction));
         toolsMenu.add(new JMenuItem(toolsMessagesAction));
@@ -284,19 +246,19 @@ public final class MainFrame extends BaseFrame {
         toolsMenu.add(new JMenuItem(toolsDebugAction));
         playerMenuBar.add(toolsMenu);
 
-        viewMenu = new JMenu(resourceName("menu.view"));
+        JMenu viewMenu = new JMenu(resourceName("menu.view"));
         viewMenu.setMnemonic(resourceMnemonic("menu.view"));
         viewMenu.add(new JCheckBoxMenuItem(viewStatusBarAction));
         playerMenuBar.add(viewMenu);
 
-        helpMenu = new JMenu(resourceName("menu.help"));
+        JMenu helpMenu = new JMenu(resourceName("menu.help"));
         helpMenu.setMnemonic(resourceMnemonic("menu.help"));
         helpMenu.add(new JMenuItem(helpAboutAction));
         playerMenuBar.add(helpMenu);
 
         setJMenuBar(playerMenuBar);
 
-        videoContentPane = new VideoContentPane();
+        VideoContentPane videoContentPane = new VideoContentPane();
 
         JPanel contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout());
@@ -323,10 +285,10 @@ public final class MainFrame extends BaseFrame {
         JPanel bottomControlsPane = new JPanel();
         bottomControlsPane.setLayout(new MigLayout("fill, insets 0 n n n", "[grow]", "[]0[]"));
 
-        positionPane = new PositionPane(mediaPlayer);
+        PositionPane positionPane = new PositionPane(mediaPlayer);
         bottomControlsPane.add(positionPane, "grow, wrap");
 
-        controlsPane = new ControlsPane(mediaPlayerActions);
+        ControlsPane controlsPane = new ControlsPane(mediaPlayerActions);
         bottomPane.add(bottomControlsPane, BorderLayout.CENTER);
         bottomControlsPane.add(controlsPane, "grow");
 
@@ -334,7 +296,8 @@ public final class MainFrame extends BaseFrame {
         bottomPane.add(statusBar, BorderLayout.SOUTH);
 
         contentPane.add(bottomPane, BorderLayout.SOUTH);
-        mouseMovementDetector = new VideoMouseMovementDetector(mediaPlayerComponent.getVideoSurface(), 500, mediaPlayerComponent);
+        MouseMovementDetector mouseMovementDetector =
+                new VideoMouseMovementDetector(mediaPlayerComponent.getVideoSurface(), 500, mediaPlayerComponent);
 
         MediaPlayerEventAdapter playerEventAdapter = new VlcjPlayerEventAdapter()
                 .setMouseMovementDetector(mouseMovementDetector)
@@ -394,7 +357,7 @@ public final class MainFrame extends BaseFrame {
                 prefs.getInt("frameY", 100),
                 prefs.getInt("frameWidth", 800),
                 prefs.getInt("frameHeight", 600)
-        );
+                 );
         boolean alwaysOnTop = prefs.getBoolean("alwaysOnTop", false);
         setAlwaysOnTop(alwaysOnTop);
         videoAlwaysOnTopAction.select(alwaysOnTop);

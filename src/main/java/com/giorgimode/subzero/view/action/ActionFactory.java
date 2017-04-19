@@ -38,9 +38,6 @@ import static com.giorgimode.subzero.view.main.MainFrame.ACTION_EXIT_FULLSCREEN;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-/**
- * Created by modeg on 2/22/2017.
- */
 @Slf4j
 public class ActionFactory {
     private MainFrame mainFrame;

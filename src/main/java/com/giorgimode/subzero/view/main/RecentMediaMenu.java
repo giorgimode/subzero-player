@@ -1,19 +1,18 @@
 package com.giorgimode.subzero.view.main;
 
-import static com.giorgimode.subzero.Application.application;
-
-import java.awt.event.ActionEvent;
-import java.util.List;
+import com.giorgimode.subzero.view.OnDemandMenu;
+import com.giorgimode.subzero.view.action.Resource;
+import com.giorgimode.subzero.view.action.StandardAction;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
+import java.awt.event.ActionEvent;
+import java.util.List;
 
-import com.giorgimode.subzero.view.OnDemandMenu;
-import com.giorgimode.subzero.view.action.Resource;
-import com.giorgimode.subzero.view.action.StandardAction;
+import static com.giorgimode.subzero.Application.application;
 
 final class RecentMediaMenu extends OnDemandMenu {
 
@@ -22,7 +21,7 @@ final class RecentMediaMenu extends OnDemandMenu {
     }
 
     @Override
-    protected final void onPrepareMenu(JMenu menu) {
+    protected void onPrepareMenu(JMenu menu) {
         List<String> mrls = application().recentMedia();
         if (!mrls.isEmpty()) {
             int i = 1;
@@ -38,7 +37,7 @@ final class RecentMediaMenu extends OnDemandMenu {
 
         private final String mrl;
 
-        public PlayRecentAction(int number, String mrl) {
+        PlayRecentAction(int number, String mrl) {
             super(String.format("%d: %s", number, mrl));
             putValue(Action.MNEMONIC_KEY, number < 10 ? number : 0);
             putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(String.format("control %d", number < 10 ? number : 0)));
@@ -53,7 +52,7 @@ final class RecentMediaMenu extends OnDemandMenu {
 
     private class ClearRecentMediaAction extends StandardAction {
 
-        public ClearRecentMediaAction() {
+        ClearRecentMediaAction() {
             super(Resource.resource("menu.media.item.recent.item.clear"));
         }
 

@@ -24,21 +24,23 @@ import java.util.Map;
 import static com.giorgimode.subzero.Application.application;
 
 class TranslationPanel extends JScrollPane {
-    @Setter @Getter
-    private boolean focused;
-    @Getter
-    private final JTextPane jTextPane;
-    private final Dimension panelDimension;
-    private int maximumAllowedHeight;
-    @Getter
-    private Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
-    @Setter @Getter
-    private StyledDocument originalStyledDocument;
     @Setter
-    private StyledDocument previewStyledDocument;
+    @Getter
+    private       boolean                                      focused;
+    @Getter
+    private final JTextPane                                    jTextPane;
+    private final Dimension                                    panelDimension;
+    private       int                                          maximumAllowedHeight;
+    @Getter
+    private       Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap;
+    @Setter
+    @Getter
+    private       StyledDocument                               originalStyledDocument;
+    @Setter
+    private       StyledDocument                               previewStyledDocument;
     @Getter
     @Setter
-    private boolean expanded;
+    private       boolean                                      expanded;
 
     TranslationPanel(Map.Entry<String, Map<String, List<String>>> wordDefinitionEntryMap) {
         jTextPane = new JTextPane();

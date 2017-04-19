@@ -1,10 +1,9 @@
 package com.giorgimode.subzero.view;
 
+import javax.swing.JLabel;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Insets;
-
-import javax.swing.JLabel;
 
 public class StandardLabel extends JLabel {
 
@@ -28,8 +27,7 @@ public class StandardLabel extends JLabel {
         String text = getText();
         if (template != null) {
             w += fontMetrics.stringWidth(template);
-        }
-        else {
+        } else {
             w += text != null && text.length() > 0 ? fontMetrics.stringWidth(text) : 32;
         }
         return new Dimension(w, h);

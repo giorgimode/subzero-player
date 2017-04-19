@@ -1,21 +1,21 @@
 package com.giorgimode.subzero.view;
 
+import com.giorgimode.subzero.view.action.Resource;
+
 import javax.swing.JMenu;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import com.giorgimode.subzero.view.action.Resource;
-
 public abstract class OnDemandMenu implements MenuListener {
 
     private final JMenu menu;
-
     private final boolean clearOnPrepare;
 
     public OnDemandMenu(Resource resource) {
         this(resource, false);
     }
 
+    @SuppressWarnings("ConstantConditions")
     public OnDemandMenu(Resource resource, boolean clearOnPrepare) {
         this.menu = new JMenu(resource.name());
         this.menu.setMnemonic(resource.mnemonic());

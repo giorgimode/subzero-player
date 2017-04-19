@@ -1,47 +1,37 @@
 package com.giorgimode.subzero.view.effects.video;
 
-import static com.giorgimode.subzero.Application.application;
-import static com.giorgimode.subzero.Application.resources;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import com.giorgimode.subzero.view.BasePanel;
 import net.miginfocom.swing.MigLayout;
 import uk.co.caprica.vlcj.binding.LibVlcConst;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
-// Note that LibVLC 3.0.0 currently has a problem that the video adjust filter needs to be disabled then enabled again after changing ANY property
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
 
-public class VideoAdjustPanel extends BasePanel {
+import static com.giorgimode.subzero.Application.application;
+import static com.giorgimode.subzero.Application.resources;
 
-    private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
+/* TODO Note that LibVLC 3.0.0 currently has a problem that the video adjust filter needs to be disabled then enabled again after
+ changing ANY property
+ */
+
+class VideoAdjustPanel extends BasePanel {
 
     private final JCheckBox enableCheckBox;
-    private final JLabel hueLabel;
-    private final JSlider hueSlider;
-    private final JLabel brightnessLabel;
-    private final JSlider brightnessSlider;
-    private final JLabel contrastLabel;
-    private final JSlider contrastSlider;
-    private final JLabel saturationLabel;
-    private final JSlider saturationSlider;
-    private final JLabel gammaLabel;
-    private final JSlider gammaSlider;
+    private final JSlider   hueSlider;
+    private final JSlider   brightnessSlider;
+    private final JSlider   contrastSlider;
+    private final JSlider   saturationSlider;
+    private final JSlider   gammaSlider;
 
-    public VideoAdjustPanel() {
-        this.mediaPlayerComponent = application().mediaPlayerComponent();
+    VideoAdjustPanel() {
+        EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
 
         enableCheckBox = new JCheckBox(resources().getString("dialog.effects.tabs.video.adjust.enable"));
 
-        hueLabel = new JLabel();
+        JLabel hueLabel = new JLabel();
         hueLabel.setText(resources().getString("dialog.effects.tabs.video.adjust.hue"));
 
         hueSlider = new JSlider();
@@ -49,7 +39,7 @@ public class VideoAdjustPanel extends BasePanel {
         hueSlider.setMaximum(LibVlcConst.MAX_HUE);
         hueLabel.setLabelFor(hueSlider);
 
-        brightnessLabel = new JLabel();
+        JLabel brightnessLabel = new JLabel();
         brightnessLabel.setText(resources().getString("dialog.effects.tabs.video.adjust.brightness"));
 
         brightnessSlider = new JSlider();
@@ -57,7 +47,7 @@ public class VideoAdjustPanel extends BasePanel {
         brightnessSlider.setMaximum(Math.round(LibVlcConst.MAX_BRIGHTNESS * 100.0f));
         brightnessLabel.setLabelFor(brightnessSlider);
 
-        contrastLabel = new JLabel();
+        JLabel contrastLabel = new JLabel();
         contrastLabel.setText(resources().getString("dialog.effects.tabs.video.adjust.contrast"));
 
         contrastSlider = new JSlider();
@@ -67,7 +57,7 @@ public class VideoAdjustPanel extends BasePanel {
         contrastSlider.setPaintTicks(true);
         contrastLabel.setLabelFor(contrastSlider);
 
-        saturationLabel = new JLabel();
+        JLabel saturationLabel = new JLabel();
         saturationLabel.setText(resources().getString("dialog.effects.tabs.video.adjust.saturation"));
 
         saturationSlider = new JSlider();
@@ -75,7 +65,7 @@ public class VideoAdjustPanel extends BasePanel {
         saturationSlider.setMaximum(Math.round(LibVlcConst.MAX_SATURATION * 100.0f));
         saturationLabel.setLabelFor(saturationSlider);
 
-        gammaLabel = new JLabel();
+        JLabel gammaLabel = new JLabel();
         gammaLabel.setText(resources().getString("dialog.effects.tabs.video.adjust.gamma"));
 
         gammaSlider = new JSlider();
@@ -84,53 +74,35 @@ public class VideoAdjustPanel extends BasePanel {
 
         MediaPlayer mediaPlayer = mediaPlayerComponent.getMediaPlayer();
 
-        enableCheckBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean enable = enableCheckBox.isSelected();
-                enableControls(enable);
-                mediaPlayer.setAdjustVideo(enable);
-            }
+        enableCheckBox.addActionListener(e -> {
+            boolean enable = enableCheckBox.isSelected();
+            enableControls(enable);
+            mediaPlayer.setAdjustVideo(enable);
         });
 
-        hueSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                mediaPlayer.setHue(source.getValue());
-            }
+        hueSlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            mediaPlayer.setHue(source.getValue());
         });
 
-        brightnessSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                mediaPlayer.setBrightness(source.getValue() / 100.0f);
-            }
+        brightnessSlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            mediaPlayer.setBrightness(source.getValue() / 100.0f);
         });
 
-        contrastSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                mediaPlayer.setContrast(source.getValue() / 100.0f);
-            }
+        contrastSlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            mediaPlayer.setContrast(source.getValue() / 100.0f);
         });
 
-        saturationSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                mediaPlayer.setSaturation(source.getValue() / 100.0f);
-            }
+        saturationSlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            mediaPlayer.setSaturation(source.getValue() / 100.0f);
         });
 
-        gammaSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                JSlider source = (JSlider) e.getSource();
-                mediaPlayer.setGamma(source.getValue() / 100.0f);
-            }
+        gammaSlider.addChangeListener(e -> {
+            JSlider source = (JSlider) e.getSource();
+            mediaPlayer.setGamma(source.getValue() / 100.0f);
         });
 
         contrastSlider.setValue(Math.round(mediaPlayer.getBrightness() * 100.0f));

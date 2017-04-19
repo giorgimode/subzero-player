@@ -11,7 +11,8 @@ import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.mediaplayer.ChapterAction;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
-// FIXME there's no reason this couldn't be another radiobutton menu... and show the current chapter - probably more useful that way even if not the same as VLC
+// FIXME there's no reason this couldn't be another radiobutton menu... and show the current chapter - probably more useful that
+// way even if not the same as VLC
 
 final class ChapterMenu extends OnDemandMenu {
 

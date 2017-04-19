@@ -17,7 +17,7 @@ public final class AudioDeviceMenu extends OnDemandMenu {
 
     private static final String KEY_AUDIO_DEVICE = "audio-device";
 
-    public AudioDeviceMenu() {
+    AudioDeviceMenu() {
         super(Resource.resource("menu.audio.item.device"));
     }
 

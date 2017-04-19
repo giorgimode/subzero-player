@@ -1,19 +1,16 @@
 package com.giorgimode.subzero.view.main;
 
+import javax.swing.TransferHandler;
 import java.awt.datatransfer.DataFlavor;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
 
-import javax.swing.TransferHandler;
-
 @SuppressWarnings("serial")
 abstract class MediaTransferHandler extends TransferHandler {
 
     private final DataFlavor uriListFlavor;
-
     private final DataFlavor javaUrlFlavor;
-
     private final DataFlavor javaFileListFlavor;
 
     MediaTransferHandler() {
@@ -25,8 +22,7 @@ abstract class MediaTransferHandler extends TransferHandler {
     private DataFlavor newDataFlavor(String mimeType) {
         try {
             return new DataFlavor(mimeType);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException();
         }
     }
@@ -43,29 +39,26 @@ abstract class MediaTransferHandler extends TransferHandler {
             try {
                 Object transferData = support.getTransferable().getTransferData(flavor);
                 if (transferData instanceof String) {
-                    String value = (String)transferData;
+                    String value = (String) transferData;
                     String[] uris = value.split("\\r\\n");
                     if (uris.length > 0) {
                         onMediaDropped(uris);
                     }
                     return true;
-                }
-                else if (transferData instanceof URL) {
-                    URL value = (URL)transferData;
+                } else if (transferData instanceof URL) {
+                    URL value = (URL) transferData;
                     String uri = value.toExternalForm();
-                    onMediaDropped(new String[] {uri});
-                }
-                else if (transferData instanceof List) {
-                    List<?> value = (List<?>)transferData;
+                    onMediaDropped(new String[]{uri});
+                } else if (transferData instanceof List) {
+                    List<?> value = (List<?>) transferData;
                     if (value.size() > 0) {
                         // Play the first MRL that was dropped (the others are discarded)
-                        File file = (File)value.get(0);
+                        File file = (File) value.get(0);
                         String uri = file.getAbsolutePath();
-                        onMediaDropped(new String[] {uri});
+                        onMediaDropped(new String[]{uri});
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

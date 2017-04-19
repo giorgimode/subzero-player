@@ -16,6 +16,6 @@ final class SkipAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.skip(delta);
+        getMediaPlayer().skip(delta);
     }
 }

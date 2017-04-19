@@ -1,19 +1,16 @@
 package com.giorgimode.subzero.view.main;
 
-import static com.giorgimode.subzero.Application.application;
-
-import java.awt.CardLayout;
+import com.giorgimode.subzero.view.image.ImagePane;
 
 import javax.swing.JPanel;
+import java.awt.CardLayout;
 
-import com.giorgimode.subzero.view.image.ImagePane;
+import static com.giorgimode.subzero.Application.application;
 
 public final class VideoContentPane extends JPanel {
 
     private static final String NAME_DEFAULT = "default";
-
-    private static final String NAME_VIDEO = "video";
-
+    private static final String NAME_VIDEO   = "video";
     private final CardLayout cardLayout;
 
     VideoContentPane() {

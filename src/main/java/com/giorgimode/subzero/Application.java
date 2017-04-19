@@ -30,31 +30,24 @@ public final class Application {
 
     private static final String RESOURCE_BUNDLE_BASE_NAME = "strings/vlcj-player";
 
-    private static final ResourceBundle resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE       = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME);
+    private static final int            MAX_RECENT_MEDIA_SIZE = 10;
 
-    private static final int MAX_RECENT_MEDIA_SIZE = 10;
-
-    private final EventBus eventBus;
-
+    private final EventBus                     eventBus;
     private final EmbeddedMediaPlayerComponent mediaPlayerComponent;
-
-    private final MediaPlayerActions mediaPlayerActions;
-
+    private final MediaPlayerActions           mediaPlayerActions;
     private final Deque<String> recentMedia = new ArrayDeque<>(MAX_RECENT_MEDIA_SIZE);
     @Setter
-    private LanguageEnum languageEnum;
-
-    private OverlayType selectedOverlayType;
-
+    private LanguageEnum        languageEnum;
+    private OverlayType         selectedOverlayType;
     @Getter
     private List<SubtitleTrack> subtitleTracks;
-
     @Getter
     @Setter
-    private int currentSubtitleId;
+    private int                 currentSubtitleId;
     @Getter
     @Setter
-    private boolean mediaMrlAdded;
+    private boolean             mediaMrlAdded;
 
     private static final class ApplicationHolder {
         private static final Application INSTANCE = new Application();
@@ -65,7 +58,7 @@ public final class Application {
     }
 
     public static ResourceBundle resources() {
-        return resourceBundle;
+        return RESOURCE_BUNDLE;
     }
 
     private Application() {
@@ -147,7 +140,7 @@ public final class Application {
         return subtitleTracks.get(currentSubtitleId).getSubtitlePath();
     }
 
-    public void dispose(){
+    public void dispose() {
         application().post(ShutdownEvent.INSTANCE);
         mediaPlayerComponent.getMediaPlayer().stop();
         mediaPlayerComponent.release();

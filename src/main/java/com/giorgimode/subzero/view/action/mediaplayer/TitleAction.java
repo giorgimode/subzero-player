@@ -15,6 +15,6 @@ public final class TitleAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setTitle(titleId);
+        getMediaPlayer().setTitle(titleId);
     }
 }

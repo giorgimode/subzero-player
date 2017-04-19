@@ -13,20 +13,19 @@ public class SliderControl extends JPanel implements ChangeListener {
     private final float factor = 100f;
     private final String valueFormat;
 
-    private final JLabel label;
     private final JSlider slider;
-    private final JLabel valueLabel;
+    private final JLabel  valueLabel;
 
     public SliderControl(String text, float min, float max, float value, String valueFormat) {
         this.valueFormat = valueFormat;
 
-        label = new SmallStandardLabel();
+        JLabel label = new SmallStandardLabel();
         label.setText(text);
         label.setHorizontalAlignment(JLabel.CENTER);
 
-        int modelMin = (int)(min * factor);
-        int modelMax = (int)(max * factor);
-        int modelValue = (int)(value * factor);
+        int modelMin = (int) (min * factor);
+        int modelMax = (int) (max * factor);
+        int modelValue = (int) (value * factor);
 
         modelValue = Math.min(modelValue, modelMax);
         modelValue = Math.max(modelValue, modelMin);

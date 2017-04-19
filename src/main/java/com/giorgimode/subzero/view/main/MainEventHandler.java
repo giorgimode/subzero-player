@@ -17,15 +17,12 @@ import javax.swing.KeyStroke;
 import static com.giorgimode.subzero.Application.application;
 import static com.giorgimode.subzero.view.main.MainFrame.ACTION_EXIT_FULLSCREEN;
 
-/**
- * Created by modeg on 2/22/2017.
- */
 public class MainEventHandler {
     private MainFrame mainFrame;
-    private static EmbeddedMediaPlayerComponent mediaPlayerComponent = application().mediaPlayerComponent();
-    private static EmbeddedMediaPlayer mediaPlayer = mediaPlayerComponent.getMediaPlayer();
-    private static final KeyStroke KEYSTROKE_ESCAPE = KeyStroke.getKeyStroke("ESCAPE");
-    private static final KeyStroke KEYSTROKE_TOGGLE_FULLSCREEN = KeyStroke.getKeyStroke("F11");
+    private static       EmbeddedMediaPlayerComponent mediaPlayerComponent        = application().mediaPlayerComponent();
+    private static       EmbeddedMediaPlayer          mediaPlayer                 = mediaPlayerComponent.getMediaPlayer();
+    private static final KeyStroke                    KEYSTROKE_ESCAPE            = KeyStroke.getKeyStroke("ESCAPE");
+    private static final KeyStroke                    KEYSTROKE_TOGGLE_FULLSCREEN = KeyStroke.getKeyStroke("F11");
 
     MainEventHandler(MainFrame mainFrame) {
         this.mainFrame = mainFrame;

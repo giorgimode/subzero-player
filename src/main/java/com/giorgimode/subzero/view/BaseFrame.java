@@ -1,14 +1,12 @@
 package com.giorgimode.subzero.view;
 
-import java.io.IOException;
+import com.giorgimode.subzero.Application;
+import com.giorgimode.subzero.event.ShutdownEvent;
+import com.google.common.eventbus.Subscribe;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-
-import com.giorgimode.subzero.Application;
-import com.giorgimode.subzero.event.ShutdownEvent;
-
-import com.google.common.eventbus.Subscribe;
+import java.io.IOException;
 
 @SuppressWarnings("serial")
 public abstract class BaseFrame extends JFrame {
@@ -19,8 +17,7 @@ public abstract class BaseFrame extends JFrame {
         super(title);
         try {
             setIconImage(ImageIO.read(getClass().getResource("/vlcj-logo-frame.png")));
-        }
-        catch (IOException e) {
+        } catch (IOException ignored) {
         }
         Application.application().subscribe(this);
     }
@@ -34,6 +31,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public final void onShutdown(ShutdownEvent event) {
         onShutdown();
     }

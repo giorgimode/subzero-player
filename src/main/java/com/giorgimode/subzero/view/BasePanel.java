@@ -1,20 +1,20 @@
 package com.giorgimode.subzero.view;
 
-import static com.giorgimode.subzero.Application.application;
+import com.giorgimode.subzero.event.ShutdownEvent;
+import com.google.common.eventbus.Subscribe;
 
 import javax.swing.JPanel;
 
-import com.giorgimode.subzero.event.ShutdownEvent;
-
-import com.google.common.eventbus.Subscribe;
+import static com.giorgimode.subzero.Application.application;
 
 public abstract class BasePanel extends JPanel {
 
-    public BasePanel() {
+    protected BasePanel() {
         application().subscribe(this);
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public final void onShutdown(ShutdownEvent event) {
         onShutdown();
     }
@@ -22,6 +22,6 @@ public abstract class BasePanel extends JPanel {
     /**
      * Override, e.g. to save component preferences.
      */
-    protected final void onShutdown() {
+    private void onShutdown() {
     }
 }

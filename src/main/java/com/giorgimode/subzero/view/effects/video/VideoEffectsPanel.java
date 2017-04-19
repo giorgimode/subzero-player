@@ -9,14 +9,10 @@ import net.miginfocom.swing.MigLayout;
 
 public class VideoEffectsPanel extends BasePanel {
 
-    private final JTabbedPane tabbedPane;
-
-    private final VideoAdjustPanel videoAdjustPanel;
-
     public VideoEffectsPanel() {
-        tabbedPane = new JTabbedPane();
+        JTabbedPane tabbedPane = new JTabbedPane();
+        VideoAdjustPanel videoAdjustPanel = new VideoAdjustPanel();
 
-        videoAdjustPanel = new VideoAdjustPanel();
         tabbedPane.add(videoAdjustPanel, resources().getString("dialog.effects.tabs.video.adjust"));
 
         setLayout(new MigLayout("fill", "grow", "grow"));

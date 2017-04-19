@@ -15,6 +15,6 @@ public final class ChapterAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.setChapter(chapter);
+        getMediaPlayer().setChapter(chapter);
     }
 }

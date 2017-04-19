@@ -1,25 +1,22 @@
 package com.giorgimode.subzero.view.main;
 
-import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Font;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-import java.util.Properties;
+import com.giorgimode.subzero.Application;
+import net.miginfocom.swing.MigLayout;
+import uk.co.caprica.vlcj.Info;
+import uk.co.caprica.vlcj.version.LibVlcVersion;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
-
-import com.giorgimode.subzero.Application;
-import net.miginfocom.swing.MigLayout;
-import uk.co.caprica.vlcj.Info;
-import uk.co.caprica.vlcj.version.LibVlcVersion;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.util.Properties;
 
 public final class AboutDialog extends JDialog {
 
@@ -94,7 +91,7 @@ public final class AboutDialog extends JDialog {
 
     private class ValueLabel extends JLabel {
 
-        public ValueLabel() {
+        ValueLabel() {
             setFont(getFont().deriveFont(Font.BOLD));
         }
     }

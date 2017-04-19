@@ -4,7 +4,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 public abstract class StandardAction extends AbstractAction {
-
+    // @formatter:off
     public StandardAction(Resource resource) {
         putValue(Action.NAME             , resource.name      ());
         putValue(Action.MNEMONIC_KEY     , resource.mnemonic  ());
@@ -13,10 +13,10 @@ public abstract class StandardAction extends AbstractAction {
         putValue(Action.SMALL_ICON       , resource.menuIcon  ());
         putValue(Action.LARGE_ICON_KEY   , resource.buttonIcon());
     }
-
-    public StandardAction(String name) {
-        putValue(Action.NAME, name);
-    }
+//@formatter:on
+public StandardAction(String name) {
+    putValue(Action.NAME, name);
+}
 
     public final void select(boolean select) {
         putValue(Action.SELECTED_KEY, select);

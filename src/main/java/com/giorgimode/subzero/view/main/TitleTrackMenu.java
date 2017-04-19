@@ -1,13 +1,12 @@
 package com.giorgimode.subzero.view.main;
 
-import java.util.List;
-
-import javax.swing.Action;
-
 import com.giorgimode.subzero.Application;
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.mediaplayer.TitleAction;
 import uk.co.caprica.vlcj.player.TrackDescription;
+
+import javax.swing.Action;
+import java.util.List;
 
 final class TitleTrackMenu extends TrackMenu {
 
@@ -17,7 +16,8 @@ final class TitleTrackMenu extends TrackMenu {
 
     @Override
     protected Action createAction(TrackDescription trackDescription) {
-        return new TitleAction(trackDescription.description(), Application.application().mediaPlayerComponent().getMediaPlayer(), trackDescription.id());
+        return new TitleAction(trackDescription.description(), Application.application().mediaPlayerComponent()
+                                                                          .getMediaPlayer(), trackDescription.id());
     }
 
     @Override

@@ -13,6 +13,6 @@ final class PreviousChapterAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.previousChapter();
+        getMediaPlayer().previousChapter();
     }
 }

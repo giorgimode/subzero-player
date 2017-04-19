@@ -7,10 +7,7 @@ import javax.swing.JSlider;
 import javax.swing.plaf.SliderUI;
 import javax.swing.plaf.basic.BasicSliderUI;
 
-/**
- * Created by modeg on 8/21/2016.
- */
-public class CustomSliderUI {
+public final class CustomSliderUI {
 
     public static SliderUI getSliderUI() {
         if (RuntimeUtil.isWindows()) {
@@ -43,5 +40,8 @@ public class CustomSliderUI {
             value = sliderUI.valueForYPosition(slider.getMousePosition().y);
         }
         slider.setValue(value);
+    }
+
+    private CustomSliderUI() {
     }
 }

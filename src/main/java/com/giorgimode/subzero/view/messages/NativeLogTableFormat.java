@@ -5,10 +5,10 @@ import ca.odell.glazedlists.gui.TableFormat;
 final class NativeLogTableFormat implements TableFormat<NativeLogMessage> {
 
     private static final String[] COLUMN_NAMES = {
-        "Module",
-        "Object",
-        "Level",
-        "Message"
+            "Module",
+            "Object",
+            "Level",
+            "Message"
     };
 
     private static final int COLUMN_MODULE = 0;
@@ -35,7 +35,7 @@ final class NativeLogTableFormat implements TableFormat<NativeLogMessage> {
     @Override
     public Object getColumnValue(NativeLogMessage message, int column) {
         Object result;
-        switch(column) {
+        switch (column) {
             case COLUMN_MODULE:
                 result = message.getModule();
                 break;

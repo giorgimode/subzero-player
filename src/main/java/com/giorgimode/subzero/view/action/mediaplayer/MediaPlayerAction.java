@@ -2,11 +2,12 @@ package com.giorgimode.subzero.view.action.mediaplayer;
 
 import com.giorgimode.subzero.view.action.Resource;
 import com.giorgimode.subzero.view.action.StandardAction;
+import lombok.Getter;
 import uk.co.caprica.vlcj.player.MediaPlayer;
 
 abstract class MediaPlayerAction extends StandardAction {
-
-    protected final MediaPlayer mediaPlayer;
+    @Getter
+    private final MediaPlayer mediaPlayer;
 
     MediaPlayerAction(Resource resource, MediaPlayer mediaPlayer) {
         super(resource);

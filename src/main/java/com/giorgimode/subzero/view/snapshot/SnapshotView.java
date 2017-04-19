@@ -1,14 +1,10 @@
 package com.giorgimode.subzero.view.snapshot;
 
-import static com.giorgimode.subzero.Application.resources;
-
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.text.MessageFormat;
+import com.giorgimode.subzero.view.image.ImagePane;
+import com.giorgimode.subzero.view.image.ImagePane.Mode;
+import com.google.common.io.Files;
+import net.miginfocom.swing.MigLayout;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -16,12 +12,13 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.MessageFormat;
 
-import net.miginfocom.swing.MigLayout;
-import com.giorgimode.subzero.view.image.ImagePane;
-import com.giorgimode.subzero.view.image.ImagePane.Mode;
-
-import com.google.common.io.Files;
+import static com.giorgimode.subzero.Application.resources;
 
 /**
  * Simple frame implementation that shows a buffered image.
@@ -53,34 +50,33 @@ public class SnapshotView extends JFrame {
             File file = fileChooser.getSelectedFile();
             try {
                 String ext = Files.getFileExtension(file.getName()).toLowerCase();
-                if (ext == null) {
+                if (StringUtils.isBlank(ext)) {
                     file = new File(file.getAbsolutePath() + DEFAULT_FILE_EXTENSION);
                     ext = DEFAULT_FILE_EXTENSION;
                 }
                 // FIXME should warn about overwriting if the file exists
                 boolean wrote = ImageIO.write(image, ext, file);
                 if (!wrote) {
-                    JOptionPane.showMessageDialog(this, MessageFormat.format(resources().getString("error.saveImage"), file.toString(), MessageFormat.format(resources().getString("error.saveImageFormat"), ext)), resources().getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, MessageFormat
+                            .format(resources().getString("error.saveImage"), file.toString(), MessageFormat
+                                    .format(resources().getString("error.saveImageFormat"), ext)), resources()
+                            .getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
                 }
-            }
-            catch (IOException e) {
-                JOptionPane.showMessageDialog(this, MessageFormat.format(resources().getString("error.saveImage"), file.toString(), e.getMessage()), resources().getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, MessageFormat
+                        .format(resources().getString("error.saveImage"), file.toString(), e.getMessage()), resources()
+                        .getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
-    private class ActionPane extends JPanel {
+    private final class ActionPane extends JPanel {
 
         private ActionPane() {
             setLayout(new MigLayout("fillx", "push[]", "[]"));
             JButton saveButton = new JButton("Save");
             add(saveButton);
-            saveButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    onSave();
-                }
-            });
+            saveButton.addActionListener(e -> onSave());
         }
     }
 }

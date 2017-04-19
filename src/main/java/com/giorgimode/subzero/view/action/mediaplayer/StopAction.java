@@ -13,6 +13,6 @@ final class StopAction extends MediaPlayerAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        mediaPlayer.stop();
+        getMediaPlayer().stop();
     }
 }

@@ -2,13 +2,9 @@ package com.giorgimode.subzero.view.action;
 
 import lombok.Data;
 
-/**
- * Created by modeg on 4/6/2017.
- */
-
 @Data
 public class SubtitleTrack {
-    private final int id;
+    private final int    id;
     private final String subtitlePath;
     private final String description;
 
