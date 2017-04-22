@@ -11,8 +11,6 @@ import java.util.List;
 // FIXME i think none of these actions need be public now?
 //       the dynamic ones currently are unfortunately... for now... (e.g. videotrack)
 
-// FIXME the play action here could listen to the mediaplayer and change its icon accordingly
-
 public final class MediaPlayerActions {
 
     private final List<Action> playbackSpeedActions;

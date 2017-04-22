@@ -149,7 +149,6 @@ public final class MainFrame extends BaseFrame {
         JMenu playbackMenu = new JMenu(resourceName("menu.playback"));
         JMenu playbackTitleMenu = new TitleTrackMenu().menu();
         playbackMenu.setMnemonic(resourceMnemonic("menu.playback"));
-        // TODO Chapter could be an "on-demand" menu too, and it could be with radio buttons...
         playbackMenu.add(playbackTitleMenu);
 
         JMenu playbackChapterMenu = new ChapterMenu().menu();

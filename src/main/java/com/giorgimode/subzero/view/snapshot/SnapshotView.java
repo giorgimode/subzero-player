@@ -4,7 +4,6 @@ import com.giorgimode.subzero.view.image.ImagePane;
 import com.giorgimode.subzero.view.image.ImagePane.Mode;
 import com.google.common.io.Files;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -48,25 +47,39 @@ public class SnapshotView extends JFrame {
     private void onSave() {
         if (JFileChooser.APPROVE_OPTION == fileChooser.showSaveDialog(this)) {
             File file = fileChooser.getSelectedFile();
-            try {
-                String ext = Files.getFileExtension(file.getName()).toLowerCase();
-                if (StringUtils.isBlank(ext)) {
-                    file = new File(file.getAbsolutePath() + DEFAULT_FILE_EXTENSION);
-                    ext = DEFAULT_FILE_EXTENSION;
-                }
-                // FIXME should warn about overwriting if the file exists
-                boolean wrote = ImageIO.write(image, ext, file);
-                if (!wrote) {
-                    JOptionPane.showMessageDialog(this, MessageFormat
-                            .format(resources().getString("error.saveImage"), file.toString(), MessageFormat
-                                    .format(resources().getString("error.saveImageFormat"), ext)), resources()
-                            .getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, MessageFormat
-                        .format(resources().getString("error.saveImage"), file.toString(), e.getMessage()), resources()
-                        .getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
+            String ext = Files.getFileExtension(file.getName()).toLowerCase();
+            if (!DEFAULT_FILE_EXTENSION.equals(ext)) {
+                file = new File(fileChooser.getSelectedFile().getAbsolutePath() + "." + DEFAULT_FILE_EXTENSION);
             }
+
+            try {
+                if (file.exists()) {
+                    int input = JOptionPane.showConfirmDialog(this, resources().getString("dialog.saveImageWarning"),
+                            resources().getString("dialog.saveImageWarningTitle"), JOptionPane.YES_NO_OPTION);
+                    if (input == JOptionPane.NO_OPTION) {
+                        onSave();
+                    } else {
+                        saveFile(file);
+                    }
+                } else {
+                    saveFile(file);
+                }
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, MessageFormat.format(resources().getString("error.saveImage"), file.toString(),
+                        e.getMessage()), resources().getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void saveFile(File file) throws IOException {
+        boolean wrote = ImageIO.write(image, DEFAULT_FILE_EXTENSION, file);
+        if (!wrote) {
+            JOptionPane.showMessageDialog(this, MessageFormat.format(resources().getString("error.saveImage"), file.toString(),
+                    MessageFormat.format(resources().getString("error.saveImageFormat"), DEFAULT_FILE_EXTENSION)),
+                    resources().getString("dialog.saveImage"), JOptionPane.ERROR_MESSAGE);
+        } else {
+            dispose();
         }
     }
 

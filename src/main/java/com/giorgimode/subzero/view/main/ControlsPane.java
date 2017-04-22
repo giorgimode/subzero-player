@@ -107,37 +107,38 @@ final class ControlsPane extends BasePanel {
         volumeSlider.addChangeListener(e ->
                 mediaPlayer.setVolume(volumeSlider.getValue()));
 
-        // FIXME really these should share common actions
-
         muteButton.addActionListener(e -> Application.application().post(MuteEvent.INSTANCE));
-
         fullscreenButton.addActionListener(e -> mediaPlayer.toggleFullScreen());
-
         extendedButton.addActionListener(e -> Application.application().post(ShowEffectsEvent.INSTANCE));
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onPlaying(PlayingEvent event) {
         mediaPlayer.enableOverlay(false);
-        playPauseButton.setIcon(pauseIcon); // FIXME best way to do this? should be via the action really?
+        playPauseButton.setIcon(pauseIcon);
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onPaused(PausedEvent event) {
         playPauseButton.setIcon(playIcon);
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onStopped(StoppedEvent event) {
-        playPauseButton.setIcon(playIcon); // FIXME best way to do this? should be via the action really?
+        playPauseButton.setIcon(playIcon);
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onVolumeChanged(VolumeEvent event) {
         volumeSlider.setValue(mediaPlayer.getVolume());
     }
 
     @Subscribe
+    @SuppressWarnings("unused")
     public void onMuted(MuteEvent event) {
         if (mediaPlayer.isMute()) {
             muteButton.setIcon(volumeHighIcon);

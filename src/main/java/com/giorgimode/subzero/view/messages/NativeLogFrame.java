@@ -53,8 +53,7 @@ public final class NativeLogFrame extends BaseFrame implements LogEventListener 
         AdvancedTableModel<NativeLogMessage> eventTableModel =
                 GlazedListsSwing.eventTableModelWithThreadProxyList(eventList, new NativeLogTableFormat());
 
-        // FIXME Resource
-        Action clearAction = new AbstractAction("Clear") {
+        Action clearAction = new AbstractAction(resources().getString("messages.clear")) {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // FIXME this definitely glitched once when messing about with verbosity combo then clearing

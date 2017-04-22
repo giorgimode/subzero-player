@@ -18,15 +18,16 @@ import java.awt.Component;
 import java.text.MessageFormat;
 
 import static com.giorgimode.subzero.Application.application;
+import static com.giorgimode.subzero.Application.resources;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 
 public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
-    private PositionPane positionPane;
-    private StatusBar statusBar;
-    private VideoContentPane videoContentPane;
+    private PositionPane          positionPane;
+    private StatusBar             statusBar;
+    private VideoContentPane      videoContentPane;
     private MouseMovementDetector mouseMovementDetector;
-    private Component parentComponent;
-    private JFileChooser fileChooser;
+    private Component             parentComponent;
+    private JFileChooser          fileChooser;
 
 
     @Override
@@ -63,7 +64,8 @@ public class VlcjPlayerEventAdapter extends MediaPlayerEventAdapter {
             Application.application().post(StoppedEvent.INSTANCE);
         }
         if (Application.application().isMediaMrlAdded() && mediaPlayer.subItemCount() == 0) {
-            JOptionPane.showMessageDialog(parentComponent, "No media found on this URL", "Media URL", ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(parentComponent, resources()
+                    .getString("messages.urlNotFound"), "Media URL", ERROR_MESSAGE);
             application().setMediaMrlAdded(false);
         }
     }

@@ -43,21 +43,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static com.giorgimode.subzero.Application.application;
+import static com.giorgimode.subzero.Application.resources;
 
 @Slf4j
 public class LanguagePackFrame extends BaseFrame {
     private ButtonGroup buttonGroup = new ButtonGroup();
-    private final JButton downloadButton;
-    private final JButton saveButton;
-    private final JButton cancelButton;
-    private List<LanguageEnum> languageEnums;
-    private LanguageEnum selectedLanguage;
+    private final JButton            downloadButton;
+    private final JButton            saveButton;
+    private final JButton            cancelButton;
+    private       List<LanguageEnum> languageEnums;
+    private       LanguageEnum       selectedLanguage;
     private int firstPanelPosY = 5;
-    private JLabel[] currentLanguageFlags;
-    private Map<LanguageEnum, JLabel> currentLanguageCheckLabels;
-    private JLabel currentLanguageTextLabel;
-    private JFrame mainFrame;
-    private final DownloadService downloadService;
+    private       JLabel[]                  currentLanguageFlags;
+    private       Map<LanguageEnum, JLabel> currentLanguageCheckLabels;
+    private       JLabel                    currentLanguageTextLabel;
+    private       JFrame                    mainFrame;
+    private final DownloadService           downloadService;
 
     public LanguagePackFrame(JFrame mainFrame) {
         super("Choose Language Pair");
@@ -158,9 +159,9 @@ public class LanguagePackFrame extends BaseFrame {
         gbc.fill = GridBagConstraints.BOTH;
 
         Arrays.stream(LanguageEnum.values())
-                .map(this::createPanel)
-                .filter(Objects::nonNull)
-                .forEach((panel) -> contentPane.add(panel, gbc));
+              .map(this::createPanel)
+              .filter(Objects::nonNull)
+              .forEach((panel) -> contentPane.add(panel, gbc));
     }
 
     private JPanel createPanel(LanguageEnum languageEnum) {
@@ -256,11 +257,11 @@ public class LanguagePackFrame extends BaseFrame {
             return new ArrayList<>();
         }
         return Arrays.stream(directories)
-                .filter(directory -> ArrayUtils.isNotEmpty(directory.listFiles()))
-                .map(File::getName)
-                .map(LanguageEnum::fromString)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                     .filter(directory -> ArrayUtils.isNotEmpty(directory.listFiles()))
+                     .map(File::getName)
+                     .map(LanguageEnum::fromString)
+                     .filter(Objects::nonNull)
+                     .collect(Collectors.toList());
     }
 
     private void addButtonListener() {
@@ -288,8 +289,8 @@ public class LanguagePackFrame extends BaseFrame {
                             int informationMessage;
 
                             if (isSuccessful) {
-                                result = "Language pair was download successfully";
-                                title = "Download Successful";
+                                result = resources().getString("messages.languageDownloaded");
+                                title = resources().getString("messages.languageDownloadedTitle");
                                 informationMessage = JOptionPane.INFORMATION_MESSAGE;
                                 languageEnums.add(selectedLanguage);
                                 updateDownloadButton(selectedLanguage);
@@ -300,8 +301,8 @@ public class LanguagePackFrame extends BaseFrame {
                                 }
                                 log.info("downloading language pair {} successful.", selectedLanguage.toString());
                             } else {
-                                result = "Language pair download failed. Please try again later";
-                                title = "Download Failed";
+                                result = resources().getString("messages.languageNotDownloaded");
+                                title = resources().getString("messages.languageNotDownloadedTitle");
                                 informationMessage = JOptionPane.ERROR_MESSAGE;
                                 log.error("downloading language pair {} failed.", selectedLanguage.toString());
                             }
