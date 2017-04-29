@@ -1,6 +1,6 @@
 package com.giorgimode.subzero.downloader;
 
-import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.dictionary.LanguageEnum;
 import com.giorgimode.subzero.util.Utils;
 import com.google.common.primitives.Ints;
 import lombok.Getter;

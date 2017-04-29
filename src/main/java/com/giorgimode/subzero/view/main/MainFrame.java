@@ -1,6 +1,6 @@
 package com.giorgimode.subzero.view.main;
 
-import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.dictionary.LanguageEnum;
 import com.giorgimode.subzero.customHandler.VlcjPlayerEventAdapter;
 import com.giorgimode.subzero.translator.TranslatorService;
 import com.giorgimode.subzero.view.BaseFrame;

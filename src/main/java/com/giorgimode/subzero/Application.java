@@ -1,6 +1,6 @@
 package com.giorgimode.subzero;
 
-import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.dictionary.LanguageEnum;
 import com.giorgimode.subzero.event.ShutdownEvent;
 import com.giorgimode.subzero.event.TickEvent;
 import com.giorgimode.subzero.translator.OverlayType;

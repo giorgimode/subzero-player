@@ -2,7 +2,7 @@ package com.giorgimode.subzero.translator;
 
 import com.giorgimode.dictionary.api.DictionaryService;
 import com.giorgimode.dictionary.impl.CcDictionaryService;
-import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.dictionary.LanguageEnum;
 import com.giorgimode.dictionary.impl.WordnetDictionaryService;
 import com.giorgimode.subtitle.api.SubtitleService;
 import com.giorgimode.subtitle.api.SubtitleUnit;
@@ -152,7 +152,7 @@ public class TranslatorService {
     private void showSecondSubtitleOverlay() {
         if (subtitleService2 != null) {
             SubtitleUnit subtitleUnit = subtitleService2.get(mediaPlayer.getTime());
-            List<String> subtitleRowList = subtitleUnit.text;
+            List<String> subtitleRowList = subtitleUnit.getText();
             int maxSize = subtitleRowList.stream()
                     .sorted((e1, e2) -> e1.length() > e2.length() ? -1 : 1)
                     .findFirst().orElseGet(() -> "").length();

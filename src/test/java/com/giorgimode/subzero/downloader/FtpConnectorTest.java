@@ -1,6 +1,6 @@
 package com.giorgimode.subzero.downloader;
 
-import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.dictionary.LanguageEnum;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;

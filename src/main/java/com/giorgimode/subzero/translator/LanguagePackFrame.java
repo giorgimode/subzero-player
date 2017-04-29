@@ -1,6 +1,6 @@
 package com.giorgimode.subzero.translator;
 
-import com.giorgimode.dictionary.impl.LanguageEnum;
+import com.giorgimode.dictionary.LanguageEnum;
 import com.giorgimode.subzero.downloader.DownloadService;
 import com.giorgimode.subzero.event.LanguagePairMenuEvent;
 import com.giorgimode.subzero.event.LanguagePairSwitchEvent;
