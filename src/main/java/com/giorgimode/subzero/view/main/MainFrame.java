@@ -38,7 +38,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -314,7 +313,7 @@ public final class MainFrame extends BaseFrame {
             }
         });
 
-        translationOverlay = new TranslationOverlay(this, new HashMap<>());
+        translationOverlay = new TranslationOverlay(this);
         mediaPlayer.setOverlay(translationOverlay);
         mediaPlayerComponent.getVideoSurface().requestFocusInWindow();
         applyPreferences();

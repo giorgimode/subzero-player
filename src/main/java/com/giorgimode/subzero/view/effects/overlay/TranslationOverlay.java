@@ -14,32 +14,27 @@ import java.util.Map;
 public class TranslationOverlay extends JWindow {
 
     private static final long serialVersionUID = 1L;
-    private final Window owner;
-    private List<TranslationPanel> translationPanelList;
-    private int spaceBetweenPanels;
-    private int translationPanelHeight;
-    private int area51Below;
-    private int area51Left;
-    private final int numberOfPanelsAllowed;
-    private PanelStyle translationPanelStyle;
+    private final Window                 owner;
+    private       List<TranslationPanel> translationPanelList;
+    private       int                    spaceBetweenPanels;
+    private       int                    translationPanelHeight;
+    private       int                    area51Below;
+    private       int                    area51Left;
+    private final int                    numberOfPanelsAllowed;
+    private       PanelStyle             translationPanelStyle;
 
-    public TranslationOverlay(Window owner, Map<String, Map<String, List<String>>> translatedList) {
+    public TranslationOverlay(Window owner) {
         super(owner, WindowUtils.getAlphaCompatibleGraphicsConfiguration());
         this.owner = owner;
-        translationPanelList = new ArrayList<>();
         translationPanelStyle = new TranslationPanelStyle();
         AWTUtilities.setWindowOpaque(this, false);
         setLayout(null);
-        translatedList.entrySet().stream()
-                .filter(this::isNotEmptyWordList)
-                .forEach(this::addTranslationPanel);
         setDimensions(owner);
         numberOfPanelsAllowed = (int) Math.ceil((double) (owner.getHeight() - area51Below) / (translationPanelHeight + spaceBetweenPanels));
-        updateOverlay();
     }
 
     public void updateOverlay() {
-        if (translationPanelList.isEmpty()) {
+        if (translationPanelList == null || translationPanelList.isEmpty()) {
             return;
         }
         setDimensions(owner);
@@ -63,13 +58,15 @@ public class TranslationOverlay extends JWindow {
         clean();
         translationPanelList = new ArrayList<>();
         translatedList.entrySet().stream()
-                .filter(this::isNotEmptyWordList)
-                .forEach(this::addTranslationPanel);
+                      .filter(this::isNotEmptyWordList)
+                      .forEach(this::addTranslationPanel);
         updateOverlay();
     }
 
     public void clean() {
-        translationPanelList.forEach(this::remove);
+        if (translationPanelList != null && !translationPanelList.isEmpty()) {
+            translationPanelList.forEach(this::remove);
+        }
     }
 
     private void setDimensions(Window owner) {
@@ -98,7 +95,7 @@ public class TranslationOverlay extends JWindow {
 
     private void resizeTranslationPanels(int numberOfPanels) {
         double newSize = (numberOfPanels * (translationPanelHeight + spaceBetweenPanels) - owner.getHeight()
-                + area51Below) / (double) (2 * numberOfPanels);
+                          + area51Below) / (double) (2 * numberOfPanels);
         translationPanelHeight = (int) (translationPanelHeight - newSize);
         spaceBetweenPanels = (int) (spaceBetweenPanels - newSize);
     }
