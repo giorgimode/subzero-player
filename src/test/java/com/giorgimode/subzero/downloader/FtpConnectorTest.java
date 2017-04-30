@@ -35,6 +35,7 @@ public class FtpConnectorTest {
     public static void afterClass() {
         fakeFtpServer.stop();
     }
+
     @Test
     public void downloadLanguagePack() throws Exception {
         downloadService.setSaveDirPath("D:/coding/workspace/projects/maste-project/tempftp/output/");

@@ -1,10 +1,9 @@
 package com.giorgimode.subzero.downloader;
 
 import com.giorgimode.subzero.util.UnzipUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,12 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
- * Created by modeg on 3/23/2017.
- */
-final class FtpDownloader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FtpDownloader.class);
-
+@Slf4j
+class FtpDownloader {
     /**
      *  * Download a single file from the FTP server
      *  * @param ftpClient an instance of org.apache.commons.net.ftp.FTPClient class.
@@ -27,8 +22,8 @@ final class FtpDownloader {
      *  * @throws IOException if any network or IO error occurred.
      *  
      */
-    static boolean downloadFile(FTPClient ftpClient,
-                                String remoteFilePath, String savePath) throws IOException {
+    boolean downloadFile(FTPClient ftpClient,
+                         String remoteFilePath, String savePath) throws IOException {
         File downloadFile = new File(savePath);
 
         File parentDir = downloadFile.getParentFile();
@@ -43,29 +38,26 @@ final class FtpDownloader {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
                 boolean isDownloaded = ftpClient.retrieveFile(remoteFilePath, outputStream);
                 if (!isDownloaded) {
-                    LOGGER.error("Failed to download {}", downloadFile.getName());
+                    log.error("Failed to download {}", downloadFile.getName());
                     return false;
                 }
             } catch (IOException ex) {
-                LOGGER.error("Error: {}", ex);
+                log.error("Error: {}", ex);
                 throw ex;
             }
-            LOGGER.info("Language pack {} downloaded successfully", downloadFile.getName());
+            log.info("Language pack {} downloaded successfully", downloadFile.getName());
             return extractData(downloadFile);
         } else {
-            LOGGER.error("Language directory {} could not be created", parentDir.getName());
+            log.error("Language directory {} could not be created", parentDir.getName());
             return false;
         }
     }
 
-    private static boolean extractData(File downloadFile) {
+    private boolean extractData(File downloadFile) {
         boolean isSuccessfulyUnzipped = UnzipUtil.unzip(downloadFile);
         if (!downloadFile.delete()) {
-            LOGGER.error("Downloaded archive failed to be removed");
+            log.error("Downloaded archive failed to be removed");
         }
         return isSuccessfulyUnzipped;
-    }
-
-    private FtpDownloader() {
     }
 }

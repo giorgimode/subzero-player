@@ -3,11 +3,9 @@ package com.giorgimode.subzero.downloader;
 import com.giorgimode.dictionary.LanguageEnum;
 import com.giorgimode.subzero.util.Utils;
 import com.google.common.primitives.Ints;
-import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,46 +15,48 @@ import java.util.Properties;
 import static com.giorgimode.subzero.util.Utils.normalizePath;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
-@Getter
-@Setter
+@Slf4j
 public class DownloadService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadService.class);
-    private FTPClient ftpClient;
-    private String host;
-    private int port;
-    private String username;
-    private String password;
-    private String remoteDir;
-    private String saveDirPath;
+    private FTPClient     ftpClient;
+    private FtpDownloader ftpDownloader;
+    private String        host;
+    private int           port;
+    private String        username;
+    private String        password;
+    private String        remoteDir;
+    @Setter
+    private String        saveDirPath;
     private boolean isLoaded = false;
 
     public DownloadService() {
         ftpClient = new FTPClient();
+        ftpDownloader = new FtpDownloader();
         isLoaded = loadProperties();
     }
 
     public boolean downloadLanguagePack(LanguageEnum languageEnum) {
         if (!isLoaded) {
-            LOGGER.error("Files are not downloaded. FTP properties were not properly configured");
+            log.error("Files are not downloaded. FTP properties were not properly configured");
             return false;
         }
         try {
             if (ftpConnectionFailed()) {
+                ftpClient.disconnect();
                 return false;
             }
 
             String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue() + ".zip";
             saveDirPath += languageEnum.getValue() + ".zip";
 
-            boolean isDownloaded = FtpDownloader.downloadFile(ftpClient, remoteDirPath, saveDirPath);
+            boolean isDownloaded = ftpDownloader.downloadFile(ftpClient, remoteDirPath, saveDirPath);
             // log out and disconnect from the server
             ftpClient.logout();
             ftpClient.disconnect();
 
-            LOGGER.info("Disconnected");
+            log.info("Disconnected");
             return isDownloaded;
         } catch (IOException ex) {
-            LOGGER.error("Could not open FTP connection: {}", ex);
+            log.error("Could not open FTP connection: {}", ex);
             return false;
         }
     }
@@ -77,15 +77,15 @@ public class DownloadService {
         String pPassword = prop.getProperty("password");
         String pRemoteDir = prop.getProperty("remoteDir", "D:/lang/");
         if (isNoneBlank(pHost, pPort, pUsername, pPassword, pRemoteDir)) {
-            setHost(pHost);
-            setPort(Ints.tryParse(pPort));
-            setUsername(pUsername);
-            setPassword(pPassword);
-            setRemoteDir(pRemoteDir);
-            setSaveDirPath(Utils.parentDir());
+            host = pHost;
+            port = Ints.tryParse(pPort);
+            username = pUsername;
+            password = pPassword;
+            remoteDir = pRemoteDir;
+            saveDirPath = Utils.parentDir();
             return true;
         }
-        LOGGER.error("FTP properties were not properly configured. One of the property is missing");
+        log.error("FTP properties were not properly configured. One of the property is missing");
         return false;
     }
 
@@ -93,14 +93,14 @@ public class DownloadService {
         // connect and login to the server
         ftpClient.connect(host, port);
         if (!ftpClient.login(username, password)) {
-            LOGGER.error("User not authenticated");
+            log.error("User not authenticated");
             return true;
         }
 
         // use local passive mode to pass firewall
         ftpClient.enterLocalPassiveMode();
 
-        LOGGER.info("Connected");
+        log.info("Connected");
         return false;
     }
 }
