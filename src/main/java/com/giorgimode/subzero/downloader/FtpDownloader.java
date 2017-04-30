@@ -67,6 +67,7 @@ class FtpDownloader {
             try {
                 File unzipFile = new File(unzipFileDir);
                 if (unzipFile.exists()) {
+                    log.debug("Unzipped directory is being removed: {}", unzipFileDir);
                     FileUtils.deleteDirectory(unzipFile);
                 }
             } catch (IOException e) {
@@ -77,6 +78,7 @@ class FtpDownloader {
     }
 
     private void cleanDownloadedArchive(File downloadFile) {
+        log.debug("Downloaded archive is being removed: {}", downloadFile.getName());
         if (!downloadFile.delete()) {
             log.error("Downloaded archive failed to be removed: {}", downloadFile.getName());
         }

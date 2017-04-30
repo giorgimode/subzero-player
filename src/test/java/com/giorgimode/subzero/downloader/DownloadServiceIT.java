@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -31,11 +31,11 @@ public class DownloadServiceIT {
     private        DownloadService downloadService;
     private static FakeFtpServer   fakeFtpServer;
     private static final String RESOURCE_PATH = "src/test/resources/";
+    public static final  String FTP_HOME_DIR  = "D:/lang";
 
     @BeforeClass
     public static void beforeClass() throws IOException {
         fakeFtpServer = new FakeFtpServer();
-        startMock(fakeFtpServer);
     }
 
     @Before
@@ -46,15 +46,12 @@ public class DownloadServiceIT {
     @After
     public void clean() throws IOException {
         FileUtils.deleteDirectory(new File(RESOURCE_PATH + "savedir"));
-    }
-
-    @AfterClass
-    public static void afterClass() {
         fakeFtpServer.stop();
     }
 
     @Test
     public void downloadLanguagePack() throws Exception {
+        startMock(fakeFtpServer, true);
         File savePathDirectory = new File(RESOURCE_PATH + "savedir/");
         String savePath = savePathDirectory.getAbsolutePath();
 
@@ -64,26 +61,46 @@ public class DownloadServiceIT {
 
         File savedFileDir = new File(RESOURCE_PATH + "savedir/" + LanguageEnum.BG_DE.getValue());
         assertTrue(savedFileDir.exists());
-        for (File f: savedFileDir.listFiles()) {
+        for (File f : savedFileDir.listFiles()) {
             String content = FileUtils.readFileToString(f, StandardCharsets.UTF_8);
             assertTrue(StringUtils.isNotBlank(content));
         }
     }
 
-    private static void startMock(FakeFtpServer fakeFtpServer) throws IOException {
-        String homeDir = "D:/lang";
-        fakeFtpServer.addUserAccount(new UserAccount("user", "password", homeDir));
+    @Test
+    public void downloadLanguagePackFailed() throws Exception {
+        startMock(fakeFtpServer, false);
+
+        File savePathDirectory = new File(RESOURCE_PATH + "savedir/");
+        String savePath = savePathDirectory.getAbsolutePath();
+
+        downloadService.setSaveFilePath(Utils.normalizePath(savePath));
+        boolean isDownloadSuccessful = downloadService.downloadLanguagePack(LanguageEnum.BG_DE);
+        assertFalse(isDownloadSuccessful);
+
+        File savedFileDir = new File(RESOURCE_PATH + "savedir/" + LanguageEnum.BG_DE.getValue());
+        assertFalse(savedFileDir.exists());
+    }
+
+    private static void startMock(FakeFtpServer fakeFtpServer, boolean addArchive) throws IOException {
+        fakeFtpServer.addUserAccount(new UserAccount("user", "password", FTP_HOME_DIR));
         fakeFtpServer.setServerControlPort(31);
         FileSystem fileSystem = new WindowsFakeFileSystem();
-        fileSystem.add(new DirectoryEntry(homeDir));
+        fileSystem.add(new DirectoryEntry(FTP_HOME_DIR));
 
+        if (addArchive) {
+            addArchiveToFTP(fileSystem);
+        }
+        fakeFtpServer.setFileSystem(fileSystem);
+        fakeFtpServer.start();
+    }
+
+    private static void addArchiveToFTP(FileSystem fileSystem) throws IOException {
         File configPathDirectory = new File(RESOURCE_PATH + "bg-de.zip");
         FileInputStream in = new FileInputStream(configPathDirectory);
 
-        FileEntry fileSystemEntry = new FileEntry(homeDir + "/bg-de.zip");
+        FileEntry fileSystemEntry = new FileEntry(FTP_HOME_DIR + "/bg-de.zip");
         fileSystemEntry.setContents(IOUtils.toByteArray(in));
         fileSystem.add(fileSystemEntry);
-        fakeFtpServer.setFileSystem(fileSystem);
-        fakeFtpServer.start();
     }
 }
