@@ -19,11 +19,9 @@ class FtpDownloader {
      *  * @param remoteFilePath path of the file on the server
      *  * @param savePath path of directory where the file will be stored
      *  * @return true if the file was downloaded successfully, false otherwise
-     *  * @throws IOException if any network or IO error occurred.
      *  
      */
-    boolean downloadFile(FTPClient ftpClient,
-                         String remoteFilePath, String savePath) throws IOException {
+    boolean downloadFile(FTPClient ftpClient, String remoteFilePath, String savePath) {
         File downloadFile = new File(savePath);
 
         File parentDir = downloadFile.getParentFile();
@@ -33,17 +31,18 @@ class FtpDownloader {
         }
 
         if (parentDirExists) {
+            boolean isDownloaded = false;
             try (OutputStream outputStream = new BufferedOutputStream(
                     new FileOutputStream(downloadFile))) {
                 ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
-                boolean isDownloaded = ftpClient.retrieveFile(remoteFilePath, outputStream);
-                if (!isDownloaded) {
-                    log.error("Failed to download {}", downloadFile.getName());
-                    return false;
-                }
+                isDownloaded = ftpClient.retrieveFile(remoteFilePath, outputStream);
             } catch (IOException ex) {
-                log.error("Error: {}", ex);
-                throw ex;
+                log.error("IOException: {}", ex);
+            }
+            if (!isDownloaded) {
+                log.error("Failed to download {}", downloadFile.getName());
+                cleanup(downloadFile);
+                return false;
             }
             log.info("Language pack {} downloaded successfully", downloadFile.getName());
             return extractData(downloadFile);
@@ -54,10 +53,18 @@ class FtpDownloader {
     }
 
     private boolean extractData(File downloadFile) {
+        log.debug("Unzipping downloaded file {}", downloadFile.getName());
         boolean isSuccessfulyUnzipped = UnzipUtil.unzip(downloadFile);
-        if (!downloadFile.delete()) {
-            log.error("Downloaded archive failed to be removed");
+        cleanup(downloadFile);
+        if (!isSuccessfulyUnzipped) {
+            log.error("Failed to unzip archive: {}", downloadFile.getName());
         }
         return isSuccessfulyUnzipped;
+    }
+
+    private void cleanup(File downloadFile) {
+        if (!downloadFile.delete()) {
+            log.error("Downloaded archive failed to be removed: {}", downloadFile.getName());
+        }
     }
 }
