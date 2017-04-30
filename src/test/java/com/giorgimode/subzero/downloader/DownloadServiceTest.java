@@ -29,8 +29,9 @@ public class DownloadServiceTest {
     private FTPClient       ftpClient;
     @Mock
     private FtpDownloader   ftpDownloader;
+    private static final String CONFIG_DIR = "src/test/resources/config/";
     @InjectMocks
-    private DownloadService downloadService;
+    private DownloadService downloadService = new DownloadService(CONFIG_DIR);
 
     @Test
     public void testFtpConnectionFailed() throws IOException {

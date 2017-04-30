@@ -2,6 +2,7 @@ package com.giorgimode.subzero.downloader;
 
 import com.giorgimode.subzero.util.UnzipUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 
@@ -41,7 +42,7 @@ class FtpDownloader {
             }
             if (!isDownloaded) {
                 log.error("Failed to download {}", downloadFile.getName());
-                cleanup(downloadFile);
+                cleanDownloadedArchive(downloadFile);
                 return false;
             }
             log.info("Language pack {} downloaded successfully", downloadFile.getName());
@@ -55,14 +56,27 @@ class FtpDownloader {
     private boolean extractData(File downloadFile) {
         log.debug("Unzipping downloaded file {}", downloadFile.getName());
         boolean isSuccessfulyUnzipped = UnzipUtil.unzip(downloadFile);
-        cleanup(downloadFile);
-        if (!isSuccessfulyUnzipped) {
-            log.error("Failed to unzip archive: {}", downloadFile.getName());
-        }
+        cleanDownloadedArchive(downloadFile);
+        cleanUnzippedDir(downloadFile, isSuccessfulyUnzipped);
         return isSuccessfulyUnzipped;
     }
 
-    private void cleanup(File downloadFile) {
+    private void cleanUnzippedDir(File downloadFile, boolean isSuccessfulyUnzipped) {
+        if (!isSuccessfulyUnzipped) {
+            String unzipFileDir = downloadFile.getAbsolutePath().replace(".zip", "");
+            try {
+                File unzipFile = new File(unzipFileDir);
+                if (unzipFile.exists()) {
+                    FileUtils.deleteDirectory(unzipFile);
+                }
+            } catch (IOException e) {
+                log.error("Unzipped directory failed to be removed: {}", unzipFileDir);
+            }
+            log.error("Failed to unzip archive: {}", downloadFile.getName());
+        }
+    }
+
+    private void cleanDownloadedArchive(File downloadFile) {
         if (!downloadFile.delete()) {
             log.error("Downloaded archive failed to be removed: {}", downloadFile.getName());
         }

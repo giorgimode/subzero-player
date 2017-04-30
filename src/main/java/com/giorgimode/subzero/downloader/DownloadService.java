@@ -25,10 +25,21 @@ public class DownloadService {
     private String        password;
     private String        remoteDir;
     @Setter
-    private String        saveDirPath;
+    private String        saveFilePath;
     private boolean isLoaded = false;
+    private String parentDir;
 
     public DownloadService() {
+        parentDir = Utils.parentDir("config");
+        init();
+    }
+
+    public DownloadService(String parentDir) {
+        this.parentDir = parentDir;
+        init();
+    }
+
+    private void init() {
         ftpClient = new FTPClient();
         ftpDownloader = new FtpDownloader();
         isLoaded = loadProperties();
@@ -45,10 +56,10 @@ public class DownloadService {
                 return false;
             }
 
-            String remoteDirPath = normalizePath(remoteDir) + languageEnum.getValue() + ".zip";
-            saveDirPath += languageEnum.getValue() + ".zip";
+            String remoteFilePath = normalizePath(remoteDir) + languageEnum.getValue() + ".zip";
+            saveFilePath += languageEnum.getValue() + ".zip";
 
-            boolean isDownloaded = ftpDownloader.downloadFile(ftpClient, remoteDirPath, saveDirPath);
+            boolean isDownloaded = ftpDownloader.downloadFile(ftpClient, remoteFilePath, saveFilePath);
             // log out and disconnect from the server
             ftpClient.logout();
             ftpClient.disconnect();
@@ -63,7 +74,6 @@ public class DownloadService {
 
     @SuppressWarnings("ConstantConditions")
     private boolean loadProperties() {
-        String parentDir = Utils.parentDir("config");
         File file = new File(normalizePath(parentDir) + "config.properties");
         Properties prop = new Properties();
         try {
@@ -75,14 +85,14 @@ public class DownloadService {
         String pPort = prop.getProperty("port");
         String pUsername = prop.getProperty("username");
         String pPassword = prop.getProperty("password");
-        String pRemoteDir = prop.getProperty("remoteDir", "D:/lang/");
+        String pRemoteDir = prop.getProperty("remoteDir");
         if (isNoneBlank(pHost, pPort, pUsername, pPassword, pRemoteDir)) {
             host = pHost;
             port = Ints.tryParse(pPort);
             username = pUsername;
             password = pPassword;
             remoteDir = pRemoteDir;
-            saveDirPath = Utils.parentDir();
+            saveFilePath = Utils.parentDir();
             return true;
         }
         log.error("FTP properties were not properly configured. One of the property is missing");
