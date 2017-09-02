@@ -4,6 +4,7 @@
 /stdout.log
 /lib/
 log/
+*.iml
 
 # User-specific stuff:
 

@@ -141,6 +141,7 @@ public final class Application {
     }
 
     public void dispose() {
+        eventBus.unregister(TickEvent.INSTANCE);
         application().post(ShutdownEvent.INSTANCE);
         mediaPlayerComponent.getMediaPlayer().stop();
         mediaPlayerComponent.release();
