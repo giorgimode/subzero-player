@@ -2,7 +2,7 @@ subzero-player
 ===========
 
 The subzero-player is a media player application built using vlcj with a Swing
-rich-client user interface. 
+rich-client user interface ([forked from vlcj-player](https://github.com/caprica/vlcj-player)). 
 
 The main goal of the project is to provide an extensive demo application 
 showing how to build media players with vlcj, and to include as many features
