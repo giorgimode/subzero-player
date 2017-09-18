@@ -53,7 +53,9 @@ Features
 Required Libraries 
 -----------------------
  There were two small libraries developed for this application: *[dictionary agent](https://bitbucket.org/giorgimode/dictionary-agent)* and *[subtitle agent](https://bitbucket.org/giorgimode/subtitle-agent)*.
- **Dictionary Agent** is responsible for retrieving translations for a given set of words. Since there are multiple sources of dictionaries (e.g. MIT Wordnet binaries for English to English, simple text files and so on), there are different implementations of the interface, each one responsible for specific type of dictionary source. The interface can be extended and implemented for other kinds of sources in the future:
+ 
+**Dictionary Agent** is responsible for retrieving translations for a given set of words. Since there are multiple sources of dictionaries 
+   (e.g. MIT Wordnet binaries for English to English, simple text files and so on), there are different implementations of the interface, each one responsible for specific type of dictionary source. The interface can be extended and implemented for other kinds of sources in the future:
 
      public interface DictionaryService {
         Map<String, Map<String, List<String>>> retrieveDefinitions(String[] words);
@@ -64,10 +66,24 @@ Required Libraries
 
 Status
 ------
-This project is currently a work-in-progress. There are some more exciting things to come, most notably a web portal and user profiles.
-User will be able to save a word by clicking on it in the media player subtitle translation window. Later user can log in their portal from browser and view list of words with translations and the context of the subtitle word was used.
-Progress is tracked in Youtrack project management tool. Contact me at [sub0.project@gmail.com](sub0.project@gmail.com) to gain access
+This project is currently a work-in-progress. Media player is only half of the full project, a web portal needs to be implemented. Progress is 
+tracked in Youtrack project management tool. Contact me
+ at [sub0.project@gmail.com](sub0.project@gmail.com) to gain access
 to project board.
+
+What is coming?
+---
+There are a lot of exciting things coming, most notably:
+* ~~Winter~~
+* Web portal and user profiles via Spring MVC and Angular. User will be able to save a word by clicking on it in the media player subtitle 
+translation window. Later user can log in their portal from browser and view list of words with translations and the context of the subtitle 
+in which the word was used.
+* Rest API backed by Spring Boot and MongoDB to receive and store data/words sent by user's media player
+* Ability to search a word directly inside media player
+* Enhanced front end experience on web portal to help users learn stored words
+* Option to voluntarily share stored words and contexts
+* If user enabled previous option, user can have access to the different contexts of the same word (e.g. same word from different 
+movie subtitle shared by another user). Real life sentences help learn the words faster
 
 Project Structure
 ----------
@@ -88,13 +104,17 @@ Check out source code and run `mvn clean install`
 In target folder you will get subzero-($project.version)-jar-with-dependencies.jar
 Recreate the folder structure as described in *Project Structure* part above. 
 To make things easier, [download this archive](https://s3.eu-central-1.amazonaws.com/subzero-player/SubzeroPlayer.zip) with ready made project structure and replace existing jar with the one built by your maven. 
-*lang* folder only contains en-en pair (english-english). Remote location to download other languages from media player's menu is not yet set up, but will be available soon. 
-
+*lang* folder only contains en-en pair (english-english). Remote location to download other languages from media player's menu is not yet set
+ up, but will be available soon. 
+*Some operating systems have trouble detecting VLC binaries on the classpath. Issue will be resolved.*
 
 History
 ---------------------------------
-Project was conceived when I moved to Germany in 2016 and struggled to force myself to learn the language (since my work environment was in English).
-Watching movies in German and looking up each word was too time consuming, I was losing focus and interesting really fast. I did not find any fun/engaging way to learn a new language at home after work. So I decided to take things in my own hands and create a media player designed to the language learning process very smooth. 
+Project was conceived when I moved to Germany in 2015 and struggled to force myself to learn the language (since my work environment was in 
+English).
+Watching movies in German and looking up each word was too time consuming, I was losing focus and interesting really fast. I did not find any 
+fun/engaging way to learn a new language at home after work. So I decided to take things in my own hands and create a media player designed to
+ make the language learning process very smooth. 
 
 License
 -------
