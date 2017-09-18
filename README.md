@@ -74,15 +74,15 @@ to project board.
 What is coming?
 ---
 There are a lot of exciting things coming, most notably:
- -  ~~Winter~~
- - Web portal and user profiles via Spring MVC and Angular. User will be able to save a word by clicking on it in the media player subtitle 
+  -  ~~Winter~~
+  - Web portal and user profiles via Spring MVC and Angular. User will be able to save a word by clicking on it in the media player subtitle 
 translation window. Later user can log in their portal from browser and view list of words with translations and the context of the subtitle 
 in which the word was used.
- - Rest API backed by Spring Boot and MongoDB to receive and store data/words sent by user's media player
- - Ability to search a word directly inside media player
- - Enhanced front end experience on web portal to help users learn stored words
- - Option to voluntarily share stored words and contexts
- - If user enabled previous option, user can have access to the different contexts of the same word (e.g. same word from different 
+  - Rest API backed by Spring Boot and MongoDB to receive and store data/words sent by user's media player
+  - Ability to search a word directly inside media player
+  - Enhanced front end experience on web portal to help users learn stored words
+  - Option to voluntarily share stored words and contexts
+  - If user enabled previous option, user can have access to the different contexts of the same word (e.g. same word from different 
 movie subtitle shared by another user). Real life sentences help learn the words faster
 
 Project Structure
