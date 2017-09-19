@@ -96,7 +96,8 @@ public class LanguagePackFrame extends BaseFrame {
     private JPanel currentLanguagePanel() {
         JPanel currentLanguagePanel = new JPanel();
         currentLanguagePanel.setBounds(25, firstPanelPosY, 300, 30);
-        String languagePair = application().languageEnum().getValue();
+        LanguageEnum currentLanguagePair = application().languageEnum();
+        String languagePair = currentLanguagePair != null ? currentLanguagePair.getValue() : LanguageEnum.EN_EN.getValue();
         String fullLanguageNames = mapLanguageNames(languagePair.split("-"));
         currentLanguageTextLabel = new JLabel("Current Language: " + fullLanguageNames + " ");
         Font font = currentLanguageTextLabel.getFont();
