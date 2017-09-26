@@ -98,7 +98,9 @@ Subzero player folder expects the following structure
 
 How to run
 ---------------------------------
-Check out source code and run `mvn clean install`
+Check out helper libraries developed for this application: *[dictionary agent](https://bitbucket.org/giorgimode/dictionary-agent)* and *[subtitle agent](https://bitbucket.org/giorgimode/subtitle-agent)*.
+Run `mvn clean install` on both.
+Check out source code of subzero-player and run `mvn clean install`
 In target folder you will get subzero-($project.version)-jar-with-dependencies.jar
 Recreate the folder structure as described in *Project Structure* part above. 
 To make things easier, [download this archive](https://s3.eu-central-1.amazonaws.com/subzero-player/SubzeroPlayer.zip) with ready made project structure and replace existing jar with the one built by your maven. 
