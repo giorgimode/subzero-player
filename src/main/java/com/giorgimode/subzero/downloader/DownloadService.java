@@ -79,7 +79,7 @@ public class DownloadService {
         try {
             prop.load(new FileInputStream(file));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IOException while loading config: " + e);
         }
         String pHost = prop.getProperty("host");
         String pPort = prop.getProperty("port");

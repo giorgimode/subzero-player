@@ -69,7 +69,7 @@ public class LanguagePackFrame extends BaseFrame {
         downloadButton = new JButton();
         saveButton = new JButton();
         cancelButton = new JButton();
-        selectedLanguage = application().languageEnum();
+        selectedLanguage = getSafeLanguagePair();
         currentLanguageCheckLabels = new HashMap<>();
         JPanel languageScrollPanel = new JPanel(new GridBagLayout());
         createLanguagePanels(languageScrollPanel);
@@ -96,17 +96,20 @@ public class LanguagePackFrame extends BaseFrame {
     private JPanel currentLanguagePanel() {
         JPanel currentLanguagePanel = new JPanel();
         currentLanguagePanel.setBounds(25, firstPanelPosY, 300, 30);
-        LanguageEnum currentLanguagePair = application().languageEnum();
-        String languagePair = currentLanguagePair != null ? currentLanguagePair.getValue() : LanguageEnum.EN_EN.getValue();
-        String fullLanguageNames = mapLanguageNames(languagePair.split("-"));
+        String fullLanguageNames = mapLanguageNames(selectedLanguage.getValue().split("-"));
         currentLanguageTextLabel = new JLabel("Current Language: " + fullLanguageNames + " ");
         Font font = currentLanguageTextLabel.getFont();
         currentLanguageTextLabel.setFont(new Font(font.getFamily(), Font.BOLD, font.getSize() * 5 / 4));
         currentLanguagePanel.add(currentLanguageTextLabel);
 
-        currentLanguageFlags = addFlagPair(languagePair, currentLanguagePanel);
+        currentLanguageFlags = addFlagPair(selectedLanguage.getValue(), currentLanguagePanel);
 
         return currentLanguagePanel;
+    }
+
+    private LanguageEnum getSafeLanguagePair() {
+        LanguageEnum currentLanguagePair = application().languageEnum();
+        return currentLanguagePair != null ? currentLanguagePair : LanguageEnum.EN_EN;
     }
 
     private void createButtons() {
